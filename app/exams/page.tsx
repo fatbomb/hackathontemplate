@@ -89,7 +89,7 @@ export default function ExamsPage() {
                 </h1>
 
                 <Link 
-                    href="/generate" 
+                    href="/exams/createexam" 
                     className="flex items-center gap-2 bg-gradient-to-r from-blue-600 hover:from-blue-700 to-indigo-600 hover:to-indigo-700 shadow-md hover:shadow-lg px-5 py-2.5 rounded-lg font-medium text-white transition-all duration-200"
                 >
                     <PlusCircle size={18} />
