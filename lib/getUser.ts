@@ -5,7 +5,7 @@ import { getPocketBase } from "./pocketbase";
 export async function getCurrentUser() {
   const cookieStore = await cookies(); // ✅ No need to await here, it's sync!
   const cookieHeader = cookieStore.toString(); // ✅ safe now
-  const pb = getPocketBase(cookieHeader);
+  const pb = await getPocketBase(cookieHeader);
 
   if (!pb.authStore.isValid) return null;
 

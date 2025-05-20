@@ -1,6 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+'use client';
+
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { ClientQuestion, ExamResult } from '@/types';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import ErrorMessage from '@/components/ui/ErrorMessage';
+import { Button } from '@/components/ui/button';
 
 interface ExamViewProps {
   examId: string;
@@ -8,6 +13,7 @@ interface ExamViewProps {
 }
 
 export default function ExamView({ examId, userExamId }: ExamViewProps) {
+  const router = useRouter();
   const [exam, setExam] = useState<{
     id: string;
     exam_name: string;
@@ -15,7 +21,6 @@ export default function ExamView({ examId, userExamId }: ExamViewProps) {
     time_limit: number;
     questions: ClientQuestion[];
   } | null>(null);
-  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -26,23 +31,28 @@ export default function ExamView({ examId, userExamId }: ExamViewProps) {
   const examStartTime = useRef(Date.now());
   const timerId = useRef<NodeJS.Timeout | null>(null);
   const submissionInProgress = useRef(false);
+  const [fetchedExamdata, setFetchedExamData] = useState(false);
+  const componentMounted = useRef(true);
 
   // Load exam data
   useEffect(() => {
     const fetchExamData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`/api/exams/${examId}?userExamId=${userExamId}`, {
-          headers: {
-        'Authorization': `Bearer ${localStorage.getItem('pb_auth')}`
-          }
+        const response = await fetch(`/api/exams/${examId}?userExamId=${userExamId}`, {
+          credentials: 'include'
         });
-        const examData = response.data.exam;
         
-        setExam(examData);
-        setTimeLeft(examData.time_limit * 60); // Convert minutes to seconds
+        if (!response.ok) {
+          throw new Error('Failed to load exam data');
+        }
+        
+        const examData = await response.json();
+        setExam(examData.exam);
+        setTimeLeft(examData.exam.time_limit * 60);
         examStartTime.current = Date.now();
-      } catch (err) {
+        setFetchedExamData(true);
+      } catch (err: any) {
         setError('Failed to load exam data');
         console.error(err);
       } finally {
@@ -50,21 +60,22 @@ export default function ExamView({ examId, userExamId }: ExamViewProps) {
       }
     };
     
-    fetchExamData();
+    if(!fetchedExamdata) {
+      fetchExamData();
+    }
+
+    // Set component as mounted
+    componentMounted.current = true;
     
-    // Cleanup function
     return () => {
-      if (!examSubmitted && exam && !submissionInProgress.current) {
-        handleSubmitExam(true); // Silent submission
-      }
-      
+      componentMounted.current = false;
       if (timerId.current) {
         clearInterval(timerId.current);
       }
     };
-  }, [examId, userExamId]);
+  }, [examId, userExamId, fetchedExamdata]);
 
-  // Timer effect with anti-tamper measures
+  // Timer effect
   useEffect(() => {
     if (!loading && exam && !examSubmitted && timeLeft > 0) {
       const serverTimeLimit = exam.time_limit * 60;
@@ -80,10 +91,12 @@ export default function ExamView({ examId, userExamId }: ExamViewProps) {
           return;
         }
         
-        setTimeLeft(remaining);
+        if (componentMounted.current) {
+          setTimeLeft(remaining);
+        }
       }, 1000);
       
-      // Additional anti-tamper: listen for visibility changes
+      // Anti-tamper measure
       document.addEventListener("visibilitychange", handleVisibilityChange);
       
       return () => {
@@ -93,81 +106,105 @@ export default function ExamView({ examId, userExamId }: ExamViewProps) {
     }
   }, [loading, exam, examSubmitted]);
 
-  // Handle tab visibility changes (detect tab switching)
   const handleVisibilityChange = () => {
     if (document.visibilityState === 'hidden') {
-      console.log('Tab visibility changed - user may be switching tabs');
-      // You could track suspicious behavior here
+      console.log('Tab visibility changed - potential cheating attempt');
     }
   };
 
-  // Handle answer selection
   const handleAnswerSelect = (questionId: string, answerIndex: number) => {
     if (examSubmitted) return;
     
-    const newSelectedAnswers = new Map(selectedAnswers);
-    newSelectedAnswers.set(questionId, answerIndex);
-    setSelectedAnswers(newSelectedAnswers);
+    setSelectedAnswers(prev => {
+      const newMap = new Map(prev);
+      newMap.set(questionId, answerIndex);
+      return newMap;
+    });
   };
 
-  // Submit exam
-  const handleSubmitExam = async (silent = false) => {
-    if (examSubmitted || !exam || submissionInProgress.current) return;
+  const handleSubmitExam = useCallback(async (silent = false) => {
+    if (examSubmitted || !exam || !userExamId || submissionInProgress.current) return;
     
     submissionInProgress.current = true;
     try {
       if (!silent) setLoading(true);
       
-      // Calculate time spent
       const timeSpent = exam.time_limit * 60 - timeLeft;
-      
-      // Convert map to array for submission
       const answersArray = Array.from(selectedAnswers).map(([questionId, selectedAnswer]) => ({
         questionId,
         selectedAnswer
       }));
       
-      const response = await axios.post(`/api/exams/${examId}/submit`, {
-        userExamId,
-        answers: answersArray,
-        timeSpent,
-        clientTimeStamp: Date.now()
-      }, {
+      const response = await fetch(`/api/exams/${examId}/submit`, {
+        method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('pb_auth')}`
-        }
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userExamId,
+          answers: answersArray,
+          timeSpent,
+          clientTimeStamp: Date.now()
+        }),
+        credentials: 'include'
       });
       
-      setExamResult(response.data);
+      if (!response.ok) {
+        throw new Error('Failed to submit exam');
+      }
+      
+      const result = await response.json();
+      setExamResult(result);
+      console.log(result, 'result');
       setExamSubmitted(true);
       
       if (timerId.current) {
         clearInterval(timerId.current);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!silent) {
-        setError('Failed to submit exam');
-        console.error(err);
+        setError(err.message || 'Failed to submit exam');
       }
     } finally {
       if (!silent) setLoading(false);
       submissionInProgress.current = false;
     }
-  };
+  }, [examSubmitted, exam, userExamId, timeLeft, selectedAnswers, examId]);
 
-  // Format time (mm:ss)
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   };
 
-  if (loading) return <div className="py-10 text-center">Loading exam...</div>;
-  if (error) return <div className="py-10 text-red-500 text-center">{error}</div>;
-  if (!exam) return <div className="py-10 text-center">No exam data found</div>;
+  if (loading) return (
+    <div className="flex justify-center items-center min-h-[50vh]">
+      <LoadingSpinner size="lg" />
+    </div>
+  );
+
+  if (error) return (
+    <div className="mx-auto p-6 max-w-4xl container">
+      <ErrorMessage 
+        message={error}
+        onRetry={() => window.location.reload()}
+      />
+    </div>
+  );
+
+  if (!exam) return (
+    <div className="mx-auto p-6 max-w-4xl text-center container">
+      <div className="bg-white shadow-sm p-8 rounded-lg">
+        <h2 className="mb-4 font-semibold text-xl">Exam Not Found</h2>
+        <p className="mb-4 text-gray-600">The requested exam could not be loaded.</p>
+        <Button asChild>
+          <a href="/exams">Back to Exams</a>
+        </Button>
+      </div>
+    </div>
+  );
 
   const currentQuestion = exam.questions[currentQuestionIndex];
-
   return (
     <div className="bg-white shadow-md mx-auto p-6 rounded-lg max-w-4xl">
       <div className="flex justify-between items-center mb-6">
@@ -194,11 +231,11 @@ export default function ExamView({ examId, userExamId }: ExamViewProps) {
               if (examSubmitted && examResult) {
                 const resultQuestion = examResult.questions.find(q => q.id === currentQuestion.id);
                 if (resultQuestion) {
-                  if (optionIndex === resultQuestion.correctAnswer) {
+                    if (optionIndex === Number(resultQuestion.correctAnswer)) {
                     resultClass = 'border-green-500 bg-green-50';
-                  } else if (isSelected && optionIndex !== resultQuestion.correctAnswer) {
+                    } else if (isSelected && optionIndex !== Number(resultQuestion.correctAnswer)) {
                     resultClass = 'border-red-500 bg-red-50';
-                  }
+                    }
                 }
               }
               

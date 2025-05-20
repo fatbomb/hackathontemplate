@@ -1,60 +1,71 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getPocketBase, getAuthFromCookies } from '@/lib/pocketbase';
-import { ExamService } from '@/services/api';
-import { ExamSubmission } from '@/types';
-import { parseJWT } from '@/lib/jwt';
+import { NextResponse } from 'next/server';
+import { getPocketBase } from '@/lib/pocketbase';
 
 export async function POST(
-  request: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    // Get auth from cookies
-    const authData = request.headers.get('Authorization') || request.headers.get('pb_auth');
-    if (!authData) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const pb = await getPocketBase(request.headers.get('cookie') || '');
     
-    const pb = getPocketBase();
-    const decodeToken = parseJWT(authData || '');
-                if (!decodeToken.id) {
-                  // Access cookies if needed
-                    return NextResponse.json({ error: 'Invalid authentication' }, { status: 401 });
-        
-                //   router.push('/login?redirect=' + encodeURIComponent(`/exams/${examId}`));
-                //   return;
-                }
-            
-    const examId = params.id;
-    const { userExamId, answers, timeSpent, clientTimeStamp } = await request.json() as ExamSubmission;
+    if (!pb.authStore.isValid) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const { userExamId, answers, timeSpent, clientTimeStamp } = await request.json();
     
     // Verify the exam belongs to this user
-    const userExam = await ExamService.getUserExam(userExamId);
-    // if (userExam.user_id !== pb.authStore.model?.id) {
-    //   return NextResponse.json({ error: 'Unauthorized access to this exam' }, { status: 403 });
-    // }
-    
-    // Verify time validity
-    const examStartTime = await ExamService.getExamStartTime(userExamId);
-    const maxAllowedTime = await ExamService.getExamTimeLimit(examId);
-    const actualTimeSpent = Math.min((Date.now() - examStartTime) / 1000, maxAllowedTime * 60);
-    
-    // Check for suspicious time discrepancy
-    if (Math.abs(timeSpent - actualTimeSpent) > 60) { // 1 minute tolerance
-      console.warn('Suspicious time discrepancy for exam:', examId, 'userExam:', userExamId);
-      // Optionally flag for review or reject
+    const userExam = await pb.collection('user_exams').getOne(userExamId);
+    if (userExam.user_id !== pb.authStore.model?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized access to this exam' },
+        { status: 403 }
+      );
     }
-    
+
     // Calculate results
-    const result = await ExamService.calculateExamResults(userExamId, examId, answers);
+    const questions = await pb.collection('questions').getFullList({
+      filter: `exam_id = "${params.id}"`
+    });
+
+    let correctCount = 0;
+    const questionResults = questions.map((question, index) => {
+      const userAnswer = answers[index]?.selectedAnswer;
+      const isCorrect = Number(userAnswer) === Number(question.correct_answer);
+      if (isCorrect) correctCount++;
+      return {
+        id: question.id,
+        correctAnswer: question.correct_answer,
+        userAnswer,
+        isCorrect,
+        explanation: question.explaination
+      };
+    });
+      
+
+    const score = (correctCount / questions.length) * 100;
     
-    // Save the exam result
-    await ExamService.saveExamResult(userExamId, result.score, answers);
-    
-    return NextResponse.json(result);
-    
-  } catch (error) {
-    console.error('Error submitting exam:', error);
-    return NextResponse.json({ error: 'Failed to submit exam' }, { status: 500 });
+    // Save the result
+    await pb.collection('user_exams').update(userExamId, {
+      status: 'completed',
+      score,
+      answers: answers,
+      completed_at: new Date().toISOString(),
+      time_spent: timeSpent
+    });
+
+    return NextResponse.json({
+      score,
+      questions: questionResults
+    });
+
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || 'Failed to submit exam' },
+      { status: 500 }
+    );
   }
 }
