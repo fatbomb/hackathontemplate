@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Eye, EyeOff } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -27,15 +28,21 @@ const formSchema = z.object({
   password: z.string().min(8, {
     message: "Password must be at least 8 characters",
   }),
+  confirmPassword: z.string(),
   terms: z.boolean().refine((val) => val === true, {
     message: "You must agree to the terms and conditions",
   }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"], // Path determines which field will show the error message
 });
-
 export default function SignupPage() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const router = useRouter();
   const { toast } = useToast();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,36 +50,50 @@ export default function SignupPage() {
       name: "",
       email: "",
       password: "",
+      confirmPassword: "",
       terms: false,
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    
+
     try {
-      // Handle signup logic here
-      console.log(values);
-      
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: values.name,
+          email: values.email,
+          password: values.password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Signup failed");
+      }
+
       toast({
         title: "Account created!",
         description: "You have successfully created an account.",
       });
-      
+
       router.push("/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Something went wrong. Please try again.",
+        description: error.message || "Something went wrong.",
       });
     } finally {
       setIsLoading(false);
     }
   }
+
 
   return (
     <div className="space-y-6">
@@ -115,7 +136,64 @@ export default function SignupPage() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="••••••••" {...field} />
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      {...field}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="top-0 right-0 absolute px-3 h-full"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                      <span className="sr-only">
+                        {showPassword ? "Hide password" : "Show password"}
+                      </span>
+                    </Button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      {...field}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="top-0 right-0 absolute px-3 h-full"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                      <span className="sr-only">
+                        {showConfirmPassword ? "Hide password" : "Show password"}
+                      </span>
+                    </Button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -161,7 +239,7 @@ export default function SignupPage() {
       </Form>
       <div className="text-sm text-center">
         Already have an account?{" "}
-        <Link href="/login" className="text-primary hover:underline">
+        <Link href="/auth/login" className="text-primary hover:underline">
           Login
         </Link>
       </div>

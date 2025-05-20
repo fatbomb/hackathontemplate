@@ -27,6 +27,6 @@
       // "@/styles/*": ["./src/lib/styles/*"],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/auth/reset-password"],
   "exclude": ["node_modules"]
 }

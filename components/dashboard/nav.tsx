@@ -30,7 +30,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function DashboardNav() {
   return (
-    <header className="top-0 z-50 sticky bg-background/95 supports-[backdrop-filter]:bg-background/60 backdrop-blur border-b border-border/40 w-full">
+    <header className="top-0 z-50 sticky bg-background/95 supports-[backdrop-filter]:bg-background/60 backdrop-blur px-10 border-b border-border/40 w-full">
       <div className="flex items-center max-w-screen-2xl h-14 container">
         <div className="md:hidden flex mr-4">
           <Sheet>
