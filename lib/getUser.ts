@@ -13,6 +13,7 @@ export async function getCurrentUser() {
     await pb.collection("users").authRefresh();
     return pb.authStore.model;
   } catch (e) {
+    console.error("Error refreshing auth:", e);
     return null;
   }
 }
