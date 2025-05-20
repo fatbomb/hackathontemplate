@@ -6,45 +6,71 @@ export interface MCQQuestion {
 }
 
 export interface Exam {
-  exam_id?: string;
+  id: string;
+  user_id: string;
   exam_name: string;
-  refined_text: string;
+  input_text: string;
   difficulty: string;
+  topic: string;
   type: string;
   time_limit: number;
-  created_at?: string;
+  created: string;
 }
 
-export interface Question {
-  question_id?: string;
-  exam_id: string;
+export interface ClientQuestion {
+  id: string;
   question_statement: string;
   options: string[];
+}
+export interface ServerQuestion extends ClientQuestion {
   correct_answer: number;
   explanation: string;
 }
 
 export interface UserExam {
-  user_exam_id?: string;
+  id: string;
   user_id: string;
   exam_id: string;
-  status: string;
+  status: 'pending' | 'completed' | 'in_progress';
   score?: number;
-  completed_at?: string;
+  start_time?: string;
+  end_time?: string;
 }
 
-export interface TaskProgress {
-  progress_id?: string;
-  task_id: string;
-  status: string;
-  created_at: string;
+export interface ExamSubmission {
+  userExamId: string; 
+  answers: { questionId: string, selectedAnswer: number }[];
+  timeSpent: number;
+  clientTimeStamp: number;
+}
+
+export interface ExamResult {
+  score: number;
+  totalQuestions: number;
+  correctAnswers: number;
+  questions: {
+    id: string;
+    question_statement: string;
+    options: string[];
+    userAnswer: number;
+    correctAnswer: number;
+    explanation: string;
+  }[];
+}
+
+export interface UserAnswer {
+  id?: string;
+  user_exam_id: string;
+  question_id: string;
+  selected_answer: number;
 }
 
 export interface MCQGenerationParams {
   refined_text: string;
   difficulty: string;
   num_questions: number;
-  exam_name: string;
-  time_limit: number;
   topic_name: string;
+  language?: string;
+  exam_name: string;
+  time_limit: number; 
 }

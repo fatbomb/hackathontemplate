@@ -1,26 +1,40 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+// To run this code you need to install the following dependencies:
+// npm install @google/genai mime
+// npm install -D @types/node
 
-// Initialize the Google Generative AI SDK
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || '');
+import { GoogleGenAI } from '@google/genai';
 
 export async function generateWithGemini(prompt: string): Promise<string> {
+  const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY || '',
+  });
+  console.log(prompt);
+
+  const model = 'learnlm-2.0-flash-experimental';
+  const config = {
+    responseMimeType: 'text/plain',
+  };
+
+  const contents = [
+    {
+      role: 'user',
+      parts: [
+        {
+          text: prompt,
+        },
+      ],
+    },
+  ];
+
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
-    
-    const generationConfig = {
-      temperature: 1,
-      topP: 0.95,
-      topK: 64,
-      maxOutputTokens: 10000,
-    };
-    
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig,
+    const response = await ai.models.generateContent({
+      model,
+      config,
+      contents,
     });
 
-    const response = result.response;
-    return response.text();
+    const text = response.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    return text;
   } catch (error) {
     console.error('Error generating content with Gemini:', error);
     throw error;

@@ -1,79 +1,100 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AIService, ExamService, QuestionService, UserExamService, TaskProgressService } from '@/services/api';
+import { AIService, ExamService } from '@/services/api';
 import { MCQGenerationParams } from '@/types';
-
+import { cookies } from 'next/headers';
+import { getPocketBase, getAuthFromCookies } from '@/lib/pocketbase';
+import { parseJWT } from '@/lib/jwt';
 export async function POST(request: NextRequest) {
   try {
     const data: MCQGenerationParams = await request.json();
-    const { refined_text, difficulty, num_questions, exam_name, time_limit, topic_name } = data;
-    
+    const { refined_text, difficulty, num_questions, exam_name, time_limit, topic_name, language } = data;
+
     // Validate input data
     if (!refined_text || !difficulty || !num_questions || !exam_name || !topic_name) {
       return NextResponse.json({ error: "All fields are required." }, { status: 400 });
     }
     
-    // Create a task to track progress
-    const progressId = await TaskProgressService.createTask();
+    // Get auth token from cookies
+    const authToken = getAuthFromCookies(request.headers.get('cookie') || '');
+    if (!authToken) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Initialize PocketBase
+    const pb = getPocketBase();
+    pb.authStore.loadFromCookie(`pb_auth=${authToken}`);
+    // console.log('Auth store:', pb.authStore, authToken);
+    // console.log('Decoded Token:', parseJWT(authToken)); // Use a function to decode JWT
+
+    const decodededToken = parseJWT(authToken);
+    console.log('Decoded Token:', decodededToken.id);
     
-    // Extract user ID from auth token or provide a static one for testing
-    const userId = request.headers.get('authorization')?.split(' ')[1] || 'test-user-id';
+    // Ensure the auth store is valid
+    if (!decodededToken.id) {
+      return NextResponse.json({ error: 'Invalid authentication or user not found' }, { status: 401 });
+    }
     
-    // Generate the MCQ prompt
-    const prompt = `Generate exactly ${num_questions + 3} mcq questions for the topic ${topic_name} from the following text with difficulty '${difficulty}': ${refined_text}. 
-      Respond strictly in valid JSON format without any additional text. 
-      The response must be a JSON object inside a list ([]) with keys: 'question', 'options' (list of 4 choices), 'answer' (correct answer as text), and 'explanation'.
-      Do not include any introduction, explanation, or any other text—only return the JSON output.`;
-    
-    // In a real implementation, you would call your AI service here
-    // This is just a mockup for demonstration
-    const aiResponse = await AIService.generateMCQQuestions({
+    const userId = decodededToken.id;
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID not found' }, { status: 500 });
+    }
+
+    // Proceed with MCQ generation logic
+    const aiRawResponse = await AIService.generateMCQQuestions({
       refined_text,
       difficulty,
       num_questions,
-      topic_name
+      topic_name,
+      language,
     });
+
+    const allGeneratedQuestions = AIService.processResponse(aiRawResponse, num_questions);
     
-    // Process the AI response
-    const allGeneratedQuestions = AIService.processResponse(JSON.stringify(aiResponse), num_questions);
-    
-    if (!allGeneratedQuestions.length) {
-      await TaskProgressService.updateTask(progressId, 'failed');
-      return NextResponse.json({ error: "Failed to generate questions" }, { status: 500 });
+    if (allGeneratedQuestions.length === 0) {
+      return NextResponse.json({ error: 'Failed to generate valid questions' }, { status: 500 });
     }
-    
-    // Create the exam
-    const newExam = await ExamService.createExam({
-      exam_name,
-      refined_text,
-      difficulty,
-      type: 'mcq',
-      time_limit,
-      created_at: new Date().toISOString()
-    });
-    
-    // Create questions for the exam
-    for (const q of allGeneratedQuestions) {
-      await QuestionService.createQuestion({
-        exam_id: newExam.id,
-        question_statement: q.question,
-        options: q.options,
-        correct_answer: q.answer,
-        explanation: q.explanation
+
+    try {
+      // --- Create exam ---
+      const newExam = await pb.collection('exams').create({
+        user_id: userId,
+        exam_name: exam_name,
+        input_text: refined_text,
+        difficulty: difficulty.toLowerCase(),
+        topic: topic_name,
+        type: 'mcq',
+        time_limit: time_limit,
       });
+
+      // --- Save questions ---
+      for (const q of allGeneratedQuestions) {
+        await pb.collection('questions').create({
+          exam_id: newExam.id,
+          question_statement: q.question,
+          options: q.options,
+          correct_answer: q.answer,
+          explaination: q.explanation
+        });
+      }
+
+      // --- Assign to user ---
+      const newUserExam = await pb.collection('user_exams').create({
+        user_id: userId,
+        exam_id: newExam.id,
+        status: 'pending'
+      });
+      
+      return NextResponse.json({
+        message: "Exam and questions saved successfully!",
+        exam_id: newExam.id,
+        user_exam_id: newUserExam.id
+      });
+
+    } catch (error) {
+      console.error('MCQ generation error:', error);
+      return NextResponse.json({ error: 'MCQ creation failed' }, { status: 500 });
     }
-    
-    // Assign exam to user
-    const newUserExam = await UserExamService.assignExamToUser(userId, newExam.id);
-    
-    // Mark task as completed
-    await TaskProgressService.deleteTask(progressId);
-    
-    return NextResponse.json({
-      message: "Exam and questions saved successfully!",
-      exam_id: newExam.id,
-      user_exam_id: newUserExam.id
-    });
-    
+
   } catch (error) {
     console.error('Error in MCQ generation:', error);
     return NextResponse.json({ error: "Failed to generate questions" }, { status: 500 });
