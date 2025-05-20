@@ -37,30 +37,37 @@ export default function ResetPasswordPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    
+
     try {
-      // Handle password reset logic here
-      console.log(values);
-      
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+      const res = await fetch("/api/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: values.email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to send reset link.");
+      }
+
       toast({
         title: "Reset link sent",
         description: "Check your email for a link to reset your password.",
       });
-      
+
       setIsSubmitted(true);
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Something went wrong. Please try again.",
+        description: error.message || "Something went wrong.",
       });
     } finally {
       setIsLoading(false);
     }
   }
+
 
   return (
     <div className="space-y-6">
@@ -70,7 +77,7 @@ export default function ResetPasswordPage() {
           Enter your email and we'll send you a link to reset your password
         </p>
       </div>
-      
+
       {isSubmitted ? (
         <div className="space-y-4">
           <div className="bg-muted/50 p-4 border rounded-lg">
@@ -79,7 +86,7 @@ export default function ResetPasswordPage() {
             </p>
           </div>
           <Button className="w-full" asChild>
-            <Link href="/login">Back to Login</Link>
+            <Link href="/auth/login">Back to Login</Link>
           </Button>
         </div>
       ) : (
@@ -110,10 +117,10 @@ export default function ResetPasswordPage() {
           </form>
         </Form>
       )}
-      
+
       <div className="text-sm text-center">
         Remember your password?{" "}
-        <Link href="/login" className="text-primary hover:underline">
+        <Link href="/auth/login" className="text-primary hover:underline">
           Back to Login
         </Link>
       </div>

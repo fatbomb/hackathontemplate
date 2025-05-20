@@ -28,6 +28,6 @@
       // "@/markdown/*": ["./markdown/*"],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "**/*.mdx", "**/*.md"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "**/*.mdx", "**/*.md", "app/auth/reset-password"],
   "exclude": ["node_modules"]
 }
