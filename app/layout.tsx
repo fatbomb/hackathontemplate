@@ -4,7 +4,8 @@ import { Inter } from "next/font/google";
 import { Toaster } from '../components/ui/toaster'
 import "./globals.css";
 import { ThemeProvider } from "../components/teme-provider";
-import { cn } from "@/lib/utils";
+import { Navbar } from "@/components/landing/navbar";
+import { Footer } from "@/components/landing/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,7 +23,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning={true} className={`min-h-screen ${inter.className}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+          <div className="flex flex-col min-h-screen max-w-screen">
+            <Navbar />
+              {children}
+            <Footer className="px-20" />
+          </div>
           <Toaster />
         </ThemeProvider>
       </body>

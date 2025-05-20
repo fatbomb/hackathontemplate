@@ -11,23 +11,20 @@ export async function hasFileWithExtension(path: string, extension: string): Pro
     }
 }
 
-export function getAllMdPaths(dir: string, base = ''): string[] {
-    let paths: string[] = [];
+export function getAllMdPaths (dir: string, base = ''): string[][]{
+    let results: string[][] = [];
 
-    try {
-        fs.readdirSync(dir, { withFileTypes: true }).forEach((entry) => {
-            const fullPath = path.join(dir, entry.name);
-            const relPath = path.join(base, entry.name);
+    fs.readdirSync(dir, { withFileTypes: true }).forEach((entry) => {
+      const fullPath = path.join(dir, entry.name);
+      const relPath = path.join(base, entry.name);
 
-            if (entry.isDirectory()) {
-                paths.push(...getAllMdPaths(fullPath, relPath));
-            } else if (entry.isFile() && /\.(md|mdx)$/.test(entry.name)) {
-                paths.push(relPath.replace(/\.(md|mdx)$/, '').split(path.sep).join('/'));
-            }
-        });
-    } catch (error) {
-        console.error(`Error reading directory ${dir}:`, error);
-    }
+      if (entry.isDirectory()) {
+        results.push(...getAllMdPaths(fullPath, relPath));
+      } else if (entry.isFile() && /\.(mdx?|MDX?)$/.test(entry.name)) {
+        const slugArray = relPath.replace(/\.(mdx?|MDX?)$/, '').split(path.sep);
+        results.push(slugArray);
+      }
+    });
 
-    return paths;
-}
+    return results;
+  };
