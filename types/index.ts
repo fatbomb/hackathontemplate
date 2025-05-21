@@ -73,4 +73,6 @@ export interface MCQGenerationParams {
   language?: string;
   exam_name: string;
   time_limit: number; 
+  subject: string;
+  Class: string;
 }

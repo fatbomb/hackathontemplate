@@ -1,7 +1,9 @@
-import { useState } from 'react';
+'use client'
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/hooks/use-toast';
 import { redirect } from "next/navigation";
+import { useSearchParams } from 'next/navigation';
 
 export default function MCQGenerationForm(user: any) {
   const router = useRouter();
@@ -9,6 +11,24 @@ export default function MCQGenerationForm(user: any) {
   const [isGenerated, setIsGenerated] = useState(false); // NEW STATE
   const [userExamId, setUserExamId] = useState<string | null>(null); // For redirect
   const [examId, setExamId] = useState<string | null>(null); // For redirect
+  const searchParams = useSearchParams();
+  const topic = searchParams.get('topic');
+  const subject = searchParams.get('subject');
+  const level = searchParams.get('level')||'1';
+
+  useEffect(() => {
+    if (topic) {
+      setFormData(prev => ({ ...prev, topic_name: topic }));
+    }
+    if (subject) {
+      setFormData(prev => ({ ...prev, subject: subject }));
+
+    }
+      setFormData(prev => ({ ...prev, exam_name: `${subject} ${topic} level ${level}` }));
+    
+  }, [topic, subject]);
+
+  
   const [formData, setFormData] = useState({
     refined_text: '',
     difficulty: 'medium',
@@ -16,10 +36,19 @@ export default function MCQGenerationForm(user: any) {
     topic_name: '',
     language: 'English',
     exam_name: '',
+    subject: subject || '',
+    Class: '9',
     time_limit: 30
   });
 
   // ...handleChange remains unchanged
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: name === 'num_questions' || name === 'time_limit' ? parseInt(value) : value
+    }));
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,10 +56,33 @@ export default function MCQGenerationForm(user: any) {
 
     try {
       if (!user) {
-        redirect("/login?redirect=/generate");
+        redirect("/login?redirect=/exams/generate");
       }
 
       // Validation (unchanged)
+       // Validation
+      if (!formData.exam_name) {
+        toast({ description: 'Please enter an exam name' });
+        setIsLoading(false);
+        return;
+      }
+      
+      if (!formData.topic_name) {
+        toast({ description: 'Please enter a topic name' });
+        setIsLoading(false);
+        return;
+      }
+      if (!formData.Class) {
+        toast({ description: 'Please enter a Class' });
+        setIsLoading(false);
+        return;
+      }
+      if (!formData.subject) {
+        toast({ description: 'Please enter a Subject name' });
+        setIsLoading(false);
+        return;
+      }
+      
 
       const response = await fetch('/api/mcq', {
         method: 'POST',
@@ -73,10 +125,148 @@ export default function MCQGenerationForm(user: any) {
 
   return (
     <div className="mx-auto p-6 max-w-3xl container">
-      <h1 className="mb-6 font-bold text-3xl">Generate MCQ Exam</h1>
+
 
       <form onSubmit={onSubmit} className="space-y-6 bg-white shadow-md p-6 rounded-lg">
         {/* ...form fields unchanged... */}
+        <div>
+          <label htmlFor="exam_name" className="block mb-1 font-medium text-sm">
+            Exam Name
+          </label>
+          <input
+            type="text"
+            id="exam_name"
+            name="exam_name"
+            value={formData.exam_name}
+            onChange={handleChange}
+            className="px-3 py-2 border rounded-md w-full"
+            placeholder="Enter a name for this exam"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="exam_name" className="block mb-1 font-medium text-sm">
+            Class
+          </label>
+          <input
+            type="text"
+            id="Class"
+            name="Class"
+            value={formData.Class}
+            onChange={handleChange}
+            className="px-3 py-2 border rounded-md w-full"
+            placeholder="Enter a name for this exam"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="exam_name" className="block mb-1 font-medium text-sm">
+            Subject
+          </label>
+          <input
+            type="text"
+            id="subject"
+            name="subject"
+            value={formData.subject}
+            onChange={handleChange}
+            className="px-3 py-2 border rounded-md w-full"
+            placeholder="Enter a name for this exam"
+            required
+          />
+        </div>
+        
+        <div>
+          <label htmlFor="topic_name" className="block mb-1 font-medium text-sm">
+            Topic
+          </label>
+          <input
+            type="text"
+            id="topic_name"
+            name="topic_name"
+            value={formData.topic_name}
+            onChange={handleChange}
+            className="px-3 py-2 border rounded-md w-full"
+            placeholder="e.g., Photosynthesis, World War II, Algebra"
+            required
+          />
+        </div>
+        
+        <div className="gap-4 grid grid-cols-1 md:grid-cols-3">
+          <div>
+            <label htmlFor="difficulty" className="block mb-1 font-medium text-sm">
+              Difficulty
+            </label>
+            <select
+              id="difficulty"
+              name="difficulty"
+              value={formData.difficulty}
+              onChange={handleChange}
+              className="px-3 py-2 border rounded-md w-full"
+              >
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+          
+          <div>
+            <label htmlFor="num_questions" className="block mb-1 font-medium text-sm">
+              Number of Questions
+            </label>
+            <input
+              type="number"
+              id="num_questions"
+              name="num_questions"
+              value={formData.num_questions}
+              onChange={handleChange}
+              min={5}
+              max={30}
+              className="px-3 py-2 border rounded-md w-full"
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="time_limit" className="block mb-1 font-medium text-sm">
+              Time Limit (minutes)
+            </label>
+            <input
+              type="number"
+              id="time_limit"
+              name="time_limit"
+              value={formData.time_limit}
+              onChange={handleChange}
+              min={5}
+              max={120}
+              className="px-3 py-2 border rounded-md w-full"
+            />
+             </div>
+        
+        <div>
+          <label htmlFor="language" className="block mb-1 font-medium text-sm">
+            Language
+          </label>
+          <select
+            id="language"
+            name="language"
+            value={formData.language}
+            onChange={handleChange}
+            className="px-3 py-2 border rounded-md w-full"
+          >
+            <option value="English">English</option>
+            <option value="Spanish">Spanish</option>
+            <option value="French">French</option>
+            <option value="German">German</option>
+            <option value="Chinese">Chinese</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Hindi">Hindi</option>
+          </select>
+        </div>
+        
+        
+          
+        </div>
+        
+        
 
         {!isGenerated ? (
           <button

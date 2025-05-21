@@ -123,7 +123,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
         </Link>
       </NavigationMenuItem>
       <NavigationMenuItem>
-        <Link href="/about" legacyBehavior passHref>
+        <Link href="/gymnasium" legacyBehavior passHref>
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
             Gymnasium
           </NavigationMenuLink>
