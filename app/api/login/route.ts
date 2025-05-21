@@ -1,26 +1,42 @@
-// app/login/route.ts (POST handler)
 import { NextResponse } from "next/server";
-import PocketBase from "pocketbase";
+import { getPocketBase } from "@/lib/pocketbase";
 import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
-  const { email, password } = await req.json();
-  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL!);
+    const { email, password } = await req.json();
+    
+    if (!email || !password) {
+        return NextResponse.json(
+            { error: "Email and password are required" },
+            { status: 400 }
+        );
+    }
 
-  try {
-    const authData = await pb.collection("users").authWithPassword(email, password);
-    console.log("Auth data:", authData);
+    const pb = await getPocketBase();
 
-    (await cookies()).set("pb_auth", authData.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60, // 7 days
-      path: "/",
-    });
+    try {
+        const authData = await pb.collection("users").authWithPassword(email, password);
+        
+        // Set cookie
+        const cookieStore = await cookies();
+        cookieStore.set("pb_auth", pb.authStore.exportToCookie(), {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60,
+            path: "/",
+        });
 
-    return NextResponse.json(authData, { status: 200 });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Login failed" }, { status: 401 });
-  }
+        return NextResponse.json({
+            user: authData.record,
+            token: authData.token
+        }, { status: 200 });
+
+    } catch (error: any) {
+        console.error('Login error:', error);
+        return NextResponse.json(
+            { error: error.message || "Invalid email or password" },
+            { status: 401 }
+        );
+    }
 }

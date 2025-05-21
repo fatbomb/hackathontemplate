@@ -141,12 +141,12 @@ export const AIService = {
 
 export const ExamService = {
   async getExam(examId: string): Promise<Exam> {
-    const pb = getPocketBase();
+    const pb = await getPocketBase();
     return await pb.collection('exams').getOne(examId);
   },
   
   async getClientQuestions(examId: string): Promise<ClientQuestion[]> {
-    const pb = getPocketBase();
+    const pb = await getPocketBase();
     const records = await pb.collection('questions').getFullList({
       filter: `exam_id = "${examId}"`,
     });
@@ -159,7 +159,7 @@ export const ExamService = {
   },
   
   async getFullQuestions(examId: string): Promise<ServerQuestion[]> {
-    const pb = getPocketBase();
+    const pb =await  getPocketBase();
     const records = await pb.collection('questions').getFullList({
       filter: `exam_id = "${examId}"`,
     });
@@ -174,7 +174,7 @@ export const ExamService = {
   },
   
   async startExam(userExamId: string): Promise<void> {
-    const pb = getPocketBase();
+    const pb =await getPocketBase();
     await pb.collection('user_exams').update(userExamId, {
       status: 'in_progress',
       start_time: new Date().toISOString()
@@ -182,12 +182,12 @@ export const ExamService = {
   },
   
   async getUserExam(userExamId: string): Promise<UserExam> {
-    const pb = getPocketBase();
+    const pb = await getPocketBase();
     return await pb.collection('user_exams').getOne(userExamId);
   },
   
   async getExamStartTime(userExamId: string): Promise<number> {
-    const pb = getPocketBase();
+    const pb = await getPocketBase();
     const userExam = await pb.collection('user_exams').getOne(userExamId);
     
     if (!userExam.start_time) {
@@ -198,7 +198,7 @@ export const ExamService = {
   },
   
   async getExamTimeLimit(examId: string): Promise<number> {
-    const pb = getPocketBase();
+    const pb =await getPocketBase();
     const exam = await pb.collection('exams').getOne(examId);
     return exam.time_limit; // Returns time in minutes
   },
@@ -208,7 +208,7 @@ export const ExamService = {
     score: number, 
     answers: { questionId: string, selectedAnswer: number }[]
   ): Promise<void> {
-    const pb = getPocketBase();
+    const pb =await getPocketBase();
     
     // Update user exam record
     await pb.collection('user_exams').update(userExamId, {
@@ -268,7 +268,7 @@ export const ExamService = {
   },
   
   async getUserAnswers(userExamId: string): Promise<UserAnswer[]> {
-    const pb = getPocketBase();
+    const pb =await getPocketBase();
     const records = await pb.collection('user_answers').getFullList({
       filter: `user_exam_id = "${userExamId}"`,
     });
