@@ -1,15 +1,12 @@
+"use client";
 import { Card, CardContent } from '@/components/ui/card';
 import RichTextStyle from '@/styles/richTextStyle.module.css';
 
-interface ContentCardProps {
-  children: React.ReactNode;
-}
-
-export function ContentCard({ children }: ContentCardProps) {
+export function ContentCard({ content }: {content: React.ReactNode}) {
   return (
-    <Card className="w-3/4">
+    <Card className="w-full">
       <CardContent className={`${RichTextStyle.richtext} p-10`}>
-        {children}
+        {content}
       </CardContent>
     </Card>
   );

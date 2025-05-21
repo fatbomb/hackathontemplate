@@ -3,7 +3,9 @@ import { renderMDX } from '@/lib/mdx-remote';
 import { getDoc } from '@/lib/content/get-doc';
 import { getTutorialTOC } from '@/lib/content/get-tutorial-toc';
 import { SidebarTOC } from '@/lib/content/components/SidebarTOC';
-import { ContentCard } from '@/lib/content/components/ContentCard';
+import { markdownToText } from '@/lib/content/markdownToText';
+import ReadableContentCard from '@/lib/content/components/ReadableContentCard';
+import { translateReactNodeToBanglaServer, translateTextToBanglaServer } from '@/lib/content/translate';
 
 interface SubjectPageProps {
   params: {
@@ -16,14 +18,22 @@ export default async function SubjectPage({ params }: SubjectPageProps) {
   const doc = await getDoc(slug);
   if (!doc) return notFound();
 
+  const mdxText = markdownToText(doc.content);
+
   const mdxContent = await renderMDX(doc.content);
   const tutorialSlug = slug.slice(0, -1);
   const { meta, sections } = await getTutorialTOC(tutorialSlug);
 
+  
+  const mdxTextBn = await translateTextToBanglaServer(mdxText);
+  const mdxContentBn = await translateReactNodeToBanglaServer(mdxContent.content);
+  
+  // console.log("mdxContentBn", JSON.stringify(mdxContentBn));
+
   return (
     <div className="flex gap-6 mx-6 my-3">
       <SidebarTOC meta={meta} sections={sections} activeSlug={slug} />
-      <ContentCard>{mdxContent.content}</ContentCard>
+      <ReadableContentCard textEn={mdxText} textBn={mdxTextBn} contentBn={mdxContentBn} contentEn={mdxContent.content}/>
     </div>
   );
 }
