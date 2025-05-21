@@ -25,6 +25,20 @@ const nextConfig: NextConfig = {
     ]
   },
   pageExtensions: ['tsx', 'jsx', 'ts', 'js', 'mdx', 'md'],
+  
+  // Add transpilation configuration for framer-motion
+  transpilePackages: ['framer-motion'],
+  
+  // Optional: Add webpack configuration to handle problematic exports
+  webpack: (config) => {
+    // Handle 'export *' issue in framer-motion
+    config.module.rules.push({
+      test: /node_modules\/framer-motion/,
+      sideEffects: false,
+    });
+    
+    return config;
+  },
 };
 
 export default withMDX(nextConfig);

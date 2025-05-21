@@ -26,6 +26,7 @@
       // "@/context/*": ["./src/context/*"],
       "@/styles/*": ["./styles/*"],
       // "@/markdown/*": ["./markdown/*"],
+      
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "**/*.mdx", "**/*.md", "app/auth/reset-password"],

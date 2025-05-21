@@ -5,7 +5,7 @@ export async function fetchExamData(examId: string, userExamId?: string) {
   try {
     const cookieStore = await cookies();
     const pb = await getPocketBase(cookieStore.toString());
-    
+
     if (!pb.authStore.isValid) {
       try {
         await pb.collection('users').authRefresh();
@@ -44,16 +44,16 @@ export async function fetchExamData(examId: string, userExamId?: string) {
     };
   } catch (error: any) {
     console.error('Error fetching exam:', error);
-    return { 
+    return {
       exam: null,
-      error: error.message || 'Failed to load exam' 
+      error: error.message || 'Failed to load exam'
     };
   }
 }
 export async function initExamSession(examId: string, existingUserExamId?: string) {
   try {
     const pb = await getPocketBase(cookies().toString());
-    
+
     if (!pb.authStore.isValid) {
       try {
         await pb.collection('users').authRefresh();
@@ -73,7 +73,9 @@ export async function initExamSession(examId: string, existingUserExamId?: strin
       if (userExam.user_id !== userId) {
         return { error: 'This exam does not belong to you' };
       }
-      return { userExamId: existingUserExamId, error: null };
+      if (userExam.status !== 'completed') {
+        return { userExamId: existingUserExamId, error: null };
+      }
     }
 
     // Create new exam session
@@ -83,15 +85,15 @@ export async function initExamSession(examId: string, existingUserExamId?: strin
       status: 'pending'
     });
 
-    return { 
+    return {
       userExamId: newUserExam.id,
       error: null
     };
   } catch (error: any) {
     console.error('Exam initialization error:', error);
-    return { 
+    return {
       userExamId: null,
-      error: error.message || 'Failed to initialize exam' 
+      error: error.message || 'Failed to initialize exam'
     };
   }
 }
