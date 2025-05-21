@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,96 +15,337 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { ModeToggle } from "@/components/mode-toggle";
-import { LogIn } from "lucide-react";
+import { LogIn, LogOut, Menu, User, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
 
-export function Navbar() {
+interface NavbarProps {
+  serverAuth: {
+    isAuthed: boolean;
+    user: any;
+  };
+}
+
+export function Navbar({ serverAuth }: NavbarProps) {
   const pathname = usePathname();
-  const isAuthed = false; // Replace with your auth logic
+  const router = useRouter();
+  const [authState, setAuthState] = useState(serverAuth);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const fetchAuthStatus = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/auth/status');
+      if (!response.ok) throw new Error('Failed to fetch auth status');
+      const data = await response.json();
+      setAuthState(data);
+    } catch (err) {
+      console.error('Failed to fetch auth status:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAuthStatus();
+  }, []);
+
+  const handleLogout = async () => {
+    // Show confirmation dialog
+    const confirmLogout = window.confirm("Are you sure you want to log out?");
+    if (!confirmLogout) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/auth/logout', { 
+        method: 'POST',
+      });
+      
+      if (response.ok) {
+        setAuthState({ isAuthed: false, user: null });
+        router.refresh();
+        setIsMobileMenuOpen(false);
+        router.push('/');
+      } else {
+        throw new Error('Logout failed');
+      }
+    } catch (err) {
+      console.error('Logout failed:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const NavItems = () => (
+    <>
+      <NavigationMenuItem>
+        <NavigationMenuTrigger>Features</NavigationMenuTrigger>
+        <NavigationMenuContent>
+          <ul className="gap-3 grid lg:grid-cols-[.75fr_1fr] py-6 md:w-[400px] lg:w-[500px]">
+            <li className="row-span-3">
+              <NavigationMenuLink asChild>
+                <a
+                  className="flex flex-col justify-end bg-gradient-to-b from-muted/50 to-muted focus:shadow-md p-6 rounded-md outline-none w-full h-full no-underline select-none"
+                  href="/"
+                >
+                  <div className="mt-4 mb-2 font-medium text-lg">
+                    HackathonApp
+                  </div>
+                  <p className="text-muted-foreground text-sm leading-tight">
+                    A beautiful and functional frontend for your hackathon project.
+                  </p>
+                </a>
+              </NavigationMenuLink>
+            </li>
+            <ListItem href="/dashboard" title="Dashboard">
+              View and manage all your projects in one place.
+            </ListItem>
+            <ListItem href="/features/analytics" title="Analytics">
+              Powerful insights into your application usage.
+            </ListItem>
+            <ListItem href="/features/integrations" title="Integrations">
+              Connect with your favorite tools and services.
+            </ListItem>
+          </ul>
+        </NavigationMenuContent>
+      </NavigationMenuItem>
+      <NavigationMenuItem>
+        <Link href="/pricing" legacyBehavior passHref>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            Pricing
+          </NavigationMenuLink>
+        </Link>
+      </NavigationMenuItem>
+      <NavigationMenuItem>
+        <Link href="/about" legacyBehavior passHref>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            About
+          </NavigationMenuLink>
+        </Link>
+      </NavigationMenuItem>
+    </>
+  );
+
+  const AuthButtons = () => (
+    <>
+      {authState.isAuthed ? (
+        <>
+          <Button 
+            asChild 
+            variant="ghost" 
+            size="sm"
+            className="flex items-center"
+            disabled={isLoading}
+          >
+            <Link href="/profile">
+              <User className="mr-2 w-4 h-4" />
+              <span className="hidden sm:inline">{authState.user?.name || 'Profile'}</span>
+            </Link>
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleLogout}
+            className="flex items-center"
+            disabled={isLoading}
+          >
+            <LogOut className="mr-2 w-4 h-4" />
+            <span className="hidden sm:inline">Logout</span>
+          </Button>
+        </>
+      ) : (
+        <div className="flex items-center space-x-2">
+          <Button 
+            asChild 
+            variant="ghost" 
+            size="sm"
+            disabled={isLoading}
+          >
+            <Link href="/auth/login" className="flex items-center">
+              <LogIn className="mr-2 w-4 h-4" />
+              <span className="hidden sm:inline">Login</span>
+            </Link>
+          </Button>
+          <Button 
+            asChild 
+            size="sm"
+            disabled={isLoading}
+          >
+            <Link href="/auth/signup">
+              <span>Sign Up</span>
+            </Link>
+          </Button>
+        </div>
+      )}
+    </>
+  );
+
+  const MobileNavigation = () => (
+    <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" className="md:hidden">
+          <Menu className="w-5 h-5" />
+          <span className="sr-only">Toggle menu</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="w-72">
+        <div className="flex flex-col h-full">
+          <div className="flex justify-between items-center mb-6">
+            <Link 
+              href="/" 
+              className="font-bold text-lg"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              HackathonApp
+            </Link>
+            <SheetClose asChild>
+              <Button variant="ghost" size="icon">
+                <X className="w-5 h-5" />
+              </Button>
+            </SheetClose>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="space-y-1">
+              <SheetClose asChild>
+                <Link href="/">
+                  <Button variant="ghost" size="sm" className="justify-start w-full">
+                    Home
+                  </Button>
+                </Link>
+              </SheetClose>
+              <SheetClose asChild>
+                <Link href="/dashboard">
+                  <Button variant="ghost" size="sm" className="justify-start w-full">
+                    Dashboard
+                  </Button>
+                </Link>
+              </SheetClose>
+              <SheetClose asChild>
+                <Link href="/features/analytics">
+                  <Button variant="ghost" size="sm" className="justify-start w-full">
+                    Analytics
+                  </Button>
+                </Link>
+              </SheetClose>
+              <SheetClose asChild>
+                <Link href="/features/integrations">
+                  <Button variant="ghost" size="sm" className="justify-start w-full">
+                    Integrations
+                  </Button>
+                </Link>
+              </SheetClose>
+              <SheetClose asChild>
+                <Link href="/pricing">
+                  <Button variant="ghost" size="sm" className="justify-start w-full">
+                    Pricing
+                  </Button>
+                </Link>
+              </SheetClose>
+              <SheetClose asChild>
+                <Link href="/about">
+                  <Button variant="ghost" size="sm" className="justify-start w-full">
+                    About
+                  </Button>
+                </Link>
+              </SheetClose>
+            </div>
+            
+            <div className="pt-4 border-t border-border">
+              {authState.isAuthed ? (
+                <>
+                  <SheetClose asChild>
+                    <Link href="/profile">
+                      <Button variant="ghost" size="sm" className="justify-start w-full">
+                        <User className="mr-2 w-4 h-4" />
+                        Profile
+                      </Button>
+                    </Link>
+                  </SheetClose>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="justify-start w-full"
+                    onClick={() => {
+                      handleLogout();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    disabled={isLoading}
+                  >
+                    <LogOut className="mr-2 w-4 h-4" />
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <SheetClose asChild>
+                    <Link href="/auth/login">
+                      <Button variant="ghost" size="sm" className="justify-start w-full" disabled={isLoading}>
+                        <LogIn className="mr-2 w-4 h-4" />
+                        Login
+                      </Button>
+                    </Link>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Link href="/auth/signup">
+                      <Button size="sm" className="mt-2 w-full" disabled={isLoading}>
+                        Sign Up
+                      </Button>
+                    </Link>
+                  </SheetClose>
+                </>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex justify-center mt-auto mb-4">
+            <ModeToggle />
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
 
   return (
-    <header className="top-0 z-50 sticky bg-background/95 supports-[backdrop-filter]:bg-background/60 backdrop-blur px-10 border-b border-border/40 w-full">
-      <div className="flex items-center h-16 container">
-        <div className="hidden md:flex mr-4">
-          <Link href="/" className="flex items-center space-x-2 mr-6">
-            <span className="hidden sm:inline-block font-bold">
-              HackathonApp
-            </span>
+    <header className="top-0 z-50 sticky bg-background/95 supports-[backdrop-filter]:bg-background/60 backdrop-blur border-b border-border/40 w-full">
+      <div className="flex items-center mx-auto px-4 sm:px-6 md:px-8 lg:px-10 max-w-7xl h-16">
+        <div className="flex flex-1 items-center">
+          <Link href="/" className="hidden md:block mr-6 font-bold text-lg">
+            HackathonApp
           </Link>
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger>Features</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="gap-3 grid lg:grid-cols-[.75fr_1fr] p-6 md:w-[400px] lg:w-[500px]">
-                    <li className="row-span-3">
-                      <NavigationMenuLink asChild>
-                        <a
-                          className="flex flex-col justify-end bg-gradient-to-b from-muted/50 to-muted focus:shadow-md p-6 rounded-md outline-none w-full h-full no-underline select-none"
-                          href="/"
-                        >
-                          <div className="mt-4 mb-2 font-medium text-lg">
-                            HackathonApp
-                          </div>
-                          <p className="text-muted-foreground text-sm leading-tight">
-                            A beautiful and functional frontend for your hackathon project.
-                          </p>
-                        </a>
-                      </NavigationMenuLink>
-                    </li>
-                    <ListItem href="/dashboard" title="Dashboard">
-                      View and manage all your projects in one place.
-                    </ListItem>
-                    <ListItem href="/features/analytics" title="Analytics">
-                      Powerful insights into your application usage.
-                    </ListItem>
-                    <ListItem href="/features/integrations" title="Integrations">
-                      Connect with your favorite tools and services.
-                    </ListItem>
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link href="/pricing" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Pricing
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link href="/about" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    About
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+          
+          <div className="hidden md:block">
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavItems />
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+          
+          {/* Mobile menu button */}
+          <MobileNavigation />
+          
+          {/* Mobile logo (centered) */}
+          <div className="md:hidden flex flex-1 justify-center">
+            <Link href="/" className="font-bold text-lg">
+              HackathonApp
+            </Link>
+          </div>
         </div>
 
-        <div className="flex flex-1 justify-between md:justify-end items-center space-x-2">
-          <div className="flex-1 md:flex-none w-full md:w-auto">
-            {/* Mobile Menu - Implement if needed */}
-          </div>
-          <nav className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1 sm:space-x-2">
+          <div className="hidden md:block">
             <ModeToggle />
-            {isAuthed ? (
-              <Button asChild variant="ghost" size="sm">
-                <Link href="/dashboard">Dashboard</Link>
-              </Button>
-            ) : (
-              <>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href="/auth/login">
-                    <LogIn className="mr-2 w-4 h-4" />
-                    Login
-                  </Link>
-                </Button>
-                <Button asChild size="sm">
-                  <Link href="/auth/signup">Sign Up</Link>
-                </Button>
-              </>
-            )}
-          </nav>
+          </div>
+          <div className="flex items-center">
+            <AuthButtons />
+          </div>
         </div>
       </div>
     </header>

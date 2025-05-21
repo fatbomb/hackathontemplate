@@ -7,7 +7,7 @@ export function Footer({ className }: React.HTMLAttributes<HTMLElement>) {
       <div className="flex md:flex-row flex-col justify-between items-center gap-4 py-10 md:py-0 md:h-24 container">
         <div className="flex md:flex-row flex-col items-center gap-4 md:gap-2 px-8 md:px-0">
           <p className="text-muted-foreground text-sm md:text-left text-center leading-loose">
-            Built with ❤️ for your hackathon project. © {new Date().getFullYear()} Your Company Name.
+            Built with ❤️ for your hackathon project. © {new Date().getFullYear()} FlameKeepers.
           </p>
         </div>
         <div className="flex gap-4">
