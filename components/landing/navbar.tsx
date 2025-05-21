@@ -85,7 +85,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
   const NavItems = () => (
     <>
       <NavigationMenuItem>
-        <NavigationMenuTrigger>Features</NavigationMenuTrigger>
+        <NavigationMenuTrigger>Tutorials</NavigationMenuTrigger>
         <NavigationMenuContent>
           <ul className="gap-3 grid lg:grid-cols-[.75fr_1fr] py-6 md:w-[400px] lg:w-[500px]">
             <li className="row-span-3">
@@ -95,10 +95,10 @@ export function Navbar({ serverAuth }: NavbarProps) {
                   href="/"
                 >
                   <div className="mt-4 mb-2 font-medium text-lg">
-                    HackathonApp
+                    SynthLearn
                   </div>
                   <p className="text-muted-foreground text-sm leading-tight">
-                    A beautiful and functional frontend for your hackathon project.
+                    A powerful AI learning platform
                   </p>
                 </a>
               </NavigationMenuLink>
@@ -118,14 +118,21 @@ export function Navbar({ serverAuth }: NavbarProps) {
       <NavigationMenuItem>
         <Link href="/pricing" legacyBehavior passHref>
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            Pricing
+            Playground
           </NavigationMenuLink>
         </Link>
       </NavigationMenuItem>
       <NavigationMenuItem>
         <Link href="/about" legacyBehavior passHref>
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            About
+            Gymnasium
+          </NavigationMenuLink>
+        </Link>
+      </NavigationMenuItem>
+      <NavigationMenuItem>
+        <Link href="/about" legacyBehavior passHref>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            Sci-Baba Bot
           </NavigationMenuLink>
         </Link>
       </NavigationMenuItem>
@@ -202,7 +209,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
               className="font-bold text-lg"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              HackathonApp
+              SynthLearn
             </Link>
             <SheetClose asChild>
               <Button variant="ghost" size="icon">
@@ -317,7 +324,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
       <div className="flex items-center mx-auto px-4 sm:px-6 md:px-8 lg:px-10 max-w-7xl h-16">
         <div className="flex flex-1 items-center">
           <Link href="/" className="hidden md:block mr-6 font-bold text-lg">
-            HackathonApp
+            SynthLearn
           </Link>
           
           <div className="hidden md:block">

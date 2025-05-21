@@ -11,17 +11,17 @@ export default function AuthLayout({
       <div className="hidden md:flex flex-col justify-between bg-gradient-to-b from-primary to-primary/60 p-10 text-white">
         <div>
           <Link href="/" className="font-bold text-xl">
-            HackathonApp
+            SynthLearn
           </Link>
         </div>
         <div className="space-y-4">
-          <h1 className="font-bold text-3xl">Welcome to HackathonApp</h1>
+          <h1 className="font-bold text-3xl">Welcome to SynthLearn</h1>
           <p className="opacity-90 text-lg">
-            Build amazing applications with our powerful platform. Fast, secure, and designed for the modern web.
+            Learn with fun interactive exercises, play with the AI, and improve your science proficiency
           </p>
         </div>
         <div className="opacity-70 text-sm">
-          © {new Date().getFullYear()} Your Company. All rights reserved.
+          © {new Date().getFullYear()} FlameKeepers. All rights reserved.
         </div>
       </div>
       <div className="flex flex-col p-4 md:p-10">
