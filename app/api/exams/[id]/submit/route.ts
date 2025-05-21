@@ -7,6 +7,8 @@ export async function POST(
 ) {
   try {
     const pb = await getPocketBase(request.headers.get('cookie') || '');
+    const examId = params.id;
+    console.log("Exam ID:", examId);
 
     if (!pb.authStore.isValid) {
       return NextResponse.json(
@@ -28,9 +30,11 @@ export async function POST(
 
     // Calculate results
     const questions = await pb.collection('questions').getFullList({
-      filter: `exam_id = "${params.id}"`
+      filter: `exam_id = "${examId}"`
     });
-    const exam = await pb.collection('exams').getOne(params.id);
+    const exam = await pb.collection('exams').getOne(examId);
+    // console.log("Exam:", exam);
+    // console.log("Questions:", questions);
 
     let correctCount = 0;
     const questionResults = questions.map((question, index) => {
@@ -60,19 +64,21 @@ export async function POST(
         title: exam.subject
       });
     }
+    // console.log("Subject Record:", subjectRecord);
     let topicRecord;
     try {
       const topicRecords = await pb.collection('topics').getList(1, 1, {
-        filter: `title="${exam.topic_name}" && subject="${subjectRecord.id}"`
+        filter: `title="${exam.topic}" && subject="${subjectRecord.id}"`
       });
       topicRecord = topicRecords.items[0];
     } catch (error) {
       // Topic not found, create it
       topicRecord = await pb.collection('topics').create({
-        title: exam.topic_name,
+        title: exam.topic,
         subject: subjectRecord.id
       });
     }
+
     const user = await getCurrentUser();
     if (!user) {
       return NextResponse.json(
@@ -80,9 +86,11 @@ export async function POST(
         { status: 404 }
       );
     }
+    console.log("User ID:", user);
+    console.log("topic ID:", topicRecord);
 
     const records = await pb.collection('game_points').getList(1, 1, {
-      filter: `topic="${topicRecord.id}" && user="${user.id}" && type="gymnasium"`,
+      filter: `topic="${topicRecord.id}" && user="${userExam.user_id}" && type="gymnasium"`,
       expand: 'user,topic'
     });
     
@@ -90,10 +98,10 @@ export async function POST(
     if (records.items.length > 0) {
       const existingRecord = records.items[0];
       // Update existing record
-      const pointsToAdd = 50 - existingRecord.level * 5;
+      const pointsToAdd = (50 - existingRecord.level * 5)*correctCount;
       let newPoints = existingRecord.points + pointsToAdd;
-      const newLevel = newPoints >= 100 ? Math.min(existingRecord.level + 1, 10) : existingRecord.level;
-      newPoints = newPoints >= 100 ? newPoints - 100 : newPoints;
+      const newLevel = newPoints >= 100 ? Math.min(existingRecord.level + Math.floor(newPoints / 100), 10) : existingRecord.level;
+      newPoints = newPoints%100;
 
       await pb.collection('game_points').update(existingRecord.id, {
         points: newPoints,
@@ -120,11 +128,6 @@ export async function POST(
           type: 'gymnasium'
         });
 
-        return NextResponse.json({
-          success: true,
-          subject: subjectRecord,
-          topic: topicRecord
-        });
 
       } catch (error) {
         console.error("Full error:", {
@@ -143,10 +146,16 @@ export async function POST(
     await pb.collection('user_exams').update(userExamId, {
       status: 'completed',
       score,
-      answers: answers,
       completed_at: new Date().toISOString(),
       time_spent: timeSpent
     });
+    for (const answer of answers) {
+      await pb.collection('user_answers').create({
+        user_exam_id: userExamId,
+        question_id: answer.questionId,
+        selected_answer: answer.selectedAnswer
+      });
+    }
 
     return NextResponse.json({
       score,

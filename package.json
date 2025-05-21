@@ -39,6 +39,7 @@
     "highlight.js": "^11.11.1",
     "jsdom": "^26.1.0",
     "katex": "^0.16.22",
+    "languagedetect": "^2.0.0",
     "lucide-react": "^0.510.0",
     "matter-js": "^0.20.0",
     "mime": "^4.0.7",

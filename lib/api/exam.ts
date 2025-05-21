@@ -52,7 +52,8 @@ export async function fetchExamData(examId: string, userExamId?: string) {
 }
 export async function initExamSession(examId: string, existingUserExamId?: string) {
   try {
-    const pb = await getPocketBase(cookies().toString());
+    const cookieStore = await cookies();
+    const pb = await getPocketBase(cookieStore.toString());
 
     if (!pb.authStore.isValid) {
       try {

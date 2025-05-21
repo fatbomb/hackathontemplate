@@ -178,7 +178,7 @@ export default function ResultsPageClient({
                                             <div className="flex items-center gap-2">
                                                 <Calendar size={16} className="text-gray-400" />
                                                 <span className="text-sm">
-                                                    {new Date(userExam.end_time || '').toLocaleDateString()}
+                                                    {new Date(userExam.completed_at || '').toLocaleDateString()}
                                                 </span>
                                             </div>
                                         </td>

@@ -60,6 +60,15 @@ export async function POST(request: NextRequest) {
                 time_limit: time_limit,
                 subject: subject,
             });
+            for (const q of allGeneratedQuestions) {
+                await pb.collection('questions').create({
+                    exam_id: newExam.id,
+                    question_statement: q.question,
+                    options: q.options,
+                    correct_answer: q.answer,
+                    explaination: q.explanation
+                });
+            }
             let subjectRecord;
             try {
                 const subjectRecords = await pb.collection('subjects').getList(1, 1, {
@@ -97,8 +106,8 @@ export async function POST(request: NextRequest) {
                 // Update existing record
                 const pointsToAdd = 20 - existingRecord.level * 2;
                 let newPoints = existingRecord.points + pointsToAdd;
-                const newLevel = newPoints >= 100 ? Math.min(existingRecord.level + 1, 10) : existingRecord.level;
-                newPoints = newPoints >= 100 ? newPoints - 100 : newPoints;
+                const newLevel = newPoints >= 100 ? Math.min(existingRecord.level + Math.floor(newPoints / 100), 10) : existingRecord.level;
+                newPoints = newPoints%100;
 
                 await pb.collection('game_points').update(existingRecord.id, {
                     points: newPoints,
@@ -125,12 +134,6 @@ export async function POST(request: NextRequest) {
                         type: 'gymnasium'
                     });
 
-                    return NextResponse.json({
-                        success: true,
-                        subject: subjectRecord,
-                        topic: topicRecord
-                    });
-
                 } catch (error) {
                     console.error("Full error:", {
                         status: (error as any)?.status,
@@ -144,17 +147,7 @@ export async function POST(request: NextRequest) {
                 }
             }
             // Create questions
-            const questionsCreation = allGeneratedQuestions.map(q =>
-                pb.collection('questions').create({
-                    exam_id: newExam.id,
-                    question_statement: q.question,
-                    options: q.options,
-                    correct_answer: q.answer,
-                    explaination: q.explanation
-                })
-            );
-
-            await Promise.all(questionsCreation);
+            
 
             // Create user exam relation
             const newUserExam = await pb.collection('user_exams').create({

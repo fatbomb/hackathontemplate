@@ -98,8 +98,8 @@ export default function MCQGenerationForm(user: any) {
 
       toast({ description: 'MCQ questions generated successfully!' });
       setIsGenerated(true); // SET GENERATED STATE
-      setUserExamId(result.userExamId); // Save exam id if returned
-      setExamId(result.examId); // Save exam id if returned
+      setUserExamId(result.user_exam_id); // Save exam id if returned
+      setExamId(result.exam_id); // Save exam id if returned
 
     } catch (error) {
       toast({ description: 'Failed to generate MCQ questions' });
@@ -256,7 +256,7 @@ export default function MCQGenerationForm(user: any) {
             <option value="Spanish">Spanish</option>
             <option value="French">French</option>
             <option value="German">German</option>
-            <option value="Chinese">Chinese</option>
+            <option value="Bangla">Bangla</option>
             <option value="Japanese">Japanese</option>
             <option value="Hindi">Hindi</option>
           </select>
