@@ -5,7 +5,8 @@ import axios from 'axios';
 import { EnvironmentalData } from '@/types/index';
 import Map from '@/components/ScienceSout/Map';
 import DataVisualization from '@/components/ScienceSout/DataVisualization';
-import { LineChart, TrendingUp, Droplets, Leaf, Cloud, Globe } from 'lucide-react';
+import { LineChart, TrendingUp, Droplets, Leaf, Cloud, Globe, FileSpreadsheet, Info, BarChart3, AlertTriangle, Loader2, MapPin, ChevronRight, Filter, Plus } from 'lucide-react';
+import Link from 'next/link';
 
 // Define API response interface
 interface ApiResponse {
@@ -58,8 +59,18 @@ const translations = {
     environmentalImpact: "Environmental Impact",
     impactText1: "The data collected through Science Scout contributes to real environmental research and conservation efforts. Our crowdsourced approach allows for widespread data collection that would be impossible for individual researchers.",
     impactText2: "Thank you for contributing to this important citizen science initiative. Your observations help build a more comprehensive understanding of our changing environment.",
+    // environmentalImpact: "Environmental Impact",
+    // impactText1: "Thank you for contributing to this important citizen science initiative. Your observations help build a more comprehensive understanding of our changing environment.",
     eventInfo: "Join our next community science event on June 15th, 2025! Check the Community page for more details.",
     language: "ভাষা: বাংলা",
+    viewDetailedPollutionData: "View Detailed Pollution Data",
+    viewDetailedBiodiversityData: "View Detailed Biodiversity Data",
+    viewDetailedWeatherData: "View Detailed Weather Data",
+    addNewData: "Add New Data",
+    advancedFilters: "Advanced Filters",
+    contributeData: "Contribute Data",
+    mapInteractionHint: "You can zoom and pan the map to explore data points.",
+
   },
   bn: {
     title: "পরিবেশগত অন্তর্দৃষ্টি",
@@ -97,13 +108,21 @@ const translations = {
     loading: "পরিবেশগত ডেটা লোড হচ্ছে...",
     errorLoading: "ডেটা লোড করার সময় ত্রুটি",
     dataVisualizations: "ডেটা ভিজ্যুয়ালাইজেশন",
+    viewDetailedPollutionData: "বিস্তারিত দূষণ ডেটা দেখুন",
+    viewDetailedBiodiversityData: "বিস্তারিত জৈববৈচিত্র্য ডেটা দেখুন",
+    viewDetailedWeatherData: "বিস্তারিত আবহাওয়া ডেটা দেখুন",
+    addNewData: "নতুন ডেটা যোগ করুন",
+    mapInteractionHint: "ডেটা পয়েন্ট দেখতে মানচিত্রটি জুম ও প্যান করুন।",
     environmentalImpact: "পরিবেশগত প্রভাব",
-    impactText1: "সায়েন্স স্কাউটের মাধ্যমে সংগৃহীত ডেটা প্রকৃত পরিবেশগত গবেষণা এবং সংরক্ষণ প্রচেষ্টায় অবদান রাখে। আমাদের ক্রাউডসোর্সড পদ্ধতি ব্যাপক ডেটা সংগ্রহের জন্য অনুমতি দেয় যা একক গবেষকদের জন্য অসম্ভব হবে।",
-    impactText2: "এই গুরুত্বপূর্ণ নাগরিক বিজ্ঞান উদ্যোগে অবদান রাখার জন্য আপনাকে ধন্যবাদ। আপনার পর্যবেক্ষণ আমাদের পরিবর্তনশীল পরিবেশের আরও বিস্তৃত বোঝাপড়া গড়ে তুলতে সাহায্য করে।",
-    eventInfo: "আমাদের পরবর্তী কমিউনিটি বিজ্ঞান ইভেন্টে যোগ দিন ১৫ জুন, ২০২৫! আরও বিবরণের জন্য কমিউনিটি পৃষ্ঠা দেখুন।",
-    language: "Language: English",
+    advancedFilters: "উন্নত ফিল্টার",
+    // mapInteractionHint: "ডেটা পয়েন্ট দেখতে মানচিত্রটি জুম ও প্যান করুন।",
+    contributeData: "ডেটা অবদান রাখুন",
+    impactText2: "এই গুরুত্বপূর্ণ নাগরিক বিজ্ঞান উদ্যোগে অবদান রাখার জন্য আপনাকে ধন্যবাদ। আপনার পর্যবেক্ষণ আমাদের পরিবর্তিত পরিবেশ সম্পর্কে আরও ব্যাপক বোঝাপড়া তৈরি করতে সাহায্য করে।",
+    impactText1: "এই গুরুত্বপূর্ণ নাগরিক বিজ্ঞান উদ্যোগে অবদান রাখার জন্য আপনাকে ধন্যবাদ। আপনার পর্যবেক্ষণ আমাদের পরিবর্তিত পরিবেশ সম্পর্কে আরও ব্যাপক বোঝাপড়া তৈরি করতে সাহায্য করে।",
+    eventInfo: "পরবর্তী কমিউনিটি বিজ্ঞান ইভেন্টে যোগ দিন ১৫ জুন, ২০২৫ তারিখে! আরও বিশদ জানতে কমিউনিটি পৃষ্ঠাটি দেখুন।",
   }
 };
+  
 
 const EnvironmentPage: React.FC = () => {
   const [data, setData] = useState<EnvironmentalData[]>([]);
@@ -217,118 +236,193 @@ const EnvironmentPage: React.FC = () => {
     : data.filter(item => item && item.dataType === filter);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-blue-50">
+   <div className="min-h-screen">
       <Head>
         <title>Environment Dashboard - Science Scout</title>
         <meta name="description" content="Detailed environmental data analysis" />
       </Head>
 
-      {/* Language Toggle Button */}
-      <div className="fixed top-4 right-4 z-10">
+      {/* Fixed Action Buttons */}
+      <div className="right-6 bottom-6 z-10 fixed flex flex-col gap-3">
+        {/* Add Data Button */}
+        <Link href="/environment/form">
+          <button className="group flex justify-center items-center bg-gradient-to-r from-green-600 to-green-500 shadow-lg hover:shadow-xl p-4 rounded-full text-white transition-all duration-300">
+            <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
+          </button>
+        </Link>
+        
+        {/* Language Toggle */}
         <button 
           onClick={toggleLanguage}
-          className="flex items-center bg-white px-4 py-2 rounded-full shadow-md hover:bg-gray-50 transition-colors duration-300 border border-green-300"
+          className="flex justify-center items-center bg-white shadow-lg hover:shadow-xl p-4 rounded-full transition-all duration-300"
+          aria-label="Toggle language"
         >
-          <Globe className="h-5 w-5 mr-2 text-green-600" />
-          <span className="text-green-800 font-medium">{t.language}</span>
+          <Globe className="w-6 h-6 text-green-600" />
         </button>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-green-800 mb-4">{t.title}</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">{t.subtitle}</p>
+      <div className="mx-auto px-4 py-12 max-w-7xl">
+        <div className="mb-16 text-center">
+          <h1 className="bg-clip-text bg-gradient-to-r from-green-700 to-blue-700 mb-6 font-bold text-transparent text-5xl">{t.title}</h1>
+          <p className="opacity-75 mx-auto max-w-3xl text-xl">{t.subtitle}</p>
+          
+          {/* Quick Actions */}
+          <div className="flex flex-wrap justify-center gap-4 mt-8">
+            <Link href="/environment/form">
+              <button className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-500 shadow-md hover:shadow-lg px-6 py-3 rounded-lg text-white transition-all duration-300">
+                <FileSpreadsheet className="w-5 h-5" />
+                <span>{t.addNewData}</span>
+              </button>
+            </Link>
+            
+            <button className="flex items-center gap-2 bg-white shadow-md hover:shadow-lg px-6 py-3 rounded-lg transition-all duration-300">
+              <Filter className="w-5 h-5 text-green-600" />
+              <span>{t.advancedFilters}</span>
+            </button>
+          </div>
         </div>
 
         {/* Stats Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <div className="bg-white p-6 rounded-xl shadow-lg border-t-4 border-blue-500 transform hover:scale-105 transition-transform duration-300">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-gray-500 text-sm font-semibold uppercase tracking-wider">{t.totalDataPoints}</h3>
+        <div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-16">
+          <div className="bg-gradient-to-br from-white to-blue-50 shadow-md hover:shadow-lg p-6 rounded-2xl transition-all duration-300">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="opacity-75 font-semibold text-sm uppercase tracking-wider">{t.totalDataPoints}</h3>
               <div className="bg-blue-100 p-2 rounded-lg">
-                <LineChart className="h-6 w-6 text-blue-500" />
+                <LineChart className="w-6 h-6 text-blue-500" />
               </div>
             </div>
-            <p className="text-4xl font-bold text-gray-800">{stats.totalEntries}</p>
-            <p className="text-sm text-gray-500 mt-2">{t.collectedRecords}</p>
+            <p className="font-bold text-4xl">{stats.totalEntries}</p>
+            <div className="flex items-center opacity-75 mt-2 text-sm">
+              <Info className="mr-1 w-4 h-4" />
+              <p>{t.collectedRecords}</p>
+            </div>
           </div>
           
-          <div className="bg-white p-6 rounded-xl shadow-lg border-t-4 border-red-500 transform hover:scale-105 transition-transform duration-300">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-gray-500 text-sm font-semibold uppercase tracking-wider">{t.avgPollutionLevel}</h3>
+          <div className="bg-gradient-to-br from-white to-red-50 shadow-md hover:shadow-lg p-6 rounded-2xl transition-all duration-300">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="opacity-75 font-semibold text-sm uppercase tracking-wider">{t.avgPollutionLevel}</h3>
               <div className="bg-red-100 p-2 rounded-lg">
-                <Droplets className="h-6 w-6 text-red-500" />
+                <Droplets className="w-6 h-6 text-red-500" />
               </div> 
             </div>
-            <p className="text-4xl font-bold text-gray-800">{stats.averagePollution.toFixed(1)}</p>
-            <p className="text-sm text-gray-500 mt-2">{t.pollutionScale}</p>
+            <p className="font-bold text-4xl">{stats.averagePollution.toFixed(1)}</p>
+            <div className="flex items-center opacity-75 mt-2 text-sm">
+              <Info className="mr-1 w-4 h-4" />
+              <p>{t.pollutionScale}</p>
+            </div>
           </div>
           
-          <div className="bg-white p-6 rounded-xl shadow-lg border-t-4 border-green-500 transform hover:scale-105 transition-transform duration-300">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-gray-500 text-sm font-semibold uppercase tracking-wider">{t.uniqueSpecies}</h3>
+          <div className="bg-gradient-to-br from-white to-green-50 shadow-md hover:shadow-lg p-6 rounded-2xl transition-all duration-300">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="opacity-75 font-semibold text-sm uppercase tracking-wider">{t.uniqueSpecies}</h3>
               <div className="bg-green-100 p-2 rounded-lg">
-                <Leaf className="h-6 w-6 text-green-500" />
+                <Leaf className="w-6 h-6 text-green-500" />
               </div>
             </div>
-            <p className="text-4xl font-bold text-gray-800">{stats.uniqueSpecies}</p>
-            <p className="text-sm text-gray-500 mt-2">{t.documentedBiodiversity}</p>
+            <p className="font-bold text-4xl">{stats.uniqueSpecies}</p>
+            <div className="flex items-center opacity-75 mt-2 text-sm">
+              <Info className="mr-1 w-4 h-4" />
+              <p>{t.documentedBiodiversity}</p>
+            </div>
           </div>
           
-          <div className="bg-white p-6 rounded-xl shadow-lg border-t-4 border-yellow-500 transform hover:scale-105 transition-transform duration-300">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-gray-500 text-sm font-semibold uppercase tracking-wider">{t.recentWeatherEvents}</h3>
+          <div className="bg-gradient-to-br from-white to-yellow-50 shadow-md hover:shadow-lg p-6 rounded-2xl transition-all duration-300">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="opacity-75 font-semibold text-sm uppercase tracking-wider">{t.recentWeatherEvents}</h3>
               <div className="bg-yellow-100 p-2 rounded-lg">
-                <Cloud className="h-6 w-6 text-yellow-500" />
+                <Cloud className="w-6 h-6 text-yellow-500" />
               </div>
             </div>
-            <p className="text-4xl font-bold text-gray-800">{stats.recentWeatherEvents}</p>
-            <p className="text-sm text-gray-500 mt-2">{t.past7Days}</p>
+            <p className="font-bold text-4xl">{stats.recentWeatherEvents}</p>
+            <div className="flex items-center opacity-75 mt-2 text-sm">
+              <Info className="mr-1 w-4 h-4" />
+              <p>{t.past7Days}</p>
+            </div>
           </div>
         </div>
 
         {/* Data Type Selector */}
-        <div className="mb-12">
-          <div className="bg-white p-8 rounded-xl shadow-lg backdrop-blur-lg bg-opacity-90">
-            <h2 className="text-3xl font-bold mb-6 text-green-800 flex items-center">
-              <TrendingUp className="mr-3 h-7 w-7" />
-              {t.dataAnalysis}
-            </h2>
-            <div className="mb-6">
-              <label htmlFor="dataType" className="block text-gray-700 font-bold mb-3">{t.selectDataType}</label>
-              <select
-                id="dataType"
-                className="w-full md:w-72 px-4 py-3 border-2 border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm"
-                value={selectedDataType}
-                onChange={(e) => setSelectedDataType(e.target.value)}
-              >
-                <option value="pollution">{t.pollutionData}</option>
-                <option value="biodiversity">{t.biodiversityData}</option>
-                <option value="weather">{t.weatherData}</option>
-              </select>
+        <div className="mb-16">
+          <div className="bg-white shadow-md backdrop-blur-lg p-8 rounded-2xl">
+            <div className="flex md:flex-row flex-col md:justify-between md:items-center mb-6">
+              <h2 className="flex items-center font-bold text-3xl">
+                <TrendingUp className="mr-3 w-7 h-7 text-green-600" />
+                {t.dataAnalysis}
+              </h2>
+              
+              <div className="mt-4 md:mt-0">
+                <select
+                  id="dataType"
+                  className="shadow-sm px-4 py-2 border focus:border-transparent rounded-lg focus:ring-2 focus:ring-green-500"
+                  value={selectedDataType}
+                  onChange={(e) => setSelectedDataType(e.target.value)}
+                >
+                  <option value="pollution">{t.pollutionData}</option>
+                  <option value="biodiversity">{t.biodiversityData}</option>
+                  <option value="weather">{t.weatherData}</option>
+                </select>
+              </div>
             </div>
 
             {/* Data Type Specific Analysis */}
-            <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-xl border border-gray-100">
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-xl">
               {selectedDataType === 'pollution' && (
                 <div className="space-y-3">
-                  <h3 className="text-xl font-semibold mb-3 text-red-700">{t.pollutionAnalysis}</h3>
-                  <p className="mb-3 text-gray-700">{t.pollutionAvgText} <strong className="text-red-600 text-lg">{stats.averagePollution.toFixed(1)}</strong> {t.onScale}</p>
-                  <p className="text-gray-600">{t.pollutionText}</p>
+                  <h3 className="flex items-center mb-3 font-semibold text-red-700 text-xl">
+                    <Droplets className="mr-2 w-5 h-5" />
+                    {t.pollutionAnalysis}
+                  </h3>
+                  <p className="mb-3">{t.pollutionAvgText} <strong className="text-red-600 text-lg">{stats.averagePollution.toFixed(1)}</strong> {t.onScale}</p>
+                  <p className="opacity-75">{t.pollutionText}</p>
+                  
+                  <div className="mt-4 pt-4 border-gray-200 border-t">
+                    <Link href="/environment/pollution">
+                      <button className="flex items-center text-red-600 hover:text-red-700 transition-colors duration-200">
+                        <span>{t.viewDetailedPollutionData}</span>
+                        <ChevronRight className="ml-1 w-4 h-4" />
+                      </button>
+                    </Link>
+                  </div>
                 </div>
               )}
+              
               {selectedDataType === 'biodiversity' && (
                 <div className="space-y-3">
-                  <h3 className="text-xl font-semibold mb-3 text-green-700">{t.biodiversityAnalysis}</h3>
-                  <p className="mb-3 text-gray-700">{t.biodiversityRecorded} <strong className="text-green-600 text-lg">{stats.uniqueSpecies}</strong> {t.uniqueSpeciesText}</p>
-                  <p className="text-gray-600">{t.biodiversityText}</p>
+                  <h3 className="flex items-center mb-3 font-semibold text-green-700 text-xl">
+                    <Leaf className="mr-2 w-5 h-5" />
+                    {t.biodiversityAnalysis}
+                  </h3>
+                  <p className="mb-3">{t.biodiversityRecorded} <strong className="text-green-600 text-lg">{stats.uniqueSpecies}</strong> {t.uniqueSpeciesText}</p>
+                  <p className="opacity-75">{t.biodiversityText}</p>
+                  
+                  <div className="mt-4 pt-4 border-gray-200 border-t">
+                    <Link href="/environment/biodiversity">
+                      <button className="flex items-center text-green-600 hover:text-green-700 transition-colors duration-200">
+                        <span>{t.viewDetailedBiodiversityData}</span>
+                        <ChevronRight className="ml-1 w-4 h-4" />
+                      </button>
+                    </Link>
+                  </div>
                 </div>
               )}
+              
               {selectedDataType === 'weather' && (
                 <div className="space-y-3">
-                  <h3 className="text-xl font-semibold mb-3 text-yellow-700">{t.weatherAnalysis}</h3>
-                  <p className="mb-3 text-gray-700"><strong className="text-yellow-600 text-lg">{stats.recentWeatherEvents}</strong> {t.weatherRecorded}</p>
-                  <p className="text-gray-600">{t.weatherText}</p>
+                  <h3 className="flex items-center mb-3 font-semibold text-yellow-700 text-xl">
+                    <Cloud className="mr-2 w-5 h-5" />
+                    {t.weatherAnalysis}
+                  </h3>
+                  <p className="mb-3"><strong className="text-yellow-600 text-lg">{stats.recentWeatherEvents}</strong> {t.weatherRecorded}</p>
+                  <p className="opacity-75">{t.weatherText}</p>
+                  
+                  <div className="mt-4 pt-4 border-gray-200 border-t">
+                    <Link href="/environment/weather">
+                      <button className="flex items-center text-yellow-600 hover:text-yellow-700 transition-colors duration-200">
+                        <span>{t.viewDetailedWeatherData}</span>
+                        <ChevronRight className="ml-1 w-4 h-4" />
+                      </button>
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>
@@ -336,15 +430,18 @@ const EnvironmentPage: React.FC = () => {
         </div>
 
         {/* Map Component */}
-        <div className="mb-12">
-          <div className="bg-white p-8 rounded-xl shadow-lg backdrop-blur-lg bg-opacity-90">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-              <h2 className="text-3xl font-bold text-green-800 mb-4 md:mb-0">{t.environmentalDataMap}</h2>
-              <div className="bg-gray-50 p-3 rounded-lg shadow-sm border border-gray-100">
-                <label htmlFor="filter" className="mr-3 font-medium text-gray-700">{t.filterMap}</label>
+        <div className="mb-16">
+          <div className="bg-white shadow-md backdrop-blur-lg p-8 rounded-2xl">
+            <div className="flex md:flex-row flex-col md:justify-between md:items-center mb-6">
+              <h2 className="flex items-center font-bold text-3xl">
+                <MapPin className="mr-3 w-7 h-7 text-green-600" />
+                {t.environmentalDataMap}
+              </h2>
+              
+              <div className="mt-4 md:mt-0">
                 <select
                   id="filter"
-                  className="border-2 border-gray-200 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="shadow-sm px-4 py-2 border focus:border-transparent rounded-lg focus:ring-2 focus:ring-green-500"
                   value={filter}
                   onChange={(e) => setFilter(e.target.value as 'all' | 'pollution' | 'biodiversity' | 'weather')}
                 >
@@ -355,18 +452,20 @@ const EnvironmentPage: React.FC = () => {
                 </select>
               </div>
             </div>
-            <div className="mt-6 rounded-xl overflow-hidden shadow-lg border border-gray-100 h-96">
+            
+            <div className="shadow-md mt-6 rounded-xl h-[450px] overflow-hidden">
               {loading ? (
-                <div className="flex items-center justify-center h-full bg-gray-50">
-                  <div className="text-center p-8">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-700 mx-auto mb-4"></div>
-                    <p className="text-gray-600">{t.loading}</p>
+                <div className="flex justify-center items-center bg-gray-50 h-full">
+                  <div className="p-8 text-center">
+                    <Loader2 className="mx-auto mb-4 w-12 h-12 text-green-600 animate-spin" />
+                    <p className="opacity-75">{t.loading}</p>
                   </div>
                 </div>
               ) : error ? (
-                <div className="flex items-center justify-center h-full bg-red-50">
-                  <div className="text-center p-8 text-red-500">
-                    <p className="text-xl font-semibold mb-2">{t.errorLoading}</p>
+                <div className="flex justify-center items-center bg-red-50 h-full">
+                  <div className="p-8 text-red-500 text-center">
+                    <AlertTriangle className="mx-auto mb-4 w-12 h-12" />
+                    <p className="mb-2 font-semibold text-xl">{t.errorLoading}</p>
                     <p>{error}</p>
                   </div>
                 </div>
@@ -374,33 +473,52 @@ const EnvironmentPage: React.FC = () => {
                 <Map dataPoints={filteredData} />
               )}
             </div>
+            
+            <div className="flex items-center opacity-75 mt-4 text-sm">
+              <Info className="mr-1 w-4 h-4" />
+              <p>{t.mapInteractionHint}</p>
+            </div>
           </div>
         </div>
 
         {/* Visualizations */}
         {!loading && !error && (
-          <div className="mb-12">
-            <div className="bg-white p-8 rounded-xl shadow-lg backdrop-blur-lg bg-opacity-90">
-              <h2 className="text-3xl font-bold mb-6 text-green-800">{t.dataVisualizations}</h2>
+          <div className="mb-16">
+            <div className="bg-white shadow-md backdrop-blur-lg p-8 rounded-2xl">
+              <h2 className="flex items-center mb-6 font-bold text-3xl">
+                <BarChart3 className="mr-3 w-7 h-7 text-green-600" />
+                {t.dataVisualizations}
+              </h2>
               <DataVisualization data={data} />
             </div>
           </div>
         )}
 
         {/* Additional Info */}
-        <div className="bg-gradient-to-r from-green-100 to-blue-100 p-8 rounded-xl shadow-lg mb-8">
-          <h2 className="text-3xl font-bold mb-6 text-green-800">{t.environmentalImpact}</h2>
-          <div className="space-y-4 text-gray-700">
-            <p>
-              {t.impactText1}
-            </p>
-            <p className="font-medium text-green-700">
-              {t.impactText2}
-            </p>
-            <div className="bg-white bg-opacity-70 p-4 rounded-lg mt-6">
-              <p className="text-sm text-gray-600 italic">
-                {t.eventInfo}
-              </p>
+        <div className="bg-gradient-to-r from-green-50 to-blue-50 shadow-md mb-8 p-8 rounded-2xl">
+          <h2 className="flex items-center mb-6 font-bold text-3xl">
+            <Leaf className="mr-3 w-7 h-7 text-green-600" />
+            {t.environmentalImpact}
+          </h2>
+          
+          <div className="space-y-4">
+            <p>{t.impactText1}</p>
+            <p className="font-medium text-green-700">{t.impactText2}</p>
+            
+            <div className="bg-white bg-opacity-70 mt-6 p-6 border border-green-100 rounded-lg">
+              <div className="flex">
+                <Info className="flex-shrink-0 mt-0.5 mr-2 w-5 h-5 text-green-600" />
+                <p className="opacity-75 text-sm italic">{t.eventInfo}</p>
+              </div>
+            </div>
+            
+            <div className="mt-8 text-center">
+              <Link href="/environment/form">
+                <button className="flex items-center bg-gradient-to-r from-green-600 to-green-500 shadow-md hover:shadow-lg mx-auto px-8 py-4 rounded-lg text-white transition-all duration-300">
+                  <FileSpreadsheet className="mr-2 w-5 h-5" />
+                  <span>{t.contributeData}</span>
+                </button>
+              </Link>
             </div>
           </div>
         </div>
