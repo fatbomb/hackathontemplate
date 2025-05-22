@@ -12,7 +12,7 @@
 !.yarn/versions
 
 /gcp
-
+.env*.local
 # testing
 /coverage
 
