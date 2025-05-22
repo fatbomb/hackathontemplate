@@ -8,6 +8,6 @@ export async function GET() {
     const isAuthed = pb.authStore.isValid;
     return NextResponse.json({
         isAuthed,
-        user: isAuthed ? pb.authStore.record?.id : null
+        user: isAuthed ? pb.authStore.record : null
     });
 }

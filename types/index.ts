@@ -16,6 +16,11 @@ export interface Exam {
   time_limit: number;
   created: string;
 }
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+}
 
 export interface ClientQuestion {
   id: string;

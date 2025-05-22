@@ -15,7 +15,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { ModeToggle } from "@/components/mode-toggle";
-import { LogIn, LogOut, Menu, User, X } from "lucide-react";
+import { LogIn, LogOut, Menu, User as UserIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Sheet,
@@ -23,16 +23,16 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
+import { User } from "@/types";
 
 interface NavbarProps {
   serverAuth: {
     isAuthed: boolean;
-    user: any;
+    user: User | null;
   };
 }
 
 export function Navbar({ serverAuth }: NavbarProps) {
-  const pathname = usePathname();
   const router = useRouter();
   const [authState, setAuthState] = useState(serverAuth);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +44,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
       const response = await fetch('/api/auth/status');
       if (!response.ok) throw new Error('Failed to fetch auth status');
       const data = await response.json();
+      console.log('Auth status:', data);
       setAuthState(data);
     } catch (err) {
       console.error('Failed to fetch auth status:', err);
@@ -53,6 +54,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
   };
 
   useEffect(() => {
+    console.log(authState);
     fetchAuthStatus();
   }, []);
 
@@ -84,36 +86,36 @@ export function Navbar({ serverAuth }: NavbarProps) {
 
   const NavItems = () => (
     <>
-  <NavigationMenuItem>
-    <NavigationMenuLink href="/tutorials" className={navigationMenuTriggerStyle()}>
-      Tutorials
-    </NavigationMenuLink>
-  </NavigationMenuItem>
-  
-  <NavigationMenuItem>
-    <NavigationMenuLink href="/playground" className={navigationMenuTriggerStyle()}>
-      Playground
-    </NavigationMenuLink>
-  </NavigationMenuItem>
-  
-  <NavigationMenuItem>
-    <NavigationMenuLink href="/gymnasium" className={navigationMenuTriggerStyle()}>
-      Gymnasium
-    </NavigationMenuLink>
-  </NavigationMenuItem>
-  
-  <NavigationMenuItem>
-    <NavigationMenuLink href="/chatbot" className={navigationMenuTriggerStyle()}>
-      Sci-Baba Bot
-    </NavigationMenuLink>
-  </NavigationMenuItem>
-  
-  <NavigationMenuItem>
-    <NavigationMenuLink href="/environment/result" className={navigationMenuTriggerStyle()}>
-      Environment
-    </NavigationMenuLink>
-  </NavigationMenuItem>
-</>
+      <NavigationMenuItem>
+        <NavigationMenuLink href="/tutorials" className={navigationMenuTriggerStyle()}>
+          Tutorials
+        </NavigationMenuLink>
+      </NavigationMenuItem>
+
+      <NavigationMenuItem>
+        <NavigationMenuLink href="/playground" className={navigationMenuTriggerStyle()}>
+          Playground
+        </NavigationMenuLink>
+      </NavigationMenuItem>
+
+      <NavigationMenuItem>
+        <NavigationMenuLink href="/gymnasium" className={navigationMenuTriggerStyle()}>
+          Gymnasium
+        </NavigationMenuLink>
+      </NavigationMenuItem>
+
+      <NavigationMenuItem>
+        <NavigationMenuLink href="/chatbot" className={navigationMenuTriggerStyle()}>
+          Sci-Baba Bot
+        </NavigationMenuLink>
+      </NavigationMenuItem>
+
+      <NavigationMenuItem>
+        <NavigationMenuLink href="/environment/result" className={navigationMenuTriggerStyle()}>
+          Environment
+        </NavigationMenuLink>
+      </NavigationMenuItem>
+    </>
   );
 
   const AuthButtons = () => (
@@ -128,7 +130,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
             disabled={isLoading}
           >
             <Link href="/">
-              <User className="mr-2 w-4 h-4" />
+              <UserIcon className="mr-2 w-4 h-4" />
               <span className="hidden sm:inline">{authState.user?.name || 'Profile'}</span>
             </Link>
           </Button>
@@ -248,7 +250,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
                     disabled={isLoading}
                   >
                     <Link href="/">
-                      <User className="mr-2 w-4 h-4" />
+                      <UserIcon className="mr-2 w-4 h-4" />
                       <span className="hidden sm:inline">{authState.user?.name || 'Profile'}</span>
                     </Link>
                   </Button>
