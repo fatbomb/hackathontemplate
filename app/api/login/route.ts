@@ -17,7 +17,6 @@ export async function POST(req: Request) {
     try {
         const authData = await pb.collection("users").authWithPassword(email, password);
         
-        // Set cookie
         const cookieStore = await cookies();
         cookieStore.set("pb_auth", pb.authStore.exportToCookie(), {
             httpOnly: true,

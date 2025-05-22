@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cookies } from "next/headers";
+import { getCurrentUser, getPocketBase } from "@/lib/pocketbase";
 import Link from "next/link";
-import PocketBase from "pocketbase";
 
 interface Topic {
     id: string;
@@ -17,20 +16,18 @@ interface SubjectsDetails {
 }
 
 export default async function Playground() {
-    const cookiesList = await cookies();
     const subjectDetails: SubjectsDetails[] = [];
 
-    const pocketbase = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
-    pocketbase.authStore.loadFromCookie(cookiesList.toString());
-
-    console.log("Pocketbase Auth Store", pocketbase.authStore);
+    const pocketbase = await getPocketBase();
 
     const subjects = await pocketbase.collection('subjects').getFullList();
 
     const topics = await pocketbase.collection('topics').getFullList();
+    const user  = await getCurrentUser();
+    console.log("User:", user);
 
     const gamepoints = await pocketbase.collection('game_points').getFullList({
-        filter: `user = "${pocketbase.authStore.model?.id || "xo15eumgn2tov4v"}"`,
+        filter: `user = "${user?.id}"`,
     });
 
     for (const subject of subjects) {
@@ -59,9 +56,6 @@ export default async function Playground() {
 
         subjectDetails.push(subjectDetialsItem);
     }
-
-    // console.log(subjectDetails);
-
 
     return (
         <div className="flex flex-col gap-8 mx-auto my-8 px-4">

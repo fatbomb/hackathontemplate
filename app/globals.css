@@ -150,3 +150,16 @@
 .animation-delay-4000 {
   animation-delay: 4s;
 }
+
+body {
+  margin: 0;
+  padding: 0;
+  background-image: url('/bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  height: 100vh;
+  width: 100vw;
+  font-family: sans-serif;
+}

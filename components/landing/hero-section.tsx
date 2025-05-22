@@ -67,7 +67,7 @@ const HeroSection = () => {
               initial={{ opacity: 0 }}
               animate={isLoaded ? { opacity: 1 } : {}}
               transition={{ delay: 0.3, duration: 0.7 }}
-              className="font-extrabold text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-tight tracking-tight"
+              className="font-extrabold text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-6xl leading-tight tracking-tight"
             >
               Make Science{" "}
               <AnimatePresence>

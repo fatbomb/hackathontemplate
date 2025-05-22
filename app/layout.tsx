@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-// import { Toaster } from '@/components/ui/toaster'
 import { Toaster } from '../components/ui/toaster'
 import "./globals.css";
 import { ThemeProvider } from "../components/teme-provider";
-// import { Navbar } from "@/components/landing/navbar";
 import { Footer } from "@/components/landing/footer";
 import NavbarWrapper from "@/components/landing/NavbarWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FlameKeepers",
+  title: "SynthLearn",
   description: "Template for flamekeepers",
+  icons: {
+    icon: "/atom.png"
+  }
 };
 
 export default function RootLayout({

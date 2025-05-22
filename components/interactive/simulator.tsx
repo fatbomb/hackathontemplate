@@ -32,28 +32,30 @@ export default function Simulator({
     const [dimensions, setDimensions] = useState({ contentWidth: width, contentHeight: height });
     const [isRunning, setIsRunning] = useState(false);
     const [bodyUpdates, setBodyUpdates] = useState<UpdatedBody[]>([]);
-    const initialBodyDetails = bodies.map((body) => ({
+    let initialBodyDetails = bodies.map((body) => ({
         id: String(body.id),
         label: body.label,
-        position: body.position,
+        position: { x: body.position.x, y: body.position.y },
         angle: body.angle,
-        velocity: body.velocity,
+        velocity: { x: body.velocity.x, y: body.velocity.y },
         angularVelocity: body.angularVelocity,
     }));
+
 
     const engineRef = useRef<Engine | null>(null);
     const renderRef = useRef<Render | null>(null);
     const runnerRef = useRef<Runner | null>(null);
 
     useEffect(() => {
-        bodies.map((body) => ({
+        initialBodyDetails = bodies.map((body) => ({
             id: String(body.id),
             label: body.label,
-            position: body.position,
+            position: { x: body.position.x, y: body.position.y },
             angle: body.angle,
-            velocity: body.velocity,
+            velocity: { x: body.velocity.x, y: body.velocity.y },
             angularVelocity: body.angularVelocity,
         }));
+
         const scene = sceneRef.current;
         if (!scene) return;
 
@@ -159,7 +161,6 @@ export default function Simulator({
         if (!engine) return;
 
         World.clear(engine.world, false);
-        // match with initialBodyDetails
         bodies.forEach((body) => {
             const initialBody = initialBodyDetails.find((b) => b.id === String(body.id));
             if (initialBody) {
