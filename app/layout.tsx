@@ -27,8 +27,8 @@ export default function RootLayout({
           <div className="flex flex-col min-h-screen">
            <NavbarWrapper />
               {children}
-            <Footer className="px-20" />
           </div>
+            <Footer className="px-20" />
           <Toaster />
         </ThemeProvider>
       </body>

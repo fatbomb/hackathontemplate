@@ -36,7 +36,7 @@ export function SidebarTOC({ meta, sections, activeSlug }: SidebarTOCProps) {
                 return (
                   <li key={i}>
                     <Link
-                      href={`/subjects/${sectionSlug}`}
+                      href={`/tutorials/${sectionSlug}`}
                       className={cn(
                         'text-sm hover:underline transition-colors',
                         isActive

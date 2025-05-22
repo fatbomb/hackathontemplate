@@ -34,6 +34,7 @@ export default function ReadOut({
     setLoading(true);
 
     async function loadAudio() {
+      // Use cached audio if available
       if (audioCache.current[language]) {
         const cachedURL = audioCache.current[language];
         if (!isCancelled) {

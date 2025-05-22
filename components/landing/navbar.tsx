@@ -85,40 +85,9 @@ export function Navbar({ serverAuth }: NavbarProps) {
   const NavItems = () => (
     <>
       <NavigationMenuItem>
-        <NavigationMenuTrigger>Tutorials</NavigationMenuTrigger>
-        <NavigationMenuContent>
-          <ul className="gap-3 grid lg:grid-cols-[.75fr_1fr] py-6 md:w-[400px] lg:w-[500px]">
-            <li className="row-span-3">
-              <NavigationMenuLink asChild>
-                <a
-                  className="flex flex-col justify-end bg-gradient-to-b from-muted/50 to-muted focus:shadow-md p-6 rounded-md outline-none w-full h-full no-underline select-none"
-                  href="/"
-                >
-                  <div className="mt-4 mb-2 font-medium text-lg">
-                    SynthLearn
-                  </div>
-                  <p className="text-muted-foreground text-sm leading-tight">
-                    A powerful AI learning platform
-                  </p>
-                </a>
-              </NavigationMenuLink>
-            </li>
-            <ListItem href="/dashboard" title="Dashboard">
-              View and manage all your projects in one place.
-            </ListItem>
-            <ListItem href="/features/analytics" title="Analytics">
-              Powerful insights into your application usage.
-            </ListItem>
-            <ListItem href="/features/integrations" title="Integrations">
-              Connect with your favorite tools and services.
-            </ListItem>
-          </ul>
-        </NavigationMenuContent>
-      </NavigationMenuItem>
-      <NavigationMenuItem>
-        <Link href="/pricing" legacyBehavior passHref>
+        <Link href="/tutorials" legacyBehavior passHref>
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            Playground
+            Tutorials
           </NavigationMenuLink>
         </Link>
       </NavigationMenuItem>
