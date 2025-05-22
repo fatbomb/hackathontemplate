@@ -34,6 +34,7 @@ export default function ReadOut({
     setLoading(true);
 
     async function loadAudio() {
+      // Use cached audio if available
       if (audioCache.current[language]) {
         const cachedURL = audioCache.current[language];
         if (!isCancelled) {
@@ -48,11 +49,11 @@ export default function ReadOut({
       }
 
       try {
-        const res = await fetch("/api/narrate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: content, language }),
-        });
+        // const res = await fetch("/api/narrate", {
+        //   method: "POST",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify({ text: content, language }),
+        // });
 
         if (!res.ok) throw new Error("Failed to get audio");
 

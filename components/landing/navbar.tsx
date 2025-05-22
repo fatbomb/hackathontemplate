@@ -116,21 +116,21 @@ export function Navbar({ serverAuth }: NavbarProps) {
         </NavigationMenuContent>
       </NavigationMenuItem>
       <NavigationMenuItem>
-        <Link href="/pricing" legacyBehavior passHref>
+        <Link href="/playground" legacyBehavior passHref>
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
             Playground
           </NavigationMenuLink>
         </Link>
       </NavigationMenuItem>
       <NavigationMenuItem>
-        <Link href="/about" legacyBehavior passHref>
+        <Link href="/gymnasium" legacyBehavior passHref>
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
             Gymnasium
           </NavigationMenuLink>
         </Link>
       </NavigationMenuItem>
       <NavigationMenuItem>
-        <Link href="/about" legacyBehavior passHref>
+        <Link href="/sci-baba-bot" legacyBehavior passHref>
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
             Sci-Baba Bot
           </NavigationMenuLink>

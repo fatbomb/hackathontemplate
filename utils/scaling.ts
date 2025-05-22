@@ -1,11 +1,15 @@
 import { Bodies, Body } from "matter-js";
 
-export function scaleBodies(bodies: Body[], dimensions: { contentWidth: number; contentHeight: number }, originalDimensions: { width: number; height: number }): Body[] {
+export function scaleBodies(
+    bodies: Body[],
+    dimensions: { contentWidth: number; contentHeight: number },
+    originalDimensions: { width: number; height: number }
+): Body[] {
     const scaleX = dimensions.contentWidth / originalDimensions.width;
     const scaleY = dimensions.contentHeight / originalDimensions.height;
 
-    return bodies.map(body => {
-        const scaledVertices = body.vertices.map(vertex => ({
+    return bodies.map((body) => {
+        const scaledVertices = body.vertices.map((vertex) => ({
             x: vertex.x * scaleX,
             y: vertex.y * scaleY,
         }));
@@ -16,9 +20,67 @@ export function scaleBodies(bodies: Body[], dimensions: { contentWidth: number; 
             [scaledVertices],
             {
                 isStatic: body.isStatic,
+                friction: body.friction,
+                frictionAir: body.frictionAir,
+                restitution: body.restitution,
+                density: body.density,
+                render: body.render,
+                label: body.label,
             }
-        );
+        )!;
 
-        return newBody!;
+        const velocity = (body as any).customVelocity || body.velocity;
+        Body.setVelocity(newBody, {
+            x: velocity.x * scaleX,
+            y: velocity.y * scaleY,
+        });
+
+        newBody.angularVelocity.toFixed(body.angularVelocity);
+        Body.setAngle(newBody, body.angle);
+
+        return newBody;
+    });
+}
+
+
+export function unscaleBodies(
+    bodies: Body[],
+    dimensions: { contentWidth: number; contentHeight: number },
+    originalDimensions: { width: number; height: number }
+): Body[] {
+    const scaleX = originalDimensions.width / dimensions.contentWidth;
+    const scaleY = originalDimensions.height / dimensions.contentHeight;
+
+    return bodies.map((body) => {
+        const scaledVertices = body.vertices.map((vertex) => ({
+            x: vertex.x * scaleX,
+            y: vertex.y * scaleY,
+        }));
+
+        const newBody = Bodies.fromVertices(
+            body.position.x * scaleX,
+            body.position.y * scaleY,
+            [scaledVertices],
+            {
+                isStatic: body.isStatic,
+                friction: body.friction,
+                frictionAir: body.frictionAir,
+                restitution: body.restitution,
+                density: body.density,
+                render: body.render,
+                label: body.label,
+            }
+        )!;
+
+        const velocity = (body as any).customVelocity || body.velocity;
+        Body.setVelocity(newBody, {
+            x: velocity.x * scaleX,
+            y: velocity.y * scaleY,
+        });
+
+        newBody.angularVelocity.toFixed(body.angularVelocity);
+        Body.setAngle(newBody, body.angle);
+
+        return newBody;
     });
 }

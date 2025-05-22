@@ -11,11 +11,11 @@ export default function Home() {
     <main className="flex-grow overflow-hidden">
       <div className="flex flex-col justify-between items-center w-screen overflow-hidden">
         <HeroSection />
-      <SubjectsSection />
-      <FeatureSection />
-      <StatsSection />
-      <TestimonialSection />
-      <CTASection />
+        <SubjectsSection />
+        <FeatureSection />
+        <StatsSection />
+        <TestimonialSection />
+        <CTASection />
       </div>
     </main>
   );
