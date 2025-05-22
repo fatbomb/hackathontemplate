@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useRouter } from "next/navigation";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -36,7 +35,7 @@ function ProjectileAssets(velX: number, velY: number) {
     });
     projectile.label = "Projectile";
 
-    const destination = Bodies.circle(450, 300 - radius - floorHeight, radius, {
+    const destination = Bodies.circle(600, 10 - radius - floorHeight, radius, {
         restitution: 0,
         friction,
         render: {
@@ -102,7 +101,7 @@ export default function Projectile() {
                 </CardHeader>
                 <CardContent>
                     <p className="text-gray-700">
-                        The <span className="text-red-500 font-semibold">red ball</span> is at x = 30 and the <span className="text-green-600 font-semibold">green ball</span> is at x = 450. 
+                        The <span className="text-red-500 font-semibold">red ball</span> is at x = 30 and the <span className="text-green-600 font-semibold">green ball</span> is at x = 450, but will free fall from y = 6 to y = 194. 
                         Adjust the velocity to make the red ball hit the green ball. The ball must hit the green ball before it hits the ground.
                     </p>
                 </CardContent>
@@ -151,18 +150,17 @@ export default function Projectile() {
                     <AlertDialogHeader>
                     <AlertDialogTitle>Congratulations!!</AlertDialogTitle>
                     <AlertDialogDescription>
-                        You got 50 points!!
-                        <DotLottieReact src="/Animation - 1747909504076.lottie" loop autoplay/>
+                        You got 50 points!! And a Level UP!!!
+                        <DotLottieReact src="/Animation - 1747912376235.lottie" loop autoplay/>
                     </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <Link href={"/playground/physics/projectile/hit-me-if-you-can"}>
-                            <Button>Next <ArrowRightSquare /> </Button>
+                        <Link href={"/playground/physics/projectile/enemy-plane"}>
+                            <Button>Start Level 2 <ArrowRightSquare /> </Button>
                         </Link>
                     </AlertDialogFooter>
                 </AlertDialogContent>
                 </AlertDialog>
-
         </div>
     );
 }

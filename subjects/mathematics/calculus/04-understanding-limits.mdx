@@ -1,0 +1,18 @@
+# Understanding Limits
+
+Limits help us understand how functions behave near specific points, even if the function is not defined at that point. For example, the limit of $f(x)$ as $x$ approaches $a$ can be different from the value of $f(a)$.
+This is particularly useful for functions that have discontinuities or are not defined at certain points.
+
+
+## Example
+
+### Finding the Limit
+
+Consider the function $f(x) = \frac{x^2 - 1}{x - 1}$. We want to find the limit as $x$ approaches 1.
+To do this, we can simplify the function:
+$$f(x) = \frac{(x - 1)(x + 1)}{x - 1}$$
+For $x \neq 1$, we can cancel the $(x - 1)$ terms:
+$$f(x) = x + 1$$
+Now, we can find the limit:
+$$\lim_{x \to 1} f(x) = \lim_{x \to 1} (x + 1) = 2$$
+This means that as $x$ approaches 1, the value of $f(x)$ approaches 2, even though $f(1)$ is not defined (the function has a removable discontinuity at $x = 1$).

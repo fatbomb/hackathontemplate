@@ -26,5 +26,6 @@ export function getAllMdPaths (dir: string, base = ''): string[][]{
       }
     });
 
+    console.log("results", results);
     return results;
   };

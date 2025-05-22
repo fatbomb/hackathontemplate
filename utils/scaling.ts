@@ -14,19 +14,32 @@ export function scaleBodies(
             y: vertex.y * scaleY,
         }));
 
+        // Preserve all original body properties
+        const options = {
+            isStatic: body.isStatic,
+            friction: body.friction,
+            frictionAir: body.frictionAir,
+            restitution: body.restitution,
+            density: body.density,
+            render: body.render,
+            label: body.label,
+            // Preserve sprite if it exists
+            sprite: (body as any).sprite,
+            // Preserve any other custom properties
+            ...Object.keys(body).reduce((acc, key) => {
+                if (!['position', 'vertices', 'parts', 'velocity', 'angularVelocity'].includes(key) && 
+                    typeof (body as any)[key] !== 'function') {
+                    acc[key] = (body as any)[key];
+                }
+                return acc;
+            }, {} as Record<string, any>)
+        };
+
         const newBody = Bodies.fromVertices(
             body.position.x * scaleX,
             body.position.y * scaleY,
             [scaledVertices],
-            {
-                isStatic: body.isStatic,
-                friction: body.friction,
-                frictionAir: body.frictionAir,
-                restitution: body.restitution,
-                density: body.density,
-                render: body.render,
-                label: body.label,
-            }
+            options
         )!;
 
         const velocity = (body as any).customVelocity || body.velocity;
@@ -42,7 +55,6 @@ export function scaleBodies(
     });
 }
 
-
 export function unscaleBodies(
     bodies: Body[],
     dimensions: { contentWidth: number; contentHeight: number },
@@ -57,19 +69,32 @@ export function unscaleBodies(
             y: vertex.y * scaleY,
         }));
 
+        // Preserve all original body properties
+        const options = {
+            isStatic: body.isStatic,
+            friction: body.friction,
+            frictionAir: body.frictionAir,
+            restitution: body.restitution,
+            density: body.density,
+            render: body.render,
+            label: body.label,
+            // Preserve sprite if it exists
+            sprite: (body as any).sprite,
+            // Preserve any other custom properties
+            ...Object.keys(body).reduce((acc, key) => {
+                if (!['position', 'vertices', 'parts', 'velocity', 'angularVelocity'].includes(key) && 
+                    typeof (body as any)[key] !== 'function') {
+                    acc[key] = (body as any)[key];
+                }
+                return acc;
+            }, {} as Record<string, any>)
+        };
+
         const newBody = Bodies.fromVertices(
             body.position.x * scaleX,
             body.position.y * scaleY,
             [scaledVertices],
-            {
-                isStatic: body.isStatic,
-                friction: body.friction,
-                frictionAir: body.frictionAir,
-                restitution: body.restitution,
-                density: body.density,
-                render: body.render,
-                label: body.label,
-            }
+            options
         )!;
 
         const velocity = (body as any).customVelocity || body.velocity;

@@ -32,12 +32,28 @@ export default function Simulator({
     const [dimensions, setDimensions] = useState({ contentWidth: width, contentHeight: height });
     const [isRunning, setIsRunning] = useState(false);
     const [bodyUpdates, setBodyUpdates] = useState<UpdatedBody[]>([]);
+    const initialBodyDetails = bodies.map((body) => ({
+        id: String(body.id),
+        label: body.label,
+        position: body.position,
+        angle: body.angle,
+        velocity: body.velocity,
+        angularVelocity: body.angularVelocity,
+    }));
 
     const engineRef = useRef<Engine | null>(null);
     const renderRef = useRef<Render | null>(null);
     const runnerRef = useRef<Runner | null>(null);
 
     useEffect(() => {
+        bodies.map((body) => ({
+            id: String(body.id),
+            label: body.label,
+            position: body.position,
+            angle: body.angle,
+            velocity: body.velocity,
+            angularVelocity: body.angularVelocity,
+        }));
         const scene = sceneRef.current;
         if (!scene) return;
 
@@ -77,19 +93,20 @@ export default function Simulator({
         const computedStyle = getComputedStyle(document.documentElement);
         const bgPrimary = computedStyle.getPropertyValue('--background').trim() || "#fff";
 
-        Matter.Events.on(engine, "collisionStart", (event) => {
-            
+        const collisionListener = (event: Matter.IEventCollision<Matter.Engine>) => {
             event.pairs.forEach((pair: {
-                bodyA: Body;
-                bodyB: Body;
+            bodyA: Body;
+            bodyB: Body;
             }) => {
-                const { bodyA, bodyB } = pair;
-                // if (bodyA.label === "Projectile" && bodyB.label === "Destination") {
-                    callback(bodyA, bodyB);
-                // }
+            const { bodyA, bodyB } = pair;
+            if (bodyA.label === "Projectile" && bodyB.label === "Destination") {
+                Matter.Events.off(engine, "collisionStart", collisionListener);
+                callback(bodyA, bodyB);
+            }
             });
+        };
 
-        });
+        Matter.Events.on(engine, "collisionStart", collisionListener);
 
         const render = Render.create({
             element: scene,
@@ -103,12 +120,10 @@ export default function Simulator({
         });
 
         const runner = Runner.create();
-        const scaledBodies = scaleBodies(bodies, dimensions, { width, height });
-        Composite.add(engine.world, scaledBodies);
+        Composite.add(engine.world, bodies);
         const bodies_current = Composite.allBodies(engine.world);
-        const unscaledBodies = unscaleBodies(bodies_current, dimensions, { width, height });
 
-        const updatedBodies = unscaledBodies.map((body) => {
+        const updatedBodies = bodies_current.map((body) => {
             return {
                 id: String(body.id),
                 label: body.label,
@@ -144,9 +159,18 @@ export default function Simulator({
         if (!engine) return;
 
         World.clear(engine.world, false);
+        // match with initialBodyDetails
+        bodies.forEach((body) => {
+            const initialBody = initialBodyDetails.find((b) => b.id === String(body.id));
+            if (initialBody) {
+                Body.setPosition(body, initialBody.position);
+                Body.setAngle(body, initialBody.angle);
+                Body.setVelocity(body, initialBody.velocity);
+                Body.setAngularVelocity(body, initialBody.angularVelocity);
+            }
+        });
 
-        const scaledBodies = scaleBodies(bodies, dimensions, { width, height });
-        Composite.add(engine.world, scaledBodies);  
+        Composite.add(engine.world, bodies);
     };
 
     const playScene = () => {

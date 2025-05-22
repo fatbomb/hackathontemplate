@@ -3,11 +3,10 @@
 import Simulator from "@/components/interactive/simulator";
 import { Bodies, Body } from "matter-js";
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -19,7 +18,7 @@ import {
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import Link from "next/link";
 import { ArrowRightSquare } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 
 function ProjectileAssets(velX: number, velY: number) {
@@ -27,7 +26,7 @@ function ProjectileAssets(velX: number, velY: number) {
     const friction = 100;
     const floorHeight = 1;
 
-    const projectile = Bodies.circle(30, 300 - radius - floorHeight, radius, {
+    const projectile = Bodies.circle(250, 300 - radius - floorHeight, radius, {
         restitution: 0,
         friction,
         render: {
@@ -36,12 +35,16 @@ function ProjectileAssets(velX: number, velY: number) {
     });
     projectile.label = "Projectile";
 
-    const destination = Bodies.circle(450, 300 - radius - floorHeight, radius, {
+    const destination = Bodies.rectangle(650, 50, 50, 50, {
         restitution: 0,
-        friction,
+        friction: 0.1,
         render: {
-            fillStyle: "#00ff00",
-        },
+            sprite: {
+                texture: '/plane2.jpg',
+                xScale: 0.010,
+                yScale: 0.010
+            }
+        }
     });
     destination.label = "Destination";
 
@@ -61,10 +64,14 @@ function ProjectileAssets(velX: number, velY: number) {
         y: velY,
     });
 
+    Body.setVelocity(destination, {
+        x: -10, y: -2
+    });
+
     return [projectile, destination, ground];
 }
 
-export default function Projectile() {
+export default function ProjectileV3() {
     const router = useRouter();
     const [velX, setVelX] = useState(3);
     const [velY, setVelY] = useState(-3);
@@ -102,7 +109,7 @@ export default function Projectile() {
                 </CardHeader>
                 <CardContent>
                     <p className="text-gray-700">
-                        The <span className="text-red-500 font-semibold">red ball</span> is at x = 30 and the <span className="text-green-600 font-semibold">green ball</span> is at x = 450. 
+                        The <span className="text-red-500 font-semibold">red ball</span> is at x = 30 and the <span className="text-green-600 font-semibold">green ball</span> is at x = 450, but will free fall from y = 6 to y = 194. 
                         Adjust the velocity to make the red ball hit the green ball. The ball must hit the green ball before it hits the ground.
                     </p>
                 </CardContent>
@@ -151,18 +158,17 @@ export default function Projectile() {
                     <AlertDialogHeader>
                     <AlertDialogTitle>Congratulations!!</AlertDialogTitle>
                     <AlertDialogDescription>
-                        You got 50 points!!
-                        <DotLottieReact src="/Animation - 1747909504076.lottie" loop autoplay/>
+                        You got 50 points!! And a Level UP!!!
+                        <DotLottieReact src="/Animation - 1747912376235.lottie" loop autoplay/>
                     </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <Link href={"/playground/physics/projectile/hit-me-if-you-can"}>
-                            <Button>Next <ArrowRightSquare /> </Button>
+                        <Link href={"/playground/physics/projectile/enemy-plane"}>
+                            <Button>Start Level 2 <ArrowRightSquare /> </Button>
                         </Link>
                     </AlertDialogFooter>
                 </AlertDialogContent>
                 </AlertDialog>
-
         </div>
     );
 }
