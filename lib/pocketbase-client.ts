@@ -1,5 +1,5 @@
 // Client-side wrapper functions that call our server API
-export async function pbClientRequest(action: string, data?: any) {
+export async function pbClientRequest(action: string, data?: object) {
   const response = await fetch('/api/pocketbase', {
     method: 'POST',
     headers: {

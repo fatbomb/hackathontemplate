@@ -24,7 +24,7 @@ export default async function Playground() {
 
     const topics = await pocketbase.collection('topics').getFullList();
     const user  = await getCurrentUser();
-    console.log("User:", user);
+    // console.log("User:", user);
 
     const gamepoints = await pocketbase.collection('game_points').getFullList({
         filter: `user = "${user?.id}"`,

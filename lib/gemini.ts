@@ -3,7 +3,6 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialize the Google Generative AI with your API key
 const apiKey = process.env.GEMINI_API_KEY;
-const api = "AIzaSyBILbj0xgrqcFbuqk8Wcz0CR5fPTPYRFBI";
 const genAI = new GoogleGenerativeAI(apiKey || '');
 
 export async function askGemini(question: string): Promise<string> {

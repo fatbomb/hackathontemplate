@@ -169,84 +169,84 @@ export const updateChatTitle = async (chatId: string, newTitle: string) => {
   }
 };
 
-async function createSchema() {
-  try {
+// async function createSchema() {
+//   try {
    
-    if (!isAuthenticated()) throw new Error('User not authenticated');
+//     if (!isAuthenticated()) throw new Error('User not authenticated');
     
-    // Create environmental_data collection
-    await pb.collections.create({
-      name: 'environmental_data',
-      type: 'base',
-      schema: [
-        {
-          name: 'dataType',
-          type: 'text',
-          required: true,
-          options: {
-            min: 1,
-            max: 50,
-          }
-        },
-        {
-          name: 'value',
-          type: 'text',
-          required: true,
-          options: {
-            min: 1,
-            max: 500,
-          }
-        },
-        {
-          name: 'notes',
-          type: 'text',
-          required: false,
-        },
-        {
-          name: 'latitude',
-          type: 'number',
-          required: true,
-        },
-        {
-          name: 'longitude',
-          type: 'number',
-          required: true,
-        },
-        {
-          name: 'created',
-          type: 'date',
-          required: true,
-        },
-        {
-          name: 'processed',
-          type: 'bool',
-          required: false,
-          options: {
-            default: false,
-          }
-        },
-        {
-          name: 'locationName',
-          type: 'text',
-          required: false,
-        },
-        {
-          name: 'severity',
-          type: 'text',
-          required: false,
-          options: {
-            min: 0,
-            max: 20,
-          }
-        }
-      ]
-    });
+//     // Create environmental_data collection
+//     await pb.collections.create({
+//       name: 'environmental_data',
+//       type: 'base',
+//       schema: [
+//         {
+//           name: 'dataType',
+//           type: 'text',
+//           required: true,
+//           options: {
+//             min: 1,
+//             max: 50,
+//           }
+//         },
+//         {
+//           name: 'value',
+//           type: 'text',
+//           required: true,
+//           options: {
+//             min: 1,
+//             max: 500,
+//           }
+//         },
+//         {
+//           name: 'notes',
+//           type: 'text',
+//           required: false,
+//         },
+//         {
+//           name: 'latitude',
+//           type: 'number',
+//           required: true,
+//         },
+//         {
+//           name: 'longitude',
+//           type: 'number',
+//           required: true,
+//         },
+//         {
+//           name: 'created',
+//           type: 'date',
+//           required: true,
+//         },
+//         {
+//           name: 'processed',
+//           type: 'bool',
+//           required: false,
+//           options: {
+//             default: false,
+//           }
+//         },
+//         {
+//           name: 'locationName',
+//           type: 'text',
+//           required: false,
+//         },
+//         {
+//           name: 'severity',
+//           type: 'text',
+//           required: false,
+//           options: {
+//             min: 0,
+//             max: 20,
+//           }
+//         }
+//       ]
+//     });
     
-    console.log('Schema created successfully!');
-  } catch (error) {
-    console.error('Error creating schema:', error);
-  }
-}
+//     console.log('Schema created successfully!');
+//   } catch (error) {
+//     console.error('Error creating schema:', error);
+//   }
+// }
 
 
 

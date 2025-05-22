@@ -9,9 +9,7 @@ import {
   LogOut,
   User,
   Mail,
-  Calendar,
-  MoreVertical,
-  Archive
+  Calendar
 } from 'lucide-react';
 interface User {
   id: string;

@@ -1,5 +1,6 @@
 import PointsStat from "@/components/interactive/pointsStat";
 import ProjectileV2 from "@/components/interactive/projectileV2";
+import { getCurrentUser } from "@/lib/pocketbase";
 import PocketBase from "pocketbase";
 
 interface Points {
@@ -16,8 +17,9 @@ export default async function HitMeIfYouCanPage() {
     };
 
     try{
+        const user = await getCurrentUser();
         const game_points = await pocketbase.collection('game_points').getFullList({
-            filter: `user = "${pocketbase.authStore.model?.id || "xo15eumgn2tov4v"}" && type = "playground"`,
+            filter: `user = "${user?.id || "xo15eumgn2tov4v"}" && type = "playground" && topic = "Projectile"`,
         });
 
         if (game_points?.length > 0) {

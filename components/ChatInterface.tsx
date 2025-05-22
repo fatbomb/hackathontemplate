@@ -1,10 +1,10 @@
 // ChatInterface.tsx
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { HiOutlineChatAlt } from 'react-icons/hi';
 import { IoReload } from 'react-icons/io5';
-import { FaSignOutAlt, FaPaperPlane, FaMicrophone, FaStop, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
+import { FaPaperPlane, FaMicrophone, FaStop, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
 import ChatMessageComponent from './chatMessageComponent';
 import ChatListComponent from './chatList';
 
@@ -202,8 +202,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     message={{
                       ...msg,
                       id: index,
-                      timestamp: (msg as any).timestamp ?? new Date()
-                    }} 
+                      timestamp: (msg as ChatMessage).timestamp ?? new Date()
+                    }}
                     handleSpeakMessage={handleSpeakMessage}
                     isSpeaking={isSpeaking}
                     currentSpeakingId={currentSpeakingId}

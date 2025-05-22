@@ -35,10 +35,6 @@ export function base64ToBlob(base64: string, type = "audio/mpeg"): Blob {
 
   return new Blob(byteArrays, { type });
 }
-interface GeocodeResult {
-  formatted_address: string;
-  // Add other properties as needed
-}
 
 export function formatDate(date: string | Date): string {
   return new Date(date).toLocaleDateString();
