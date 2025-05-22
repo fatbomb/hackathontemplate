@@ -84,42 +84,36 @@ export function Navbar({ serverAuth }: NavbarProps) {
 
   const NavItems = () => (
     <>
-      <NavigationMenuItem>
-        <Link href="/tutorials" legacyBehavior passHref>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            Tutorials
-          </NavigationMenuLink>
-        </Link>
-      </NavigationMenuItem>
-      <NavigationMenuItem>
-        <Link href="/playground" legacyBehavior passHref>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            playground
-          </NavigationMenuLink>
-        </Link>
-      </NavigationMenuItem>
-      <NavigationMenuItem>
-        <Link href="/gymnasium" legacyBehavior passHref>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            Gymnasium
-          </NavigationMenuLink>
-        </Link>
-      </NavigationMenuItem>
-      <NavigationMenuItem>
-        <Link href="/chatbot" legacyBehavior passHref>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            Sci-Baba Bot
-          </NavigationMenuLink>
-        </Link>
-      </NavigationMenuItem>
-      <NavigationMenuItem>
-        <Link href="/environment/result" legacyBehavior passHref>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            Environment
-          </NavigationMenuLink>
-        </Link>
-      </NavigationMenuItem>
-    </>
+  <NavigationMenuItem>
+    <NavigationMenuLink href="/tutorials" className={navigationMenuTriggerStyle()}>
+      Tutorials
+    </NavigationMenuLink>
+  </NavigationMenuItem>
+  
+  <NavigationMenuItem>
+    <NavigationMenuLink href="/playground" className={navigationMenuTriggerStyle()}>
+      Playground
+    </NavigationMenuLink>
+  </NavigationMenuItem>
+  
+  <NavigationMenuItem>
+    <NavigationMenuLink href="/gymnasium" className={navigationMenuTriggerStyle()}>
+      Gymnasium
+    </NavigationMenuLink>
+  </NavigationMenuItem>
+  
+  <NavigationMenuItem>
+    <NavigationMenuLink href="/chatbot" className={navigationMenuTriggerStyle()}>
+      Sci-Baba Bot
+    </NavigationMenuLink>
+  </NavigationMenuItem>
+  
+  <NavigationMenuItem>
+    <NavigationMenuLink href="/environment/result" className={navigationMenuTriggerStyle()}>
+      Environment
+    </NavigationMenuLink>
+  </NavigationMenuItem>
+</>
   );
 
   const AuthButtons = () => (
