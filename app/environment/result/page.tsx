@@ -236,11 +236,7 @@ const EnvironmentPage: React.FC = () => {
     : data.filter(item => item && item.dataType === filter);
 
   return (
-   <div className="min-h-screen">
-      <Head>
-        <title>Environment Dashboard - Science Scout</title>
-        <meta name="description" content="Detailed environmental data analysis" />
-      </Head>
+   <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
 
       {/* Fixed Action Buttons */}
       <div className="right-6 bottom-6 z-10 fixed flex flex-col gap-3">
@@ -254,7 +250,7 @@ const EnvironmentPage: React.FC = () => {
         {/* Language Toggle */}
         <button 
           onClick={toggleLanguage}
-          className="flex justify-center items-center bg-white shadow-lg hover:shadow-xl p-4 rounded-full transition-all duration-300"
+          className="flex justify-center items-center bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl p-4 rounded-full transition-all duration-300"
           aria-label="Toggle language"
         >
           <Globe className="w-6 h-6 text-green-600" />
@@ -264,7 +260,7 @@ const EnvironmentPage: React.FC = () => {
       <div className="mx-auto px-4 py-12 max-w-7xl">
         <div className="mb-16 text-center">
           <h1 className="bg-clip-text bg-gradient-to-r from-green-700 to-blue-700 mb-6 font-bold text-transparent text-5xl">{t.title}</h1>
-          <p className="opacity-75 mx-auto max-w-3xl text-xl">{t.subtitle}</p>
+          <p className="opacity-75 mx-auto max-w-3xl text-gray-600 dark:text-gray-300 text-xl">{t.subtitle}</p>
           
           {/* Quick Actions */}
           <div className="flex flex-wrap justify-center gap-4 mt-8">
@@ -275,7 +271,7 @@ const EnvironmentPage: React.FC = () => {
               </button>
             </Link>
             
-            <button className="flex items-center gap-2 bg-white shadow-md hover:shadow-lg px-6 py-3 rounded-lg transition-all duration-300">
+            <button className="flex items-center gap-2 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg px-6 py-3 rounded-lg text-gray-900 dark:text-white transition-all duration-300">
               <Filter className="w-5 h-5 text-green-600" />
               <span>{t.advancedFilters}</span>
             </button>
@@ -284,57 +280,57 @@ const EnvironmentPage: React.FC = () => {
 
         {/* Stats Overview Cards */}
         <div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-16">
-          <div className="bg-gradient-to-br from-white to-blue-50 shadow-md hover:shadow-lg p-6 rounded-2xl transition-all duration-300">
+          <div className="bg-gradient-to-br from-white dark:from-gray-800 to-blue-50 dark:to-gray-700 shadow-md hover:shadow-lg p-6 rounded-2xl transition-all duration-300">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="opacity-75 font-semibold text-sm uppercase tracking-wider">{t.totalDataPoints}</h3>
-              <div className="bg-blue-100 p-2 rounded-lg">
+              <h3 className="opacity-75 font-semibold text-gray-600 dark:text-gray-300 text-sm uppercase tracking-wider">{t.totalDataPoints}</h3>
+              <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-lg">
                 <LineChart className="w-6 h-6 text-blue-500" />
               </div>
             </div>
-            <p className="font-bold text-4xl">{stats.totalEntries}</p>
-            <div className="flex items-center opacity-75 mt-2 text-sm">
+            <p className="font-bold text-gray-900 dark:text-white text-4xl">{stats.totalEntries}</p>
+            <div className="flex items-center opacity-75 mt-2 text-gray-600 dark:text-gray-300 text-sm">
               <Info className="mr-1 w-4 h-4" />
               <p>{t.collectedRecords}</p>
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-white to-red-50 shadow-md hover:shadow-lg p-6 rounded-2xl transition-all duration-300">
+          <div className="bg-gradient-to-br from-white dark:from-gray-800 to-red-50 dark:to-gray-700 shadow-md hover:shadow-lg p-6 rounded-2xl transition-all duration-300">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="opacity-75 font-semibold text-sm uppercase tracking-wider">{t.avgPollutionLevel}</h3>
-              <div className="bg-red-100 p-2 rounded-lg">
+              <h3 className="opacity-75 font-semibold text-gray-600 dark:text-gray-300 text-sm uppercase tracking-wider">{t.avgPollutionLevel}</h3>
+              <div className="bg-red-100 dark:bg-red-900 p-2 rounded-lg">
                 <Droplets className="w-6 h-6 text-red-500" />
               </div> 
             </div>
-            <p className="font-bold text-4xl">{stats.averagePollution.toFixed(1)}</p>
-            <div className="flex items-center opacity-75 mt-2 text-sm">
+            <p className="font-bold text-gray-900 dark:text-white text-4xl">{stats.averagePollution.toFixed(1)}</p>
+            <div className="flex items-center opacity-75 mt-2 text-gray-600 dark:text-gray-300 text-sm">
               <Info className="mr-1 w-4 h-4" />
               <p>{t.pollutionScale}</p>
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-white to-green-50 shadow-md hover:shadow-lg p-6 rounded-2xl transition-all duration-300">
+          <div className="bg-gradient-to-br from-white dark:from-gray-800 to-green-50 dark:to-gray-700 shadow-md hover:shadow-lg p-6 rounded-2xl transition-all duration-300">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="opacity-75 font-semibold text-sm uppercase tracking-wider">{t.uniqueSpecies}</h3>
-              <div className="bg-green-100 p-2 rounded-lg">
+              <h3 className="opacity-75 font-semibold text-gray-600 dark:text-gray-300 text-sm uppercase tracking-wider">{t.uniqueSpecies}</h3>
+              <div className="bg-green-100 dark:bg-green-900 p-2 rounded-lg">
                 <Leaf className="w-6 h-6 text-green-500" />
               </div>
             </div>
-            <p className="font-bold text-4xl">{stats.uniqueSpecies}</p>
-            <div className="flex items-center opacity-75 mt-2 text-sm">
+            <p className="font-bold text-gray-900 dark:text-white text-4xl">{stats.uniqueSpecies}</p>
+            <div className="flex items-center opacity-75 mt-2 text-gray-600 dark:text-gray-300 text-sm">
               <Info className="mr-1 w-4 h-4" />
               <p>{t.documentedBiodiversity}</p>
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-white to-yellow-50 shadow-md hover:shadow-lg p-6 rounded-2xl transition-all duration-300">
+          <div className="bg-gradient-to-br from-white dark:from-gray-800 to-yellow-50 dark:to-gray-700 shadow-md hover:shadow-lg p-6 rounded-2xl transition-all duration-300">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="opacity-75 font-semibold text-sm uppercase tracking-wider">{t.recentWeatherEvents}</h3>
-              <div className="bg-yellow-100 p-2 rounded-lg">
+              <h3 className="opacity-75 font-semibold text-gray-600 dark:text-gray-300 text-sm uppercase tracking-wider">{t.recentWeatherEvents}</h3>
+              <div className="bg-yellow-100 dark:bg-yellow-900 p-2 rounded-lg">
                 <Cloud className="w-6 h-6 text-yellow-500" />
               </div>
             </div>
-            <p className="font-bold text-4xl">{stats.recentWeatherEvents}</p>
-            <div className="flex items-center opacity-75 mt-2 text-sm">
+            <p className="font-bold text-gray-900 dark:text-white text-4xl">{stats.recentWeatherEvents}</p>
+            <div className="flex items-center opacity-75 mt-2 text-gray-600 dark:text-gray-300 text-sm">
               <Info className="mr-1 w-4 h-4" />
               <p>{t.past7Days}</p>
             </div>
@@ -343,9 +339,9 @@ const EnvironmentPage: React.FC = () => {
 
         {/* Data Type Selector */}
         <div className="mb-16">
-          <div className="bg-white shadow-md backdrop-blur-lg p-8 rounded-2xl">
+          <div className="bg-white dark:bg-gray-800 shadow-md backdrop-blur-lg p-8 rounded-2xl">
             <div className="flex md:flex-row flex-col md:justify-between md:items-center mb-6">
-              <h2 className="flex items-center font-bold text-3xl">
+              <h2 className="flex items-center font-bold text-gray-900 dark:text-white text-3xl">
                 <TrendingUp className="mr-3 w-7 h-7 text-green-600" />
                 {t.dataAnalysis}
               </h2>
@@ -353,7 +349,7 @@ const EnvironmentPage: React.FC = () => {
               <div className="mt-4 md:mt-0">
                 <select
                   id="dataType"
-                  className="shadow-sm px-4 py-2 border focus:border-transparent rounded-lg focus:ring-2 focus:ring-green-500"
+                  className="bg-white dark:bg-gray-700 shadow-sm px-4 py-2 border border-gray-300 dark:border-gray-600 focus:border-transparent rounded-lg focus:ring-2 focus:ring-green-500 text-gray-900 dark:text-white"
                   value={selectedDataType}
                   onChange={(e) => setSelectedDataType(e.target.value)}
                 >
@@ -365,19 +361,19 @@ const EnvironmentPage: React.FC = () => {
             </div>
 
             {/* Data Type Specific Analysis */}
-            <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-xl">
+            <div className="bg-gradient-to-r from-green-50 dark:from-gray-700 to-blue-50 dark:to-gray-600 p-6 rounded-xl">
               {selectedDataType === 'pollution' && (
                 <div className="space-y-3">
-                  <h3 className="flex items-center mb-3 font-semibold text-red-700 text-xl">
+                  <h3 className="flex items-center mb-3 font-semibold text-red-700 dark:text-red-400 text-xl">
                     <Droplets className="mr-2 w-5 h-5" />
                     {t.pollutionAnalysis}
                   </h3>
-                  <p className="mb-3">{t.pollutionAvgText} <strong className="text-red-600 text-lg">{stats.averagePollution.toFixed(1)}</strong> {t.onScale}</p>
-                  <p className="opacity-75">{t.pollutionText}</p>
+                  <p className="mb-3 text-gray-800 dark:text-gray-200">{t.pollutionAvgText} <strong className="text-red-600 dark:text-red-400 text-lg">{stats.averagePollution.toFixed(1)}</strong> {t.onScale}</p>
+                  <p className="opacity-75 text-gray-600 dark:text-gray-300">{t.pollutionText}</p>
                   
-                  <div className="mt-4 pt-4 border-gray-200 border-t">
+                  <div className="mt-4 pt-4 border-gray-200 dark:border-gray-600 border-t">
                     <Link href="/environment/pollution">
-                      <button className="flex items-center text-red-600 hover:text-red-700 transition-colors duration-200">
+                      <button className="flex items-center text-red-600 hover:text-red-700 dark:hover:text-red-300 dark:text-red-400 transition-colors duration-200">
                         <span>{t.viewDetailedPollutionData}</span>
                         <ChevronRight className="ml-1 w-4 h-4" />
                       </button>
@@ -388,16 +384,16 @@ const EnvironmentPage: React.FC = () => {
               
               {selectedDataType === 'biodiversity' && (
                 <div className="space-y-3">
-                  <h3 className="flex items-center mb-3 font-semibold text-green-700 text-xl">
+                  <h3 className="flex items-center mb-3 font-semibold text-green-700 dark:text-green-400 text-xl">
                     <Leaf className="mr-2 w-5 h-5" />
                     {t.biodiversityAnalysis}
                   </h3>
-                  <p className="mb-3">{t.biodiversityRecorded} <strong className="text-green-600 text-lg">{stats.uniqueSpecies}</strong> {t.uniqueSpeciesText}</p>
-                  <p className="opacity-75">{t.biodiversityText}</p>
+                  <p className="mb-3 text-gray-800 dark:text-gray-200">{t.biodiversityRecorded} <strong className="text-green-600 dark:text-green-400 text-lg">{stats.uniqueSpecies}</strong> {t.uniqueSpeciesText}</p>
+                  <p className="opacity-75 text-gray-600 dark:text-gray-300">{t.biodiversityText}</p>
                   
-                  <div className="mt-4 pt-4 border-gray-200 border-t">
+                  <div className="mt-4 pt-4 border-gray-200 dark:border-gray-600 border-t">
                     <Link href="/environment/biodiversity">
-                      <button className="flex items-center text-green-600 hover:text-green-700 transition-colors duration-200">
+                      <button className="flex items-center text-green-600 hover:text-green-700 dark:hover:text-green-300 dark:text-green-400 transition-colors duration-200">
                         <span>{t.viewDetailedBiodiversityData}</span>
                         <ChevronRight className="ml-1 w-4 h-4" />
                       </button>
@@ -408,16 +404,16 @@ const EnvironmentPage: React.FC = () => {
               
               {selectedDataType === 'weather' && (
                 <div className="space-y-3">
-                  <h3 className="flex items-center mb-3 font-semibold text-yellow-700 text-xl">
+                  <h3 className="flex items-center mb-3 font-semibold text-yellow-700 dark:text-yellow-400 text-xl">
                     <Cloud className="mr-2 w-5 h-5" />
                     {t.weatherAnalysis}
                   </h3>
-                  <p className="mb-3"><strong className="text-yellow-600 text-lg">{stats.recentWeatherEvents}</strong> {t.weatherRecorded}</p>
-                  <p className="opacity-75">{t.weatherText}</p>
+                  <p className="mb-3 text-gray-800 dark:text-gray-200"><strong className="text-yellow-600 dark:text-yellow-400 text-lg">{stats.recentWeatherEvents}</strong> {t.weatherRecorded}</p>
+                  <p className="opacity-75 text-gray-600 dark:text-gray-300">{t.weatherText}</p>
                   
-                  <div className="mt-4 pt-4 border-gray-200 border-t">
+                  <div className="mt-4 pt-4 border-gray-200 dark:border-gray-600 border-t">
                     <Link href="/environment/weather">
-                      <button className="flex items-center text-yellow-600 hover:text-yellow-700 transition-colors duration-200">
+                      <button className="flex items-center text-yellow-600 hover:text-yellow-700 dark:hover:text-yellow-300 dark:text-yellow-400 transition-colors duration-200">
                         <span>{t.viewDetailedWeatherData}</span>
                         <ChevronRight className="ml-1 w-4 h-4" />
                       </button>
@@ -431,9 +427,9 @@ const EnvironmentPage: React.FC = () => {
 
         {/* Map Component */}
         <div className="mb-16">
-          <div className="bg-white shadow-md backdrop-blur-lg p-8 rounded-2xl">
+          <div className="bg-white dark:bg-gray-800 shadow-md backdrop-blur-lg p-8 rounded-2xl">
             <div className="flex md:flex-row flex-col md:justify-between md:items-center mb-6">
-              <h2 className="flex items-center font-bold text-3xl">
+              <h2 className="flex items-center font-bold text-gray-900 dark:text-white text-3xl">
                 <MapPin className="mr-3 w-7 h-7 text-green-600" />
                 {t.environmentalDataMap}
               </h2>
@@ -441,7 +437,7 @@ const EnvironmentPage: React.FC = () => {
               <div className="mt-4 md:mt-0">
                 <select
                   id="filter"
-                  className="shadow-sm px-4 py-2 border focus:border-transparent rounded-lg focus:ring-2 focus:ring-green-500"
+                  className="bg-white dark:bg-gray-700 shadow-sm px-4 py-2 border border-gray-300 dark:border-gray-600 focus:border-transparent rounded-lg focus:ring-2 focus:ring-green-500 text-gray-900 dark:text-white"
                   value={filter}
                   onChange={(e) => setFilter(e.target.value as 'all' | 'pollution' | 'biodiversity' | 'weather')}
                 >
@@ -455,15 +451,15 @@ const EnvironmentPage: React.FC = () => {
             
             <div className="shadow-md mt-6 rounded-xl h-[450px] overflow-hidden">
               {loading ? (
-                <div className="flex justify-center items-center bg-gray-50 h-full">
+                <div className="flex justify-center items-center bg-gray-50 dark:bg-gray-700 h-full">
                   <div className="p-8 text-center">
                     <Loader2 className="mx-auto mb-4 w-12 h-12 text-green-600 animate-spin" />
-                    <p className="opacity-75">{t.loading}</p>
+                    <p className="opacity-75 text-gray-600 dark:text-gray-300">{t.loading}</p>
                   </div>
                 </div>
               ) : error ? (
-                <div className="flex justify-center items-center bg-red-50 h-full">
-                  <div className="p-8 text-red-500 text-center">
+                <div className="flex justify-center items-center bg-red-50 dark:bg-red-900/20 h-full">
+                  <div className="p-8 text-red-500 dark:text-red-400 text-center">
                     <AlertTriangle className="mx-auto mb-4 w-12 h-12" />
                     <p className="mb-2 font-semibold text-xl">{t.errorLoading}</p>
                     <p>{error}</p>
@@ -474,7 +470,7 @@ const EnvironmentPage: React.FC = () => {
               )}
             </div>
             
-            <div className="flex items-center opacity-75 mt-4 text-sm">
+            <div className="flex items-center opacity-75 mt-4 text-gray-600 dark:text-gray-300 text-sm">
               <Info className="mr-1 w-4 h-4" />
               <p>{t.mapInteractionHint}</p>
             </div>
@@ -484,8 +480,8 @@ const EnvironmentPage: React.FC = () => {
         {/* Visualizations */}
         {!loading && !error && (
           <div className="mb-16">
-            <div className="bg-white shadow-md backdrop-blur-lg p-8 rounded-2xl">
-              <h2 className="flex items-center mb-6 font-bold text-3xl">
+            <div className="bg-white dark:bg-gray-800 shadow-md backdrop-blur-lg p-8 rounded-2xl">
+              <h2 className="flex items-center mb-6 font-bold text-gray-900 dark:text-white text-3xl">
                 <BarChart3 className="mr-3 w-7 h-7 text-green-600" />
                 {t.dataVisualizations}
               </h2>
@@ -495,20 +491,20 @@ const EnvironmentPage: React.FC = () => {
         )}
 
         {/* Additional Info */}
-        <div className="bg-gradient-to-r from-green-50 to-blue-50 shadow-md mb-8 p-8 rounded-2xl">
-          <h2 className="flex items-center mb-6 font-bold text-3xl">
+        <div className="bg-gradient-to-r from-green-50 dark:from-gray-800 to-blue-50 dark:to-gray-700 shadow-md mb-8 p-8 rounded-2xl">
+          <h2 className="flex items-center mb-6 font-bold text-gray-900 dark:text-white text-3xl">
             <Leaf className="mr-3 w-7 h-7 text-green-600" />
             {t.environmentalImpact}
           </h2>
           
           <div className="space-y-4">
-            <p>{t.impactText1}</p>
-            <p className="font-medium text-green-700">{t.impactText2}</p>
+            <p className="text-gray-800 dark:text-gray-200">{t.impactText1}</p>
+            <p className="font-medium text-green-700 dark:text-green-400">{t.impactText2}</p>
             
-            <div className="bg-white bg-opacity-70 mt-6 p-6 border border-green-100 rounded-lg">
+            <div className="bg-white dark:bg-gray-700 bg-opacity-70 dark:bg-opacity-70 mt-6 p-6 border border-green-100 dark:border-green-800 rounded-lg">
               <div className="flex">
                 <Info className="flex-shrink-0 mt-0.5 mr-2 w-5 h-5 text-green-600" />
-                <p className="opacity-75 text-sm italic">{t.eventInfo}</p>
+                <p className="opacity-75 text-gray-600 dark:text-gray-300 text-sm italic">{t.eventInfo}</p>
               </div>
             </div>
             

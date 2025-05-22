@@ -354,7 +354,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
         </div>
 
         <div className="flex items-center space-x-1 sm:space-x-2">
-          <div className="hidden md:block">
+          <div className="block">
             <ModeToggle />
           </div>
           <div className="flex items-center">

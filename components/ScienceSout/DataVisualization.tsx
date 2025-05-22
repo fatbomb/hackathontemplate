@@ -40,12 +40,12 @@ const DataVisualization: React.FC<DataVisualizationProps> = ({ data }) => {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6">Data Visualizations</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="bg-white dark:bg-gray-800 shadow-md p-6 rounded-lg">
+      <h2 className="mb-6 font-bold text-gray-900 dark:text-white text-2xl">Data Visualizations</h2>
+
+      <div className="gap-8 grid grid-cols-1 md:grid-cols-2">
         <div>
-          <h3 className="text-lg font-semibold mb-4">Data Distribution</h3>
+          <h3 className="mb-4 font-semibold text-gray-800 dark:text-gray-200 text-lg">Data Distribution</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -62,25 +62,55 @@ const DataVisualization: React.FC<DataVisualizationProps> = ({ data }) => {
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip />
-              <Legend />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'var(--background)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '6px',
+                  color: 'var(--foreground)'
+                }}
+              />
+              <Legend
+                wrapperStyle={{
+                  color: 'var(--foreground)'
+                }}
+              />
             </PieChart>
           </ResponsiveContainer>
         </div>
 
         {pollutionData.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold mb-4">Recent Pollution Levels</h3>
+            <h3 className="mb-4 font-semibold text-gray-800 dark:text-gray-200 text-lg">Recent Pollution Levels</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart
                 data={pollutionData}
                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
               >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis domain={[0, 10]} />
-                <Tooltip />
-                <Legend />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fill: 'var(--foreground)' }}
+                  axisLine={{ stroke: 'var(--border)' }}
+                />
+                <YAxis
+                  domain={[0, 10]}
+                  tick={{ fill: 'var(--foreground)' }}
+                  axisLine={{ stroke: 'var(--border)' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'var(--background)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '6px',
+                    color: 'var(--foreground)'
+                  }}
+                />
+                <Legend
+                  wrapperStyle={{
+                    color: 'var(--foreground)'
+                  }}
+                />
                 <Bar dataKey="level" name="Pollution Level" fill="#FF8042" />
               </BarChart>
             </ResponsiveContainer>

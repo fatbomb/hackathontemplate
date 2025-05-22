@@ -110,21 +110,12 @@ const ExamWithVoiceAssistant: FC<ExamWithVoiceAssistantProps> = ({
   const detectLanguage = (text: string): string => {
     const detections = detector.detect(text, 1);
     if (detections.length > 0) {
-      // Map from language detector output to Google TTS codes
-      const langMap: Record<string, string> = {
-        'english': 'en-US',
-        'spanish': 'es-ES',
-        'french': 'fr-FR',
-        'german': 'de-DE',
-        'chinese': 'zh-CN',
-        'japanese': 'ja-JP',
-        'arabic': 'ar-AE',
-        'bengali': 'bn-BD',
-        // Add more mappings as needed
-      };
-      
       const detectedLang = detections[0][0].toLowerCase();
-      return langMap[detectedLang] || 'en-US'; // Default to English
+      if (detectedLang === 'english') {
+      return 'en-US';
+      } else {
+      return 'bn-BD';
+      }
     }
     return 'en-US'; // Default
   };
@@ -179,12 +170,13 @@ const ExamWithVoiceAssistant: FC<ExamWithVoiceAssistantProps> = ({
   const narrateCurrentQuestion = (): void => {
     if (!narrationEnabled) return;
     
-    const questionText = `Question ${currentQuestionIndex + 1} of ${exam.questions.length}. ${currentQuestion.question_statement}`;
+    const questionText = ` ${currentQuestion.question_statement}`;
     const optionsText = currentQuestion.options.map((option, index) => 
       `Option ${String.fromCharCode(65 + index)}: ${option}`
     ).join('. ');
-    
-    speakText(`${questionText}. ${optionsText}`);
+    const explainationText = examResult?.questions.find(q => q.id === currentQuestion.id)?.explanation || '';
+    speakText(`${questionText}. ${optionsText} `);
+    speakText(explainationText);
   };
 
   // Effect to narrate questions when they change or when narration is enabled
