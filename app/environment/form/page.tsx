@@ -3,16 +3,16 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { 
-  Globe, 
-  ChevronRight, 
-  Clipboard, 
-  MapPin, 
-  Cloud, 
-  ArrowLeft, 
-  Sparkles, 
-  BarChart4, 
-  Database, 
+import {
+  Globe,
+  ChevronRight,
+  Clipboard,
+  MapPin,
+  Cloud,
+  ArrowLeft,
+  Sparkles,
+  BarChart4,
+  Database,
   Leaf,
   LineChart,
   FileSpreadsheet,
@@ -93,9 +93,9 @@ export default function Form() {
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { 
+    visible: {
       opacity: 1,
-      transition: { 
+      transition: {
         staggerChildren: 0.1,
         delayChildren: 0.2
       }
@@ -104,36 +104,32 @@ export default function Form() {
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
+    visible: {
+      y: 0,
       opacity: 1,
       transition: { duration: 0.5 }
     }
   };
 
   return (
-    <div className="min-h-screen">
-      
-
+    <div className="bg-gray-50 dark:bg-gray-950 min-h-screen">
       {/* Header */}
-      <div className={`sticky top-0 z-10 transition-all duration-300 ${
-        scrolled ? ' shadow-md py-3' : ' py-5'
-      }`}>
+      <div className={`sticky top-0 z-10 transition-all duration-300 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md ${scrolled ? 'shadow-md py-3' : 'py-5'
+        }`}>
         <div className="flex justify-between items-center mx-auto px-4 md:px-8 container">
           <div className="flex items-center space-x-2">
-  
             <div>
               <h1 className="flex items-center font-bold text-primary text-2xl md:text-3xl">
                 <Sparkles className="mr-2 w-6 h-6" />
                 {activeContent.title}
               </h1>
-              <p className="text-primary text-sm md:text-base">{activeContent.subtitle}</p>
+              <p className="text-primary/80 dark:text-primary/70 text-sm md:text-base">{activeContent.subtitle}</p>
             </div>
           </div>
-          
-          <button 
+
+          <button
             onClick={toggleLanguage}
-            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm px-3 py-2 rounded-lg text-primary transition-colors"
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 dark:bg-white/5 dark:hover:bg-white/10 backdrop-blur-sm px-3 py-2 rounded-lg text-primary transition-colors"
           >
             <Globe size={18} />
             <span className="hidden sm:inline">{activeContent.switchToOther}</span>
@@ -143,45 +139,45 @@ export default function Form() {
 
       <main className="mx-auto px-4 md:px-8 py-8 container">
         {/* Hero Section */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white shadow-xl mb-16 rounded-2xl overflow-hidden"
+          className="bg-white dark:bg-gray-900 shadow-xl mb-16 border dark:border-gray-800 rounded-2xl overflow-hidden"
         >
           <div className="lg:grid lg:grid-cols-5">
             {/* Info Section */}
             <div className="lg:col-span-2 p-8 lg:pr-0">
               <div className="lg:pr-6">
-                <motion.h2 
+                <motion.h2
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2, duration: 0.5 }}
-                  className="inline-flex items-center mb-6 font-bold text-green-800 text-3xl"
+                  className="inline-flex items-center mb-6 font-bold text-green-800 dark:text-green-400 text-3xl"
                 >
-                  <Database className="mr-3 w-7 h-7 text-green-600" />
+                  <Database className="mr-3 w-7 h-7 text-green-600 dark:text-green-500" />
                   {activeContent.aboutTitle}
                 </motion.h2>
-                
-                <motion.p 
+
+                <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3, duration: 0.5 }}
-                  className="mb-4 text-gray-700 leading-relaxed"
+                  className="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed"
                 >
                   {activeContent.aboutText}
                 </motion.p>
-                
-                <motion.p 
+
+                <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.5 }}
-                  className="flex items-start mb-8 text-gray-600"
+                  className="flex items-start mb-8 text-gray-600 dark:text-gray-400"
                 >
-                  <Leaf className="flex-shrink-0 mt-0.5 mr-2 w-5 h-5 text-green-500" />
+                  <Leaf className="flex-shrink-0 mt-0.5 mr-2 w-5 h-5 text-green-500 dark:text-green-400" />
                   {activeContent.dataNote}
                 </motion.p>
-                
+
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -195,28 +191,28 @@ export default function Form() {
                       <ChevronRight size={16} className="ml-1" />
                     </button>
                   </Link>
-                  
-                  <p className="flex justify-center sm:justify-start items-center mt-4 text-gray-500 text-sm">
-                    <Share2 size={14} className="mr-2 text-green-500" />
+
+                  <p className="flex justify-center sm:justify-start items-center mt-4 text-gray-500 dark:text-gray-400 text-sm">
+                    <Share2 size={14} className="mr-2 text-green-500 dark:text-green-400" />
                     {activeContent.alreadyContributed}
                   </p>
                 </motion.div>
               </div>
             </div>
-            
+
             {/* Form Container */}
-            <div className="lg:col-span-3 bg-gradient-to-br from-green-50 to-blue-50">
+            <div className="lg:col-span-3 bg-gradient-to-br from-green-50 dark:from-green-900/20 to-blue-50 dark:to-blue-900/20">
               <div className="p-8">
-                <h3 className="flex items-center mb-6 font-bold text-green-800 text-2xl">
-                  <Clipboard className="mr-2 w-6 h-6 text-green-600" />
+                <h3 className="flex items-center mb-6 font-bold text-green-800 dark:text-green-400 text-2xl">
+                  <Clipboard className="mr-2 w-6 h-6 text-green-600 dark:text-green-500" />
                   {activeContent.formTitle}
                 </h3>
-                
-                <div className="bg-white shadow-md p-6 rounded-xl">
+
+                <div className="bg-white dark:bg-gray-800 shadow-md p-6 border dark:border-gray-700 rounded-xl">
                   <DataForm language={language} />
                 </div>
-                
-                <p className="mt-6 text-gray-600 text-center italic">
+
+                <p className="mt-6 text-gray-600 dark:text-gray-400 text-center italic">
                   {activeContent.together}
                 </p>
               </div>
@@ -225,7 +221,7 @@ export default function Form() {
         </motion.div>
 
         {/* Features Section */}
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -233,60 +229,57 @@ export default function Form() {
           className="mb-16"
         >
           <h2 className="mb-8 font-bold text-2xl text-center">
-            <span className="bg-clip-text bg-gradient-to-r from-green-600 to-blue-600 text-transparent">
+            <span className="bg-clip-text bg-gradient-to-r from-green-600 dark:from-green-400 to-blue-600 dark:to-blue-400 text-transparent">
               Why Contribute?
             </span>
           </h2>
-          
+
           <div className="gap-6 grid grid-cols-1 md:grid-cols-3">
             {activeContent.benefits.map((benefit, index) => {
               const Icon = benefit.icon;
               return (
-                <motion.div 
+                <motion.div
                   key={index}
                   variants={itemVariants}
-                  className="bg-white hover:bg-gradient-to-br hover:from-green-50 hover:to-blue-50 shadow-md hover:shadow-lg p-6 border border-gray-100 rounded-xl transition-all duration-300"
+                  className="bg-white dark:bg-gray-900 hover:bg-gradient-to-br hover:from-green-50 dark:hover:from-green-900/20 hover:to-blue-50 dark:hover:to-blue-900/20 shadow-md hover:shadow-lg p-6 border border-gray-100 dark:border-gray-800 rounded-xl transition-all duration-300"
                   whileHover={{ y: -5 }}
                 >
-                  <div className="inline-block bg-gradient-to-br from-green-100 to-green-200 mb-4 p-3 rounded-xl text-green-700">
+                  <div className="inline-block bg-gradient-to-br from-green-100 dark:from-green-900/30 to-green-200 dark:to-green-800/30 mb-4 p-3 rounded-xl text-green-700 dark:text-green-400">
                     <Icon size={24} />
                   </div>
-                  <h3 className="mb-2 font-semibold text-gray-800 text-xl">{benefit.title}</h3>
-                  <p className="text-gray-600">{benefit.description}</p>
+                  <h3 className="mb-2 font-semibold text-gray-800 dark:text-gray-100 text-xl">{benefit.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400">{benefit.description}</p>
                 </motion.div>
               );
             })}
           </div>
         </motion.div>
 
-        {/* Features Section */}
-        
-        
-                {/* CTA Section */}
-        <motion.div 
+        {/* CTA Section */}
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
           className="mb-10"
         >
-          <div className="bg-gradient-to-r from-green-600 to-blue-600 shadow-xl rounded-2xl overflow-hidden">
+          <div className="bg-gradient-to-r from-green-600 dark:from-green-700 to-blue-600 dark:to-blue-700 shadow-xl rounded-2xl overflow-hidden">
             <div className="px-8 py-12 md:py-16 text-white text-center">
               <h2 className="mb-6 font-bold text-3xl md:text-4xl">{activeContent.submitData}</h2>
-              <p className="mx-auto mb-8 max-w-2xl text-white/80">
+              <p className="mx-auto mb-8 max-w-2xl text-white/80 dark:text-white/70">
                 {activeContent.dataNote}
               </p>
-              
+
               <div className="flex sm:flex-row flex-col justify-center gap-4">
                 <Link href="#top" scroll={false}>
-                  <button className="flex justify-center items-center bg-white hover:bg-green-50 shadow-md px-8 py-4 rounded-lg text-green-700 transition-colors">
+                  <button className="flex justify-center items-center bg-white hover:bg-green-50 dark:bg-gray-800 dark:hover:bg-gray-700 shadow-md px-8 py-4 rounded-lg text-green-700 dark:text-green-400 transition-colors">
                     <Clipboard size={18} className="mr-2" />
                     {activeContent.submitData}
                   </button>
                 </Link>
-                
+
                 <Link href="/environment/result">
-                  <button className="flex justify-center items-center bg-white/10 hover:bg-white/20 shadow-md backdrop-blur-sm px-8 py-4 rounded-lg text-white transition-colors">
+                  <button className="flex justify-center items-center bg-white/10 hover:bg-white/20 dark:bg-white/10 dark:hover:bg-white/20 shadow-md backdrop-blur-sm px-8 py-4 rounded-lg text-white transition-colors">
                     <BarChart4 size={18} className="mr-2" />
                     {activeContent.dashboardLink}
                   </button>
@@ -295,21 +288,15 @@ export default function Form() {
             </div>
           </div>
         </motion.div>
-        
-        {/* Trust Indicators */}
-       
       </main>
 
-      {/* Footer */}
-      
-      
       {/* Back to top button */}
       <motion.button
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: scrolled ? 1 : 0, y: scrolled ? 0 : 10 }}
         transition={{ duration: 0.3 }}
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="right-6 bottom-6 z-10 fixed bg-green-600 hover:bg-green-700 shadow-lg p-3 rounded-full text-white"
+        className="right-6 bottom-6 z-10 fixed bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 shadow-lg p-3 rounded-full text-white"
         aria-label="Back to top"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

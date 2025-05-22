@@ -94,5 +94,5 @@ export default function ExamPageClient({
     );
   }
 
-  return <ExamView examId={examId} userExamId={userExamId} />;
+  return(<div className='items-center p-4 min-h-screen'> <ExamView examId={examId} userExamId={userExamId} /></div>);
 }
