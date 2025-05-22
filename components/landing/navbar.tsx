@@ -92,6 +92,13 @@ export function Navbar({ serverAuth }: NavbarProps) {
         </Link>
       </NavigationMenuItem>
       <NavigationMenuItem>
+        <Link href="/playground" legacyBehavior passHref>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            playground
+          </NavigationMenuLink>
+        </Link>
+      </NavigationMenuItem>
+      <NavigationMenuItem>
         <Link href="/gymnasium" legacyBehavior passHref>
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
             Gymnasium

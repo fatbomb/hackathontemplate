@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import PocketBase from "pocketbase";
 
@@ -17,12 +17,13 @@ interface SubjectsDetails {
 }
 
 export default async function Playground() {
-    const headersList = await headers();
-
+    const cookiesList = await cookies();
     const subjectDetails: SubjectsDetails[] = [];
 
     const pocketbase = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
-    pocketbase.authStore.loadFromCookie(headersList.get("pb_auth") || "");
+    pocketbase.authStore.loadFromCookie(cookiesList.toString());
+
+    console.log("Pocketbase Auth Store", pocketbase.authStore);
 
     const subjects = await pocketbase.collection('subjects').getFullList();
 
