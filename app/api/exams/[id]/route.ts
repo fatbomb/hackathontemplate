@@ -42,9 +42,9 @@ export async function GET(
         const clientQuestions = await ExamService.getClientQuestions(examId);
         
         // Mark as started if not already
-        if (userExam.status === 'pending') {
+        if (userExam.status !== 'completed') {
             await pb.collection('user_exams').update(userExamId, {
-                status: 'started',
+                status: 'in_progress',
                 started_at: new Date().toISOString()
             });
         }

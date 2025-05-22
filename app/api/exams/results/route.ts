@@ -7,6 +7,7 @@ export async function GET(request: Request) {
   
   try {
     const { exam, userExams, error } = await fetchResultsData(examId || undefined);
+    console.log("Exam ID:", examId);
     
     if (error) {
       return NextResponse.json(

@@ -67,13 +67,15 @@ export const AIService = {
     topic_name: string;
     language?: string;
     exam_name?: string;
+    subject?: string;
+    Class:string;
   }) {
     try {
-      const { refined_text, difficulty, num_questions, topic_name, language, exam_name } = params;
+      const { refined_text, difficulty, num_questions, topic_name, language, exam_name,subject,Class } = params;
       console.log(refined_text, difficulty, num_questions, topic_name, language, exam_name);
 
       const numQuestionsNumber = Number(num_questions);
-      const prompt = `Generate exactly ${numQuestionsNumber + 3} mcq questions for the topic ${topic_name} from the following text with difficulty in language ${language} '${difficulty}': ${refined_text}. 
+      const prompt = `Generate exactly ${numQuestionsNumber + 3} mcq questions for the subject ${subject} topic ${topic_name}  in language ${language} with difficulty '${difficulty}' for class ${Class} . 
       Respond strictly in valid JSON format without any additional text. 
       The response must be a JSON object inside a list ([]) with keys: 'question', 'options' (list of 4 choices), 'answer' (correct answer as text), and 'explanation'.
       Do not include any introduction, explanation, or any other text—only return the JSON output.`;
