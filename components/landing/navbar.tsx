@@ -63,10 +63,10 @@ export function Navbar({ serverAuth }: NavbarProps) {
 
     setIsLoading(true);
     try {
-      const response = await fetch('/api/auth/logout', { 
+      const response = await fetch('/api/auth/logout', {
         method: 'POST',
       });
-      
+
       if (response.ok) {
         setAuthState({ isAuthed: false, user: null });
         router.refresh();
@@ -99,9 +99,16 @@ export function Navbar({ serverAuth }: NavbarProps) {
         </Link>
       </NavigationMenuItem>
       <NavigationMenuItem>
-        <Link href="/sci-baba-bot" legacyBehavior passHref>
+        <Link href="/chatbot" legacyBehavior passHref>
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
             Sci-Baba Bot
+          </NavigationMenuLink>
+        </Link>
+      </NavigationMenuItem>
+      <NavigationMenuItem>
+        <Link href="/environment/result" legacyBehavior passHref>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            Environment
           </NavigationMenuLink>
         </Link>
       </NavigationMenuItem>
@@ -111,22 +118,22 @@ export function Navbar({ serverAuth }: NavbarProps) {
   const AuthButtons = () => (
     <>
       {authState.isAuthed ? (
-        <>
-          <Button 
-            asChild 
-            variant="ghost" 
+        <div className="hidden md:flex items-center space-x-2">
+          <Button
+            asChild
+            variant="ghost"
             size="sm"
             className="flex items-center"
             disabled={isLoading}
           >
-            <Link href="/profile">
+            <Link href="/">
               <User className="mr-2 w-4 h-4" />
               <span className="hidden sm:inline">{authState.user?.name || 'Profile'}</span>
             </Link>
           </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleLogout}
             className="flex items-center"
             disabled={isLoading}
@@ -134,12 +141,12 @@ export function Navbar({ serverAuth }: NavbarProps) {
             <LogOut className="mr-2 w-4 h-4" />
             <span className="hidden sm:inline">Logout</span>
           </Button>
-        </>
+        </div>
       ) : (
         <div className="flex items-center space-x-2">
-          <Button 
-            asChild 
-            variant="ghost" 
+          <Button
+            asChild
+            variant="ghost"
             size="sm"
             disabled={isLoading}
           >
@@ -148,8 +155,8 @@ export function Navbar({ serverAuth }: NavbarProps) {
               <span className="hidden sm:inline">Login</span>
             </Link>
           </Button>
-          <Button 
-            asChild 
+          <Button
+            asChild
             size="sm"
             disabled={isLoading}
           >
@@ -173,20 +180,16 @@ export function Navbar({ serverAuth }: NavbarProps) {
       <SheetContent side="left" className="w-72">
         <div className="flex flex-col h-full">
           <div className="flex justify-between items-center mb-6">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="font-bold text-lg"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               SynthLearn
             </Link>
-            <SheetClose asChild>
-              <Button variant="ghost" size="icon">
-                <X className="w-5 h-5" />
-              </Button>
-            </SheetClose>
+
           </div>
-          
+
           <div className="space-y-4">
             <div className="space-y-1">
               <SheetClose asChild>
@@ -197,56 +200,60 @@ export function Navbar({ serverAuth }: NavbarProps) {
                 </Link>
               </SheetClose>
               <SheetClose asChild>
-                <Link href="/dashboard">
+                <Link href="/tutorials">
                   <Button variant="ghost" size="sm" className="justify-start w-full">
-                    Dashboard
+                    Tutorials
                   </Button>
                 </Link>
               </SheetClose>
               <SheetClose asChild>
-                <Link href="/features/analytics">
+                <Link href="playground">
                   <Button variant="ghost" size="sm" className="justify-start w-full">
-                    Analytics
+                    Playground
                   </Button>
                 </Link>
               </SheetClose>
               <SheetClose asChild>
-                <Link href="/features/integrations">
+                <Link href="gymnasium">
                   <Button variant="ghost" size="sm" className="justify-start w-full">
-                    Integrations
+                    Gymnasium
                   </Button>
                 </Link>
               </SheetClose>
               <SheetClose asChild>
-                <Link href="/pricing">
+                <Link href="/chatbot">
                   <Button variant="ghost" size="sm" className="justify-start w-full">
-                    Pricing
+                    Sci-Baba bot
                   </Button>
                 </Link>
               </SheetClose>
               <SheetClose asChild>
-                <Link href="/about">
+                <Link href="/emvorpment/result">
                   <Button variant="ghost" size="sm" className="justify-start w-full">
-                    About
+                    Environment
                   </Button>
                 </Link>
               </SheetClose>
             </div>
-            
+
             <div className="pt-4 border-t border-border">
               {authState.isAuthed ? (
                 <>
-                  <SheetClose asChild>
-                    <Link href="/profile">
-                      <Button variant="ghost" size="sm" className="justify-start w-full">
-                        <User className="mr-2 w-4 h-4" />
-                        Profile
-                      </Button>
+                  <Button
+                    asChild
+                    variant="ghost"
+                    size="sm"
+                    className="flex"
+                    disabled={isLoading}
+                  >
+                    <Link href="/">
+                      <User className="mr-2 w-4 h-4" />
+                      <span className="hidden sm:inline">{authState.user?.name || 'Profile'}</span>
                     </Link>
-                  </SheetClose>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     className="justify-start w-full"
                     onClick={() => {
                       handleLogout();
@@ -279,7 +286,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
               )}
             </div>
           </div>
-          
+
           <div className="flex justify-center mt-auto mb-4">
             <ModeToggle />
           </div>
@@ -295,7 +302,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
           <Link href="/" className="hidden md:block mr-6 font-bold text-lg">
             SynthLearn
           </Link>
-          
+
           <div className="hidden md:block">
             <NavigationMenu>
               <NavigationMenuList>
@@ -303,14 +310,14 @@ export function Navbar({ serverAuth }: NavbarProps) {
               </NavigationMenuList>
             </NavigationMenu>
           </div>
-          
+
           {/* Mobile menu button */}
           <MobileNavigation />
-          
+
           {/* Mobile logo (centered) */}
           <div className="md:hidden flex flex-1 justify-center">
             <Link href="/" className="font-bold text-lg">
-              HackathonApp
+              SynthLearn
             </Link>
           </div>
         </div>
