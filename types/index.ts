@@ -76,3 +76,31 @@ export interface MCQGenerationParams {
   subject: string;
   Class: string;
 }
+
+
+//abrar
+
+export interface EnvironmentalData {
+  id: string;
+  dataType: 'pollution' | 'biodiversity' | 'weather';
+  value: string;
+  notes?: string;
+  latitude: number;
+  longitude: number;
+  created: string;
+}
+
+export interface LocationData {
+  lat: number;
+  lng: number;
+}
+
+export interface CloudFunctionData {
+  dataType: string;
+  value: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  recordId: string;
+}
