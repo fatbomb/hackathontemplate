@@ -5,7 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-<<<<<<< HEAD
 export function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -36,7 +35,6 @@ export function base64ToBlob(base64: string, type = "audio/mpeg"): Blob {
 
   return new Blob(byteArrays, { type });
 }
-=======
 interface GeocodeResult {
   formatted_address: string;
   // Add other properties as needed
@@ -63,4 +61,3 @@ export function getLocationName(lat: number, lng: number, callback: (name: strin
     }
   });
 }
->>>>>>> 8f19f038be3dc90ef6043083212f7da64a200097
