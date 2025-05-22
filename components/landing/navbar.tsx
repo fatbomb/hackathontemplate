@@ -130,7 +130,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
         </Link>
       </NavigationMenuItem>
       <NavigationMenuItem>
-        <Link href="/about" legacyBehavior passHref>
+        <Link href="/chatbot" legacyBehavior passHref>
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
             Sci-Baba Bot
           </NavigationMenuLink>
