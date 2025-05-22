@@ -54,10 +54,8 @@ export default function LoginPage() {
       });
 
       const data = await res.json();
-      console.log(data, "clientdata");
-      // document.cookie = `pb_auth=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=lax`;
       localStorage.setItem("pb_auth", data.token);
-    
+      localStorage.setItem("pb_user", JSON.stringify(data.user));
 
       if (!res.ok) throw new Error(data.error || "Login failed");
 
@@ -65,8 +63,8 @@ export default function LoginPage() {
         title: "Success!",
         description: "You have been logged in.",
       });
-      window.location.href = "/dashboard";
-      router.push("/dashboard");
+      window.location.href = "/tutorials";
+      router.push("/tutorials");
     } catch (error: any) {
       toast({
         variant: "destructive",

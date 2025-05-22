@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useRouter } from "next/navigation";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -20,7 +19,7 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import Link from "next/link";
 import { ArrowRightSquare } from "lucide-react";
 import { Button } from "../ui/button";
-
+import { savePoints } from "./savePoints";
 
 function ProjectileAssets(velX: number, velY: number) {
     const radius = 5;
@@ -72,13 +71,14 @@ export default function Projectile() {
     const [clicked, setClicked] = useState(false);
     const [collisionDetected, setCollisionDetected] = useState(false);
 
-    const callback = (bodyA: Body, bodyB: Body) => {
+    const callback = async (bodyA: Body, bodyB: Body) => {
         if(bodyA.label === "Projectile" && bodyB.label === "Destination") {
             if(clicked || collisionDetected) return;
             setCollisionDetected(true);
             const trigger = document.getElementById("trigger");
             if (trigger) {
                 setClicked(true);
+                await savePoints(50, 0, "Projectile");
                 trigger.click();
             }
         }
@@ -156,13 +156,12 @@ export default function Projectile() {
                     </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <Link href={"/playground/physics/projectile/hit-me-if-you-can"}>
+                        <Link href={"/playground/physics/projectile/hit-me-if-you-can"} className="cursor-pointer">
                             <Button>Next <ArrowRightSquare /> </Button>
                         </Link>
                     </AlertDialogFooter>
                 </AlertDialogContent>
                 </AlertDialog>
-
         </div>
     );
 }

@@ -1,6 +1,7 @@
 import PointsStat from "@/components/interactive/pointsStat";
 import Projectile from "@/components/interactive/projectile";
-import PocketBase from "pocketbase";
+import { getPocketBase } from "@/lib/pocketbase";
+import {  headers } from "next/headers";
 
 interface Points {
     points: number;
@@ -8,16 +9,19 @@ interface Points {
 }
 
 export default async function ThrowAwayPage() {
-    const pocketbase = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
-
+    const headerList = await headers();
+    const cookie = headerList.get("cookie");
+    
     const points: Points = {
         points:  0,
         level: 0,
     };
 
     try{
+        const pocketbase = await getPocketBase(cookie || "");
+        console.log("PocketBase instance:", pocketbase.authStore.record);
         const game_points = await pocketbase.collection('game_points').getFullList({
-            filter: `user = "${pocketbase.authStore.model?.id || "xo15eumgn2tov4v"}" && type = "playground"`,
+            filter: `user = "${pocketbase.authStore.record?.id}" && type = "playground" && topic = "Projectile"`,
         });
 
         if (game_points?.length > 0) {

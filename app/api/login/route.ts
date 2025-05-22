@@ -4,8 +4,6 @@ import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
     const { email, password } = await req.json();
-
-    console.log('Login attempt:', { email, password });
     
     if (!email || !password) {
         return NextResponse.json(
@@ -19,14 +17,13 @@ export async function POST(req: Request) {
     try {
         const authData = await pb.collection("users").authWithPassword(email, password);
         
-        // Set cookie
         const cookieStore = await cookies();
         cookieStore.set("pb_auth", pb.authStore.exportToCookie(), {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60,
-            path: "/*",
+            path: "/",
         });
 
         return NextResponse.json({
