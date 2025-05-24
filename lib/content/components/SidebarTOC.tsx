@@ -21,7 +21,7 @@ interface SidebarTOCProps {
 export function SidebarTOC({ meta, sections, activeSlug }: SidebarTOCProps) {
   return (
     <aside className="w-1/4">
-      <Card className="h-full">
+      <Card className="h-full border border-muted-foreground">
         <CardHeader>
           <CardTitle className="text-lg">{meta.title}</CardTitle>
         </CardHeader>

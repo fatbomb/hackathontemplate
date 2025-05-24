@@ -1,26 +1,18 @@
-import { getGoogleServiceAccount } from '@/utils/googleServiceAPI';
-import textToSpeech from '@google-cloud/text-to-speech';
+import { GoogleTTS } from '@/utils/googleTTS';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request){
     try{
-        const { text, language } = await request.json();
+        const { text } = await request.json();
 
-        const client = new textToSpeech.TextToSpeechClient({
-            credentials: getGoogleServiceAccount(),
-            projectId: process.env.GOOGLE_SERVICE_ACCOUNT_PROJECT_ID
-        });
+        // const client = new textToSpeech.TextToSpeechClient({
+        //     credentials: getGoogleServiceAccount(),
+        //     projectId: process.env.GOOGLE_SERVICE_ACCOUNT_PROJECT_ID
+        // });
 
-        const [ response ] = await client.synthesizeSpeech({
-            input: { text },
-            voice: { 
-                languageCode: language,
-                ssmlGender: 'FEMALE'
-            },
-            audioConfig: { audioEncoding: 'MP3' },
-        });
+        const response = await GoogleTTS(text)
 
-        const audioContent = response.audioContent;
+        const audioContent = response.buffer;
 
         if(!audioContent){
             return NextResponse.json({error: 'No audio content'}, { status: 400 });

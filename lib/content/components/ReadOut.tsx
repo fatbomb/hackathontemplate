@@ -34,7 +34,6 @@ export default function ReadOut({
     setLoading(true);
 
     async function loadAudio() {
-      // Use cached audio if available
       if (audioCache.current[language]) {
         const cachedURL = audioCache.current[language];
         if (!isCancelled) {
@@ -132,7 +131,7 @@ export default function ReadOut({
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center border border-muted-foreground">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="flex gap-2">

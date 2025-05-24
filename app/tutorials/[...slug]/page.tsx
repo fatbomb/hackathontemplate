@@ -18,7 +18,7 @@ export default async function SubjectPage({ params }: SubjectPageProps) {
   const doc = await getDoc(slug);
   if (!doc) return notFound();
 
-  const mdxText = markdownToText(doc.content);
+  const mdxText = doc.content;
 
   const mdxContent = await renderMDX(doc.content);
   const tutorialSlug = slug.slice(0, -1);
