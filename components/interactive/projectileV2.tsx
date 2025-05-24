@@ -78,7 +78,12 @@ export default function Projectile() {
             const trigger = document.getElementById("trigger");
             if (trigger) {
                 setClicked(true);
-                await savePoints(50, 1, "Projectile");
+                const points = localStorage.getItem("projectile_points") || "0";
+                if(points === "50"){
+                    const newPoints = parseInt(points) + 50;    
+                    localStorage.setItem("projectile_points", `${newPoints}`);
+                    localStorage.setItem("projectile_level", "1");
+                }
                 trigger.click();
             }
         }
@@ -101,10 +106,30 @@ export default function Projectile() {
                     <CardTitle className="text-lg">Projectile Motion - Throw Away</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p className="text-gray-700">
-                        The <span className="font-semibold text-red-500">red ball</span> is at x = 30 and the <span className="font-semibold text-green-600">green ball</span> is at x = 450, but will free fall from y = 6 to y = 194. 
-                        Adjust the velocity to make the red ball hit the green ball. The ball must hit the green ball before it hits the ground.
-                    </p>
+                    <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-6 shadow flex flex-col gap-4">
+                        <h2 className="text-xl font-semibold text-blue-800 flex items-center gap-2">
+                            <span role="img" aria-label="target">🎯</span>
+                            Challenge Instructions
+                        </h2>
+                        <p className="text-gray-700 leading-relaxed">
+                            The <span className="font-semibold text-red-500">red ball</span> is at <span className="font-mono">x = 30</span> and the <span className="font-semibold text-green-600">green ball</span> is at <span className="font-mono">x = 450</span>, but will free fall from <span className="font-mono">y = 6</span> to <span className="font-mono">y = 194</span>.
+                            Adjust the velocity to make the red ball hit the green ball. The ball must hit the green ball before it hits the ground.
+                        </p>
+                        <ul className="list-disc list-inside text-gray-600 pl-2">
+                            <li>
+                                <span className="font-medium text-blue-700">Projectile (Red Ball):</span> Starts at <span className="font-mono">x = 30, y = 294</span>
+                            </li>
+                            <li>
+                                <span className="font-medium text-green-700">Destination (Green Ball):</span> Starts at <span className="font-mono">x = 450, y = 6</span>
+                            </li>
+                            <li>
+                                <span className="font-medium text-blue-700">Goal:</span> <span className="font-mono">Hit the green ball before touching the ground</span>
+                            </li>
+                        </ul>
+                        <p className="text-gray-700">
+                            Use the input fields to experiment with different velocities and <span className="font-semibold text-blue-700">find the perfect shot!</span>
+                        </p>
+                    </div>
                 </CardContent>
             </Card>
             <div className="flex md:flex-row flex-col items-start gap-6">
@@ -147,7 +172,7 @@ export default function Projectile() {
             </div>
             <AlertDialog>
                 <AlertDialogTrigger id="trigger" className="hidden">Open</AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className="flex flex-col gap-4">
                     <AlertDialogHeader>
                     <AlertDialogTitle>Congratulations!!</AlertDialogTitle>
                     <AlertDialogDescription>

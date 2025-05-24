@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "../ui/card";
 
 export default function PointsStat({ points, title }: { points: {
@@ -5,7 +8,28 @@ export default function PointsStat({ points, title }: { points: {
     level: number;
 }, title: string }) {
 
-    return <Card className="w-full border-b border-muted-foreground">
+    const [pointsState, setPointsState] = useState(points);
+
+    useEffect(() => {
+        function fetchPoints() {
+          const pts = localStorage.getItem('projectile_points') || "0";
+          const lvl = localStorage.getItem('projectile_level') || "0";
+          setPointsState({
+            points: parseInt(pts),
+            level: parseInt(lvl)
+          })
+        }
+
+        const interval = setInterval(fetchPoints, 1000);
+
+        fetchPoints();
+
+        return () => {
+          clearInterval(interval);
+        }
+    }, []);
+
+    return <Card className="border border-muted-foreground shadow-lg w-full">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
@@ -14,11 +38,11 @@ export default function PointsStat({ points, title }: { points: {
             </div>
             <div className="flex gap-6">
               <div className="text-center">
-                <div className="text-4xl font-bold">{points.points}</div>
+                <div className="text-4xl font-bold">{pointsState.points}</div>
                 <div className="text-xs uppercase tracking-wide mt-1">Total Points</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold">{points.level}</div>
+                <div className="text-4xl font-bold">{pointsState.level}</div>
                 <div className="text-xs uppercase tracking-wide mt-1">Current Level</div>
               </div>
             </div>
