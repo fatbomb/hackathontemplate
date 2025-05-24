@@ -217,7 +217,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
                 </Link>
               </SheetClose>
               <SheetClose asChild>
-                <Link href="gymnasium">
+                <Link href="/gymnasium">
                   <Button variant="ghost" size="sm" className="justify-start w-full">
                     Gymnasium
                   </Button>
