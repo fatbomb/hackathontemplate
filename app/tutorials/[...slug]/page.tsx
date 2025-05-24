@@ -3,7 +3,6 @@ import { renderMDX } from '@/lib/mdx-remote';
 import { getDoc } from '@/lib/content/get-doc';
 import { getTutorialTOC } from '@/lib/content/get-tutorial-toc';
 import { SidebarTOC } from '@/lib/content/components/SidebarTOC';
-import { markdownToText } from '@/lib/content/markdownToText';
 import ReadableContentCard from '@/lib/content/components/ReadableContentCard';
 import { translateReactNodeToBanglaServer, translateTextToBanglaServer } from '@/lib/content/translate';
 

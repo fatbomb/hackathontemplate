@@ -8,7 +8,7 @@ import {
 import mime from 'mime';
 import { writeFile } from 'fs';
 
-function saveBinaryFile(fileName: string, content: Buffer) {
+export function saveBinaryFile(fileName: string, content: Buffer) {
     writeFile(fileName, content, 'utf8', (err) => {
         if (err) {
             console.error(`Error writing file ${fileName}:`, err);
