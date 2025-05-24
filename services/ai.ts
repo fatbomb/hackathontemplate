@@ -2,7 +2,7 @@
 // npm install @google/genai mime
 // npm install -D @types/node
 
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, Type } from '@google/genai';
 
 export async function generateWithGemini(prompt: string): Promise<string> {
   const ai = new GoogleGenAI({
@@ -12,7 +12,22 @@ export async function generateWithGemini(prompt: string): Promise<string> {
 
   const model = 'learnlm-2.0-flash-experimental';
   const config = {
-    responseMimeType: 'text/plain',
+    responseMimeType: 'application/json',
+    responseSchema: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          question: { type: Type.STRING },
+          options: {
+            type: Type.ARRAY,
+            items: { type: Type.STRING },
+          },
+          answer: { type: Type.STRING },
+          explanation: { type: Type.STRING },
+        }
+      }
+    }
   };
 
   const contents = [

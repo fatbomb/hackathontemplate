@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
             Class
         });
 
-        const allGeneratedQuestions = AIService.processResponse(aiRawResponse, num_questions);
+        const allGeneratedQuestions = await AIService.processResponse(aiRawResponse, num_questions);
 
         if (allGeneratedQuestions.length === 0) {
             return NextResponse.json(

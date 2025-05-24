@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as Translate } from '@google-cloud/translate';
+import { getGoogleServiceAPIKey } from '@/utils/googleServiceAPI';
 
 const translate = new Translate.Translate({
-  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+  key: getGoogleServiceAPIKey(),
 });
 
 export async function POST(req: NextRequest) {

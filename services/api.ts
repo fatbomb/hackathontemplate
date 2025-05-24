@@ -9,6 +9,7 @@ import {
   MCQQuestion
 } from '@/types';
 import { generateWithGemini } from './ai';
+import { renderMDX } from '@/lib/mdx-remote';
 
 // // Use your own AI service URL or provider
 // // const AI_SERVICE_URL = 'https://your-ai-service-url.com/generate-mcq';
@@ -75,10 +76,10 @@ export const AIService = {
       console.log(refined_text, difficulty, num_questions, topic_name, language, exam_name);
 
       const numQuestionsNumber = Number(num_questions);
-      const prompt = `Generate exactly ${numQuestionsNumber + 3} mcq questions for the subject ${subject} topic ${topic_name}  in language ${language} with difficulty '${difficulty}' for class ${Class} . 
-      Respond strictly in valid JSON format without any additional text. 
-      The response must be a JSON object inside a list ([]) with keys: 'question', 'options' (list of 4 choices), 'answer' (correct answer as text), and 'explanation'.
-      Do not include any introduction, explanation, or any other text—only return the JSON output.`;
+      const prompt = `Generate exactly ${numQuestionsNumber + 3} muliple choice questions (4 options each) for the subject='${subject}' topic='${topic_name}'  in language='${language}' with difficulty='${difficulty}' for class=${Class} .
+      Questions, options, explanations string must be in perfect markdown format with equations in LaTeX format wrapped in proper $ signs.
+      Do not include any additional text or explanations outside the JSON format.
+      `;
 
       const response = await generateWithGemini(prompt);
       return response;
@@ -89,7 +90,7 @@ export const AIService = {
   },
 
   // Simulate the JSON processing similar to _process_response in your Python code
-  processResponse(response: string, num_questions: number): MCQQuestion[] {
+  async processResponse(response: string, num_questions: number): Promise<MCQQuestion[]> {
     try {
       const jsonStart = response.indexOf('[');
       const jsonEnd = response.lastIndexOf(']') + 1;
@@ -100,10 +101,6 @@ export const AIService = {
       }
 
       let jsonText = response.substring(jsonStart, jsonEnd);
-      // let jsonText = response.substring(jsonStart, jsonEnd);
-
-      // 🧼 Clean invalid tokens (like stray words inside arrays)
-      // jsonText = sanitizeMCQJson(jsonText);
       console.log('Cleaned JSON:', jsonText);
 
       const batchQuestions = JSON.parse(jsonText);
@@ -115,18 +112,27 @@ export const AIService = {
           break;
         }
 
-        const questionText = question.question || '';
-        const options = question.options || [];
-        const answerText = question.answer || '';
-        const explanation = question.explanation || '';
+        const { question: questionText = '', options = [], answer = '', explanation = '' } = question;
+        const renderables = [questionText, ...options, answer, explanation];
+        const rendered = await Promise.all(renderables.map(text => renderMDX(text)));
+        const [questionRendered, ...rest] = rendered;
+        const optionsRendered = rest.slice(0, options.length).map(r => r.content);
+        const answerRendered = rest[options.length]?.content || '';
+        const explanationRendered = rest[options.length + 1]?.content || '';
 
         if (questionText && options.length === 4) {
           try {
-            const answerIndex = options.indexOf(answerText);
-            if (answerIndex !== -1) {
-              question.answer = answerIndex;
-              allGeneratedQuestions.push(question);
-            }
+            const answerIndex = options.indexOf(answer);
+            question.question = questionRendered.content;
+            question.options = optionsRendered;
+            question.answer = answerIndex >= 0 ? answerIndex : -1;
+            question.explanation = explanationRendered;
+            allGeneratedQuestions.push({
+              question: question.question,
+              options: question.options,
+              answer: question.answer,
+              explanation: question.explanation
+            });
           } catch (e) {
             console.log(`Skipping invalid question: ${questionText}`);
           }

@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const userId = pb.authStore.model?.id;
+    const userId = pb.authStore.record?.id;
     if (!userId) {
       return NextResponse.json(
         { error: 'User not authenticated' },
