@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "@/lib/motion"
 import { ArrowRight, Play, Sparkles } from "lucide-react"
-import ScienceAnimation from "./scienceAnimation"
+// import ScienceAnimation from "./scienceAnimation"
 import { cn } from "@/lib/utils"
 // import { useTheme } from "next-themes"
 
@@ -26,7 +26,7 @@ const HeroSection = () => {
   }, [])
 
   return (
-    <section className="relative flex flex-col items-center bg-gradient-to-b from-primary/5 via-background/95 to-background pt-6 sm:pt-10 md:pt-20 pb-12 md:pb-16 w-full min-h-[90vh] md:min-h-[85vh] overflow-hidden px-20">
+    <section className="relative flex flex-col items-center bg-gradient-to-b from-primary/5 via-background/95 to-background px-20 pt-6 sm:pt-10 md:pt-20 pb-12 md:pb-16 w-full min-h-[90vh] md:min-h-[85vh] overflow-hidden">
       {/* Dynamic background with parallax effect */}
       <div 
         className="absolute inset-0 bg-grid-pattern opacity-5"
