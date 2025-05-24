@@ -117,7 +117,7 @@ const HeroSection = () => {
               className="flex xs:flex-row sm:flex-row flex-col gap-3 sm:gap-4 mt-2"
             >
               <Link 
-                href="/dashboard" 
+                href="/tutorials" 
                 className={cn(
                   "group relative inline-flex justify-center items-center overflow-hidden",
                   "bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20",
@@ -141,7 +141,7 @@ const HeroSection = () => {
               </Link>
               
               <Link 
-                href="/demo" 
+                href="https://www.youtube.com/watch?v=1ZACZDQjT3I" 
                 className="group inline-flex justify-center items-center bg-background/80 hover:bg-accent shadow-sm backdrop-blur-sm px-6 sm:px-8 border border-input rounded-md w-full xs:w-auto h-12 sm:h-14 font-medium text-sm transition-colors hover:text-accent-foreground"
               >
                 Watch Demo

@@ -57,7 +57,7 @@ export default function MCQGenerationForm(user: AuthRecord) {
 
     try {
       if (!user) {
-        redirect("/login?redirect=/exams/generate");
+        redirect("/auth/login?redirect=/exams/generate");
       }
 
       // Validation (unchanged)

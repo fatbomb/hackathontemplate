@@ -8,7 +8,7 @@ import HeroSection from "@/components/landing/hero-section";
 
 export default function Home() {
   return (
-      <div className="flex flex-col justify-between items-center overflow-hidden px-10">
+      <div className="flex flex-col justify-between items-center overflow-hidden">
         <HeroSection />
         
         {/* <SubjectsSection />

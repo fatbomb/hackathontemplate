@@ -46,8 +46,8 @@ interface CustomUserExam {
     exam_id: string;
     status: "pending" | "completed" | "in_progress";
     score?: number | undefined;
-    started_at?: string | undefined;
-    completed_at?: string | undefined;
+    started_at?: Date | undefined;
+    completed_at?: Date | undefined;
 }
 
 
@@ -214,7 +214,7 @@ export default function ResultsPageClient({
                         <tbody className="divide-y divide-gray-200">
                             {userExams.map((userExam) => {
                                 const timeSpent = userExam.started_at && userExam.completed_at
-                                    ? Math.round((new Date(userExam.started_at).getTime() - new Date(userExam.completed_at).getTime()) / 60000)
+                                    ? Math.round((new Date(userExam.completed_at).getTime() - new Date(userExam.started_at).getTime()) / 60000)
                                     : null;
 
                                 return (
@@ -282,7 +282,7 @@ export default function ResultsPageClient({
                                         <p className="text-gray-600 text-sm">Time Spent</p>
                                         <p className="font-bold text-lg">
                                             {selectedAttempt.started_at && selectedAttempt.completed_at
-                                                ? `${Math.round((new Date(selectedAttempt.completed_at).getTime() - new Date(selectedAttempt.completed_at).getTime()) / 60000)} min`
+                                                ? `${Math.round((new Date(selectedAttempt.completed_at).getTime() - new Date(selectedAttempt.started_at).getTime()) / 60000)} min`
                                                 : 'N/A'}
                                         </p>
                                     </div>

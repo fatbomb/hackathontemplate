@@ -107,7 +107,7 @@ export default function Chatbot() {
         }
         await loadUserChats();
       } else {
-        router.push('/login');
+        router.push('/auth/login');
       }
     };
     
@@ -328,7 +328,7 @@ export default function Chatbot() {
     setChatHistory([]);
     setChats([]);
     setCurrentUser(null);
-    router.push('/login');
+    router.push('/auth/login');
   };
   
   // Check if text contains Bangla

@@ -163,3 +163,7 @@ body {
   width: 100vw;
   font-family: sans-serif;
 }
+
+.dark body {
+  background-image: url('/bg_dark.jpg'); /* Replace with your dark mode image path */
+}

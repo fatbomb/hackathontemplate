@@ -19,14 +19,14 @@ export function Footer({ className }: React.HTMLAttributes<HTMLElement>) {
             </div>
             <div className="text-left">
               <h3 className="font-bold text-gray-900 dark:text-white text-lg">FlameKeepers</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-xs">Environmental Monitoring</p>
+              <p className="text-gray-500 dark:text-gray-400 text-xs">Synth-Learn</p>
             </div>
           </div>
 
           {/* Copyright text */}
           <div className="flex md:flex-row flex-col items-center gap-2">
             <p className="text-gray-600 dark:text-gray-300 text-sm md:text-left text-center leading-relaxed">
-              Built with <span className="text-red-500 animate-pulse">❤️</span> for environmental protection
+              Built with <span className="text-red-500 animate-pulse">❤️</span> forSN Bose Science Olympiad
             </p>
             <span className="hidden md:inline text-gray-400 dark:text-gray-500">•</span>
             <p className="text-gray-500 dark:text-gray-400 text-xs">

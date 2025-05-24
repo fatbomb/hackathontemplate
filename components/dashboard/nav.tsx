@@ -81,7 +81,7 @@ export function DashboardNav() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Link href="/login">Logout</Link>
+                  <Link href="/auth/login">Logout</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

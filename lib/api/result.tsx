@@ -1,7 +1,23 @@
 import { getPocketBase } from '@/lib/pocketbase';
 import { cookies } from 'next/headers';
 import { UserExam } from '@/types';
-import { RecordModel } from 'pocketbase';
+// import { RecordModel } from 'pocketbase';
+
+interface CustomUserExam {
+    answers: {
+        id: string;
+        question_id: string;
+        answer: number;
+        created: Date;
+    }[];
+    id: string;
+    user_id: string;
+    exam_id: string;
+    status: "pending" | "completed" | "in_progress";
+    score?: number | undefined;
+    started_at?: Date | undefined;
+    completed_at?: Date | undefined;
+}
 
 export async function fetchResultsData(examId?: string) {
     try {
@@ -34,31 +50,67 @@ export async function fetchResultsData(examId?: string) {
         });
 
         // Fetch user answers for each user exam
-        const userExamsWithAnswers = await Promise.all(
-            userExamsData.map(async (ue: RecordModel) => {
-            const userExam: UserExam = {
+        // const userExamsWithAnswers = await Promise.all(
+        //     userExamsData.map(async (ue: RecordModel) => {
+        //     const userExam: UserExam = {
+        //         id: ue.id,
+        //         user_id: ue.user_id,
+        //         exam_id: ue.exam_id,
+        //         status: ue.status,
+        //         completed_at: ue.completed_at,
+        //         started_at: ue.started_at,
+        //     };
+        //     const userAnswers = await pb.collection('user_answers').getFullList({
+        //         filter: `user_exam_id="${ue.id}"`,
+        //         sort: 'question_id'
+        //     });
+        //     return {
+        //         ...userExam,
+        //         answers: userAnswers.map(ua => ({
+        //         id: ua.id,
+        //         question_id: ua.question_id,
+        //         answer: ua.selected_answer,
+        //         created: ua.created,
+        //         }))
+        //     };
+        //     })
+        // );
+        const userExamsWithAnswers: CustomUserExam[] = [];
+
+        for (const ue of userExamsData) {
+             const userExam: UserExam = {
                 id: ue.id,
                 user_id: ue.user_id,
                 exam_id: ue.exam_id,
                 status: ue.status,
                 completed_at: ue.completed_at,
                 started_at: ue.started_at,
+                score: ue.score,
             };
-            const userAnswers = await pb.collection('user_answers').getFullList({
-                filter: `user_exam_id="${ue.id}"`,
-                sort: 'question_id'
-            });
-            return {
-                ...userExam,
-                answers: userAnswers.map(ua => ({
-                id: ua.id,
-                question_id: ua.question_id,
-                answer: ua.selected_answer,
-                created: ua.created,
-                }))
-            };
-            })
-        );
+             try {
+                const userAnswers = await pb.collection('user_answers').getFullList({
+                    filter: `user_exam_id="${ue.id}"`,
+                    sort: 'question_id'
+                });
+
+                userExamsWithAnswers.push({
+                    ...userExam,
+                    answers: userAnswers.map(ua => ({
+                        id: ua.id,
+                        question_id: ua.question_id,
+                        answer: ua.selected_answer,
+                        created: ua.created,
+                    }))
+                });
+            } catch (err) {
+                console.error(`Error fetching answers for user_exam_id=${ue.id}`, err);
+                userExamsWithAnswers.push({
+                    ...userExam,
+                    answers: [],
+                    // error: 'Failed to load answers'
+                });
+            }
+        }
 
         return {
             exam: {

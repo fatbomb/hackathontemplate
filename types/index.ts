@@ -38,8 +38,8 @@ export interface UserExam {
   exam_id: string;
   status: 'pending' | 'completed' | 'in_progress';
   score?: number;
-  started_at?: string;
-  completed_at?: string;
+  started_at?: Date;
+  completed_at?: Date;
 }
 
 export interface ExamSubmission {
