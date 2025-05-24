@@ -57,11 +57,12 @@ export default function ResetPasswordPage() {
       });
 
       setIsSubmitted(true);
-    } catch (error: any) {
+    } catch (error) {
+      console.error("Error sending reset link:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "Something went wrong.",
+        description: "Something went wrong.",
       });
     } finally {
       setIsLoading(false);
@@ -74,7 +75,7 @@ export default function ResetPasswordPage() {
       <div className="space-y-2 text-center">
         <h1 className="font-bold text-2xl">Reset Password</h1>
         <p className="text-muted-foreground">
-          Enter your email and we'll send you a link to reset your password
+          Enter your email and we&#39;ll send you a link to reset your password
         </p>
       </div>
 
@@ -82,7 +83,7 @@ export default function ResetPasswordPage() {
         <div className="space-y-4">
           <div className="bg-muted/50 p-4 border rounded-lg">
             <p className="text-sm">
-              We've sent a password reset link to your email. Please check your inbox.
+              We&#39;ve sent a password reset link to your email. Please check your inbox.
             </p>
           </div>
           <Button className="w-full" asChild>

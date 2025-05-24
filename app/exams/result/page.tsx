@@ -4,10 +4,10 @@ import { fetchResultsData } from '@/lib/api/result';
 export default async function ResultsPage({
   searchParams
 }: {
-  searchParams: { examId?: string }
+  searchParams: Promise<{ examId?: string }>
 }) {
-  const { exam, userExams, error } = await fetchResultsData(searchParams.examId);
-  const examId = searchParams.examId;
+  const { exam, userExams, error } = await fetchResultsData((await searchParams).examId);
+  const examId = (await searchParams).examId;
   console.log("userExams", userExams?.map(exam => exam.answers) ?? []);
   
   return (

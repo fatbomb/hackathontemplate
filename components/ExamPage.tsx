@@ -5,13 +5,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { getPocketBase } from '@/lib/pocketbase';
 import ExamView from '@/components/ExamView';
 import { LoadingSpinner } from './ui/loading-spinner';
-import ErrorMessage from '@/components/ui/ErrorMessage';
 import { Button } from '@/components/ui/button';
 import { Link } from 'lucide-react';
+import { User } from '@/types';
 
 interface ExamInitializerProps {
     params: { id: string };
-    user: any;
+    user: User;
 }
 
 export default function ExamInitializer({ params, user }: ExamInitializerProps) {
@@ -71,9 +71,9 @@ export default function ExamInitializer({ params, user }: ExamInitializerProps) 
                 }
 
                 setUserExamId(userExamIdValue);
-            } catch (err: any) {
+            } catch (err) {
                 console.error('Exam initialization error:', err);
-                setError(err.message || 'Failed to initialize exam. Please try again.');
+                setError('Failed to initialize exam. Please try again.');
             } finally {
                 setLoading(false);
             }

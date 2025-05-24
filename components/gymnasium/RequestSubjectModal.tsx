@@ -15,7 +15,7 @@ export default function RequestSubjectModal({ userId }: RequestSubjectModalProps
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const modalRef = useRef<HTMLDivElement>(null);
-
+  console.log(userId);
   const openModal = () => setIsOpen(true);
   const closeModal = () => {
     setIsOpen(false);
@@ -71,6 +71,7 @@ export default function RequestSubjectModal({ userId }: RequestSubjectModalProps
         closeModal();
       }, 2000);
     } catch (error) {
+      console.error('Error submitting request:', error);
       setMessage({ text: 'Failed to submit request. Please try again.', type: 'error' });
     } finally {
       setIsSubmitting(false);
@@ -93,7 +94,7 @@ export default function RequestSubjectModal({ userId }: RequestSubjectModalProps
         </div>
         <h3 className="mb-1 font-semibold text-foreground text-lg">Request New Subject</h3>
         <p className="text-muted-foreground text-sm">
-          Don't see what you're looking for? Request a new subject.
+          Don&apos;t see what you&apos;re looking for? Request a new subject.
         </p>
       </motion.div>
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AIService, ExamService } from '@/services/api';
+import { AIService } from '@/services/api';
 import { MCQGenerationParams } from '@/types';
 import { getPocketBase, getCurrentUser } from '@/lib/pocketbase';
 
@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
                 subjectRecord = subjectRecords.items[0];
             } catch (error) {
                 // Subject not found, create it
+                console.error("Subject Record:", error);
                 subjectRecord = await pb.collection('subjects').create({
                     title: subject
                 });
@@ -88,6 +89,7 @@ export async function POST(request: NextRequest) {
                 });
                 topicRecord = topicRecords.items[0];
             } catch (error) {
+                console.error("Topic Record:", error);
                 // Topic not found, create it
                 topicRecord = await pb.collection('topics').create({
                     title: topic_name,
@@ -135,11 +137,7 @@ export async function POST(request: NextRequest) {
                     });
 
                 } catch (error) {
-                    console.error("Full error:", {
-                        status: (error as any)?.status,
-                        data: (error as any)?.response?.data,
-                        message: (error instanceof Error) ? error.message : 'Unknown error'
-                    });
+                    console.error("Error occurred while processing game points:", error);
                     return NextResponse.json(
                         { error: "Failed to process game points" },
                         { status: 500 }

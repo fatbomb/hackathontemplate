@@ -31,10 +31,10 @@ export async function POST(req: Request) {
             token: authData.token
         }, { status: 200 });
 
-    } catch (error: any) {
+    } catch (error) {
         console.error('Login error:', error);
         return NextResponse.json(
-            { error: error.message || "Invalid email or password" },
+            { error: "Invalid email or password" },
             { status: 401 }
         );
     }

@@ -6,10 +6,54 @@ import ErrorMessage from '@/components/ui/ErrorMessage';
 import { Button } from '@/components/ui/button';
 import { Clock, Award, BarChart2, Calendar, History } from 'lucide-react';
 import Link from 'next/link';
+interface Question {
+    id: string;
+    text: string;
+    options: string[];
+    correct_option: number;
+    created: string;
+    explanation: string;
+}
+interface Exam {
+    id: string;
+    user_id: string;
+    exam_name: string;
+    input_text: string;
+    difficulty: string;
+    topic: string;
+    type: string;
+    time_limit: number;
+    created: Date;
+    questions: Question[];
+}
+interface Answers {
+
+    id: string;
+    question_id: string;
+    answer: number;
+    created: Date;
+}
+
+interface CustomUserExam {
+    answers: {
+        id: string;
+        question_id: string;
+        answer: number;
+        created: Date;
+    }[];
+    id: string;
+    user_id: string;
+    exam_id: string;
+    status: "pending" | "completed" | "in_progress";
+    score?: number | undefined;
+    started_at?: string | undefined;
+    completed_at?: string | undefined;
+}
+
 
 interface ResultsPageClientProps {
-    initialExam: any;
-    initialUserExams: any[];
+    initialExam: Exam | null;
+    initialUserExams: CustomUserExam[];
     initialError: string | null;
     examId?: string;
 }
@@ -24,7 +68,7 @@ export default function ResultsPageClient({
     const [userExams, setUserExams] = useState(initialUserExams);
     const [error, setError] = useState(initialError);
     const [loading, setLoading] = useState(false);
-    const [selectedAttempt, setSelectedAttempt] = useState<any>(null);
+    const [selectedAttempt, setSelectedAttempt] = useState<CustomUserExam | null>(null);
 
     const handleRetry = async () => {
         if (!examId) return;
@@ -39,14 +83,15 @@ export default function ResultsPageClient({
             const { exam, userExams } = await response.json();
             setExam(exam);
             setUserExams(userExams);
-        } catch (err: any) {
-            setError(err.message || 'Failed to load results');
+        } catch (err) {
+            console.error(err);
+            setError('Failed to load results');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleViewDetails = (attempt: any) => {
+    const handleViewDetails = (attempt: CustomUserExam) => {
         setSelectedAttempt(attempt);
     };
 
@@ -78,7 +123,7 @@ export default function ResultsPageClient({
             <div className="mx-auto p-6 max-w-4xl text-center container">
                 <div className="bg-white shadow-sm p-8 rounded-lg">
                     <h2 className="mb-4 font-semibold text-xl">Exam Not Found</h2>
-                    <p className="mb-4 text-gray-600">The requested exam could not be found or you don't have permission to view it.</p>
+                    <p className="mb-4 text-gray-600">The requested exam could not be found or you do not have permission to view it.</p>
                     <Button asChild>
                         <Link href="/exams">Back to Exams</Link>
                     </Button>
@@ -95,7 +140,7 @@ export default function ResultsPageClient({
                         <History className="text-gray-500" size={24} />
                     </div>
                     <h2 className="mb-2 font-semibold text-xl">No Attempts Found</h2>
-                    <p className="mb-6 text-gray-600">You haven't completed this exam yet.</p>
+                    <p className="mb-6 text-gray-600">You have not completed this exam yet.</p>
                     <Button asChild>
                         <Link href={`/exams/${exam.id}`}>Take Exam Now</Link>
                     </Button>
@@ -168,8 +213,8 @@ export default function ResultsPageClient({
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                             {userExams.map((userExam) => {
-                                const timeSpent = userExam.start_time && userExam.end_time
-                                    ? Math.round((new Date(userExam.end_time).getTime() - new Date(userExam.start_time).getTime()) / 60000)
+                                const timeSpent = userExam.started_at && userExam.completed_at
+                                    ? Math.round((new Date(userExam.started_at).getTime() - new Date(userExam.completed_at).getTime()) / 60000)
                                     : null;
 
                                 return (
@@ -184,8 +229,8 @@ export default function ResultsPageClient({
                                         </td>
                                         <td className="px-4 py-3 whitespace-nowrap">
                                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${(userExam.score || 0) >= 70 ? 'bg-green-100 text-green-800' :
-                                                    (userExam.score || 0) >= 50 ? 'bg-yellow-100 text-yellow-800' :
-                                                        'bg-red-100 text-red-800'
+                                                (userExam.score || 0) >= 50 ? 'bg-yellow-100 text-yellow-800' :
+                                                    'bg-red-100 text-red-800'
                                                 }`}>
                                                 {userExam.score?.toFixed(1)}%
                                             </span>
@@ -236,8 +281,8 @@ export default function ResultsPageClient({
                                     <div>
                                         <p className="text-gray-600 text-sm">Time Spent</p>
                                         <p className="font-bold text-lg">
-                                            {selectedAttempt.start_time && selectedAttempt.end_time
-                                                ? `${Math.round((new Date(selectedAttempt.end_time).getTime() - new Date(selectedAttempt.start_time).getTime()) / 60000)} min`
+                                            {selectedAttempt.started_at && selectedAttempt.completed_at
+                                                ? `${Math.round((new Date(selectedAttempt.completed_at).getTime() - new Date(selectedAttempt.completed_at).getTime()) / 60000)} min`
                                                 : 'N/A'}
                                         </p>
                                     </div>
@@ -251,9 +296,9 @@ export default function ResultsPageClient({
                             </div>
 
                             <div className="space-y-6">
-                                {exam.questions.map((question: any, index: number) => {
-                                    const userAnswer = selectedAttempt.answers?.find((a: any) => a.question_id === question.id);
-                                    const isCorrect = (userAnswer.answer === question.correct_option);
+                                {exam.questions.map((question: Question, index: number) => {
+                                    const userAnswer = selectedAttempt.answers?.find((a: Answers) => a.question_id === question.id);
+                                    const isCorrect = userAnswer?.answer === question.correct_option;
 
                                     return (
                                         <div key={question.id} className="border rounded-lg overflow-hidden">
@@ -273,8 +318,8 @@ export default function ResultsPageClient({
                                                             <div
                                                                 key={optionIndex}
                                                                 className={`p-3 border rounded-md ${isCorrectOption ? 'border-green-500 bg-green-50' :
-                                                                        isSelected ? 'border-red-500 bg-red-50' :
-                                                                            'border-gray-200'
+                                                                    isSelected ? 'border-red-500 bg-red-50' :
+                                                                        'border-gray-200'
                                                                     }`}
                                                             >
                                                                 <span className="font-medium">
@@ -296,8 +341,8 @@ export default function ResultsPageClient({
                                                 </div>
                                                 <div className='space-y-2 mt-4 p-3 border rounded-md'>
                                                     <span className="font-medium">
-                                                                    {question.explanation}
-                                                                </span>
+                                                        {question.explanation}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>

@@ -9,7 +9,7 @@ export default function DashboardPage() {
       <div>
         <h1 className="font-bold text-3xl tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome to your dashboard. Here's an overview of your account.
+          Welcome to your dashboard. Here is an overview of your account.
         </p>
       </div>
       <Tabs defaultValue="overview" className="space-y-4">

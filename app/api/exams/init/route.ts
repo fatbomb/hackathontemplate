@@ -25,15 +25,19 @@ export async function POST(request: Request) {
       user_id: userId,
       exam_id: examId,
       status: 'pending'
-    });
+    }) as { id: string };
 
     return NextResponse.json({
       userExamId: newUserExam.id
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    let errorMessage = 'Failed to initialize exam';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
     return NextResponse.json(
-      { error: error.message || 'Failed to initialize exam' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

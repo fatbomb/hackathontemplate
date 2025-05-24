@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import localFont from 'next/font/local';
 import { Toaster } from '../components/ui/toaster'
 import "./globals.css";
 import { ThemeProvider } from "../components/teme-provider";
 import { Footer } from "@/components/landing/footer";
 import NavbarWrapper from "@/components/landing/NavbarWrapper";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = localFont({
+  src: '../public/Inter.otf', // Path to your downloaded Inter font
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: "SynthLearn",

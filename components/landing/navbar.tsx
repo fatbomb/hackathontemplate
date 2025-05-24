@@ -2,20 +2,20 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
-  NavigationMenuContent,
+  // NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
+  // NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { ModeToggle } from "@/components/mode-toggle";
-import { LogIn, LogOut, Menu, User as UserIcon, X } from "lucide-react";
+import { LogIn, LogOut, Menu, User as UserIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Sheet,
@@ -231,7 +231,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
                 </Link>
               </SheetClose>
               <SheetClose asChild>
-                <Link href="/emvorpment/result">
+                <Link href="/environment/result">
                   <Button variant="ghost" size="sm" className="justify-start w-full">
                     Environment
                   </Button>

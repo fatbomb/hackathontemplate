@@ -91,10 +91,11 @@ export async function POST(request: Request) {
             default:
                 return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
         }
-    } catch (error: any) {
+    } catch (error) {
+        console.error('PocketBase API error:', error);
         return NextResponse.json(
-            { error: error.message || 'An error occurred' },
-            { status: error.status || 500 }
+            { error: 'An error occurred' },
+            { status: 500 }
         );
     }
 }

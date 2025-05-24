@@ -19,7 +19,7 @@ interface TopicCardProps {
   userId: string;
 }
 
-export default function TopicCard({ subject, topic, gamePoints, userId }: TopicCardProps) {
+export default function TopicCard({ subject, topic, gamePoints }: TopicCardProps) {
   const points = gamePoints?.points || 0;
   const level = gamePoints?.level || 1;
 

@@ -83,6 +83,7 @@ export default function ScienceChatPage() {
         loadChat(mockChats[0].id);
       }
     } catch (error) {
+      console.error('Error fetching chats:', error);
       setError('চ্যাট লোড করতে সমস্যা হয়েছে');
     }
   };
@@ -197,6 +198,7 @@ $$r = \\frac{a(1-e^2)}{1 + e\\cos\\theta}$$
       setShowChatsList(false); // Hide the chats list after selection on mobile
       setLoading(false);
     } catch (error) {
+      console.error('Error loading chat:', error);
       setError('চ্যাট লোড করতে সমস্যা হয়েছে');
       setLoading(false);
     }
@@ -384,6 +386,7 @@ $$\\frac{T^2}{a^3} = \\frac{4\\pi^2}{GM}$$
       }, 1500);
       
     } catch (error) {
+      console.error('Error submitting question:', error);
       setError('উত্তর পেতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
       setLoading(false);
     }
@@ -464,12 +467,12 @@ $$\\frac{T^2}{a^3} = \\frac{4\\pi^2}{GM}$$
   // Render chat list
   const renderChatList = () => {
     return (
-      <div className="w-64 bg-white/70 p-4 rounded-lg shadow-md">
+      <div className="bg-white/70 shadow-md p-4 rounded-lg w-64">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-green-800">আলোচনাসমূহ</h2>
+          <h2 className="font-semibold text-green-800 text-lg">আলোচনাসমূহ</h2>
           <button
             onClick={createNewChat}
-            className="bg-green-600 text-white p-1 rounded-full hover:bg-green-700"
+            className="bg-green-600 hover:bg-green-700 p-1 rounded-full text-white"
             title="নতুন আলোচনা শুরু করুন"
           >
             <span className="text-lg">+</span>
@@ -477,10 +480,10 @@ $$\\frac{T^2}{a^3} = \\frac{4\\pi^2}{GM}$$
         </div>
         
         {/* Mobile only close button */}
-        <div className="flex justify-end mb-4 md:hidden">
+        <div className="md:hidden flex justify-end mb-4">
           <button
             onClick={() => setShowChatsList(false)}
-            className="bg-gray-200 text-gray-600 p-1 rounded hover:bg-gray-300"
+            className="bg-gray-200 hover:bg-gray-300 p-1 rounded text-gray-600"
           >
             ✕
           </button>
@@ -496,14 +499,14 @@ $$\\frac{T^2}{a^3} = \\frac{4\\pi^2}{GM}$$
               onClick={() => loadChat(chat.id)}
             >
               <p className="font-medium truncate">{chat.title}</p>
-              <p className="text-xs text-gray-500">
+              <p className="text-gray-500 text-xs">
                 {new Date(chat.updatedAt).toLocaleDateString('bn-BD')}
               </p>
             </div>
           ))}
           
           {chats.length === 0 && (
-            <p className="text-gray-500 text-center py-4">কোন আলোচনা নেই</p>
+            <p className="py-4 text-gray-500 text-center">কোন আলোচনা নেই</p>
           )}
         </div>
       </div>
@@ -511,18 +514,18 @@ $$\\frac{T^2}{a^3} = \\frac{4\\pi^2}{GM}$$
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-50 to-blue-50">
+    <div className="flex flex-col bg-gradient-to-br from-green-50 to-blue-50 min-h-screen">
       {/* Header */}
-      <header className="bg-green-700 text-white p-4 shadow-md">
-        <div className="container mx-auto flex justify-between items-center">
+      <header className="bg-green-700 shadow-md p-4 text-white">
+        <div className="flex justify-between items-center mx-auto container">
           <div className="flex items-center">
             <button
               onClick={() => setShowChatsList(!showChatsList)}
-              className="mr-3 md:hidden"
+              className="md:hidden mr-3"
             >
               <HiOutlineChatAlt size={24} />
             </button>
-            <h1 className="text-2xl md:text-3xl font-bold">🔬 বিজ্ঞান বাংলাবট</h1>
+            <h1 className="font-bold text-2xl md:text-3xl">🔬 বিজ্ঞান বাংলাবট</h1>
           </div>
           <div className="flex space-x-2">
             <button
@@ -544,7 +547,7 @@ $$\\frac{T^2}{a^3} = \\frac{4\\pi^2}{GM}$$
       </header>
       
       {/* Main content */}
-      <main className="flex-1 container mx-auto p-4 flex md:space-x-4">
+      <main className="flex flex-1 md:space-x-4 mx-auto p-4 container">
         {/* Chat list for desktop */}
         <div className="hidden md:block">
           {renderChatList()}
@@ -552,23 +555,23 @@ $$\\frac{T^2}{a^3} = \\frac{4\\pi^2}{GM}$$
         
         {/* Mobile chat list */}
         {showChatsList && (
-          <div className="fixed inset-0 z-10 bg-white md:hidden p-4">
+          <div className="md:hidden z-10 fixed inset-0 bg-white p-4">
             {renderChatList()}
           </div>
         )}
         
         {/* Chat area */}
-        <div className="flex-1 flex flex-col max-w-3xl mx-auto w-full">
+        <div className="flex flex-col flex-1 mx-auto w-full max-w-3xl">
           {/* Chat messages */}
           <div 
             ref={chatContainerRef}
-            className="flex-1 overflow-y-auto mb-4 p-4 bg-white/70 rounded-lg shadow-md"
+            className="flex-1 bg-white/70 shadow-md mb-4 p-4 rounded-lg overflow-y-auto"
             style={{ minHeight: '60vh', maxHeight: '60vh' }}
           >
             {chatHistory.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                <p className="text-center text-lg mb-2">বাংলায় বিজ্ঞান সম্পর্কে আপনার প্রশ্ন জিজ্ঞাসা করুন</p>
-                <p className="text-center text-sm">উদাহরণ: পানির আণবিক গঠন কি? | সৌরজগতের গ্রহগুলো কি কি?</p>
+              <div className="flex flex-col justify-center items-center h-full text-gray-500">
+                <p className="mb-2 text-lg text-center">বাংলায় বিজ্ঞান সম্পর্কে আপনার প্রশ্ন জিজ্ঞাসা করুন</p>
+                <p className="text-sm text-center">উদাহরণ: পানির আণবিক গঠন কি? | সৌরজগতের গ্রহগুলো কি কি?</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -584,11 +587,11 @@ $$\\frac{T^2}{a^3} = \\frac{4\\pi^2}{GM}$$
                 
                 {loading && (
                   <div className="flex justify-start">
-                    <div className="bg-white p-3 rounded-lg shadow rounded-tl-none">
+                    <div className="bg-white shadow p-3 rounded-lg rounded-tl-none">
                       <div className="flex space-x-2">
-                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
-                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                        <div className="bg-gray-500 rounded-full w-2 h-2 animate-bounce" style={{ animationDelay: '0s' }}></div>
+                        <div className="bg-gray-500 rounded-full w-2 h-2 animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="bg-gray-500 rounded-full w-2 h-2 animate-bounce" style={{ animationDelay: '0.4s' }}></div>
                       </div>
                     </div>
                   </div>
@@ -599,16 +602,16 @@ $$\\frac{T^2}{a^3} = \\frac{4\\pi^2}{GM}$$
           
           {/* Error message */}
           {error && (
-            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 mb-4 rounded">
+            <div className="bg-red-100 mb-4 p-3 border-red-500 border-l-4 rounded text-red-700">
               <p>{error}</p>
             </div>
           )}
           
           {/* Input area */}
-          <div className="bg-white rounded-lg shadow-md p-3">
+          <div className="bg-white shadow-md p-3 rounded-lg">
             <textarea
               ref={textareaRef}
-              className="w-full p-3 rounded border focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-500 w-full"
               placeholder="আপনার বিজ্ঞান প্রশ্ন লিখুন..."
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
@@ -675,7 +678,7 @@ $$\\frac{T^2}{a^3} = \\frac{4\\pi^2}{GM}$$
       </main>
       
       {/* Footer */}
-      <footer className="text-center p-4 text-gray-600 bg-white/50">
+      <footer className="bg-white/50 p-4 text-gray-600 text-center">
         <p>© ২০২৫ বিজ্ঞান বাংলাবট - আপনার বিজ্ঞান প্রশ্নের বাংলা উত্তর</p>
       </footer>
     </div>

@@ -1,7 +1,7 @@
 'use client'
 // components/landing/testimonial-section.tsx
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card, CardContent } from "@/components/ui/card"
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+// import { Card, CardContent } from "@/components/ui/card"
 import { motion } from "@/lib/motion"
 import { useInView } from "react-intersection-observer";
 
@@ -40,7 +40,7 @@ const TestimonialSection = () => {
             What Our Students Say
           </h2>
           <p className="mx-auto max-w-2xl text-muted-foreground">
-            Join thousands of satisfied learners who've transformed their understanding of science.
+            Join thousands of satisfied learners who&apos;ve transformed their understanding of science.
           </p>
         </div>
 
@@ -54,7 +54,7 @@ const TestimonialSection = () => {
               className="bg-card shadow-sm p-6 border rounded-xl"
             >
               <div className="relative">
-                <span className="-top-2 -left-2 absolute opacity-20 text-primary text-4xl">"</span>
+                <span className="-top-2 -left-2 absolute opacity-20 text-primary text-4xl">&quot;</span>
                 <p className="z-10 relative mb-4 text-muted-foreground italic">
                   {testimonial.quote}
                 </p>
@@ -80,27 +80,27 @@ const TestimonialSection = () => {
   );
 };
 export default TestimonialSection;
-function TestimonialCard({ quote, name, title, avatar }: { 
-  quote: string; 
-  name: string; 
-  title: string; 
-  avatar: string;
-}) {
-  return (
-    <Card className="text-left">
-      <CardContent className="space-y-4 p-6">
-        <p className="text-muted-foreground italic">"{quote}"</p>
-        <div className="flex items-center space-x-4">
-          <Avatar>
-            <AvatarImage src={avatar} alt={name} />
-            <AvatarFallback>{name.charAt(0)}</AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="font-semibold">{name}</p>
-            <p className="text-muted-foreground text-sm">{title}</p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
+// function TestimonialCard({ quote, name, title, avatar }: { 
+//   quote: string; 
+//   name: string; 
+//   title: string; 
+//   avatar: string;
+// }) {
+//   return (
+//     <Card className="text-left">
+//       <CardContent className="space-y-4 p-6">
+//         <p className="text-muted-foreground italic">"{quote}"</p>
+//         <div className="flex items-center space-x-4">
+//           <Avatar>
+//             <AvatarImage src={avatar} alt={name} />
+//             <AvatarFallback>{name.charAt(0)}</AvatarFallback>
+//           </Avatar>
+//           <div>
+//             <p className="font-semibold">{name}</p>
+//             <p className="text-muted-foreground text-sm">{title}</p>
+//           </div>
+//         </div>
+//       </CardContent>
+//     </Card>
+//   )
+// }

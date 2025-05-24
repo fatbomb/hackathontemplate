@@ -1,5 +1,5 @@
 "use client";
-import { scaleBodies, unscaleBodies } from "@/utils/scaling";
+import { unscaleBodies } from "@/utils/scaling";
 import Matter, { Body, Composite, Engine, Render, Runner, World } from "matter-js";
 import { useEffect, useRef, useState } from "react";
 import ResizeObserver from "resize-observer-polyfill";
@@ -10,7 +10,7 @@ type SimulatorProps = {
     bodies: Body[];
     width: number;
     height: number;
-    callback: Function;
+    callback: (bodyA: Body, bodyB: Body) => void;
 };
 
 type UpdatedBody = {
@@ -60,7 +60,7 @@ export default function Simulator({
         if (!scene) return;
 
         const observer = new ResizeObserver((entries) => {
-            for (let entry of entries) {
+            for (const entry of entries) {
                 const { width: containerWidth, height: containerHeight } = entry.contentRect;
 
                 const targetAspect = width / height;
@@ -216,28 +216,28 @@ export default function Simulator({
 
     return (
         <div className="flex gap-2">
-            <div className="flex flex-col items-center w-fit justify-center p-4">
+            <div className="flex flex-col justify-center items-center p-4 w-fit">
                 <div
                     id="scene"
                     ref={sceneRef}
                     style={{ width: "50dvw", height: "50dvh" }}
-                    className="flex flex-col-reverse border bg-muted shadow-lg p-2 px-2"
+                    className="flex flex-col-reverse bg-muted shadow-lg p-2 px-2 border"
                 >
-                    <div className="flex flex-grow gap-2 items-center justify-center">
+                    <div className="flex flex-grow justify-center items-center gap-2">
                         {!isRunning
-                            ? <Button variant={"destructive"} onClick={playScene} className="transition duration-200 animate-out"><Play /></Button>
-                            : <Button variant={"outline"} onClick={resetScene} className="transition duration-200 animate-in"><RotateCcw /></Button>
+                            ? <Button variant={"destructive"} onClick={playScene} className="transition animate-out duration-200"><Play /></Button>
+                            : <Button variant={"outline"} onClick={resetScene} className="transition animate-in duration-200"><RotateCcw /></Button>
                         }
                     </div>
                 </div>
             </div>
-            <div className="w-80 h-[60vh] overflow-y-auto border rounded-xl bg-gradient-to-br from-background via-primary/10 to-primary/20 shadow-2xl p-6 flex flex-col gap-4">
-                <h2 className="font-bold text-xl mb-4 text-primary flex items-center gap-2">
-                    <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+            <div className="flex flex-col gap-4 bg-gradient-to-br from-background via-primary/10 to-primary/20 shadow-2xl p-6 border rounded-xl w-80 h-[60vh] overflow-y-auto">
+                <h2 className="flex items-center gap-2 mb-4 font-bold text-primary text-xl">
+                    <span className="inline-block bg-green-500 rounded-full w-2 h-2 animate-pulse"></span>
                     Simulation Status
                 </h2>
                 {bodyUpdates.length === 0 ? (
-                    <div className="text-muted-foreground text-sm italic flex-1 flex items-center justify-center">
+                    <div className="flex flex-1 justify-center items-center text-muted-foreground text-sm italic">
                         No updates yet.
                     </div>
                 ) : (
@@ -245,16 +245,16 @@ export default function Simulator({
                         {bodyUpdates.map((body, idx) => (
                             <div
                                 key={idx}
-                                className="rounded-lg bg-card/90 border border-border/70 p-4 shadow transition hover:shadow-lg"
+                                className="bg-card/90 shadow hover:shadow-lg p-4 border border-border/70 rounded-lg transition"
                             >
-                                <div className="font-semibold text-primary mb-3 flex items-center gap-2">
-                                    <span className="inline-block w-2 h-2 rounded-full bg-blue-400"></span>
+                                <div className="flex items-center gap-2 mb-3 font-semibold text-primary">
+                                    <span className="inline-block bg-blue-400 rounded-full w-2 h-2"></span>
                                     {body.label || body.id}
                                 </div>
-                                <div className="grid grid-cols-1 gap-y-2 text-sm">
+                                <div className="gap-y-2 grid grid-cols-1 text-sm">
                                     <div className="flex items-center">
                                         <span className="w-28 font-medium text-muted-foreground">Position:</span>
-                                        <span className="ml-2 font-mono text-primary flex gap-2">
+                                        <span className="flex gap-2 ml-2 font-mono text-primary">
                                             <span className="inline-block w-20 text-right">x={body.position.x.toFixed(2)}</span>
                                             <span className="inline-block w-20 text-right">y={body.position.y.toFixed(2)}</span>
                                         </span>
@@ -267,7 +267,7 @@ export default function Simulator({
                                     </div>
                                     <div className="flex items-center">
                                         <span className="w-28 font-medium text-muted-foreground">Velocity:</span>
-                                        <span className="ml-2 font-mono text-primary flex gap-2">
+                                        <span className="flex gap-2 ml-2 font-mono text-primary">
                                             <span className="inline-block w-20 text-right">x={body.velocity.x.toFixed(2)}</span>
                                             <span className="inline-block w-20 text-right">y={body.velocity.y.toFixed(2)}</span>
                                         </span>

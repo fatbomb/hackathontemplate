@@ -171,7 +171,7 @@ export const ExamService = {
       question_statement: record.question_statement,
       options: record.options,
       correct_answer: record.correct_answer,
-      explanation: record.explaination
+      explaination: record.explaination
     }));
   },
   
@@ -253,7 +253,7 @@ export const ExamService = {
         options: question.options,
         userAnswer: userAnswer,
         correctAnswer: question.correct_answer,
-        explanation: question.explanation
+        explanation: question.explaination
       };
     });
     

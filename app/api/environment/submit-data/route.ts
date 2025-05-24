@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import pb from '@/lib/pocketbase';
 import { CloudFunctionsServiceClient } from '@google-cloud/functions';
 import { CloudFunctionData } from '@/types/index';
+import fs from 'fs';
 
 interface SubmitDataRequestBody {
   dataType: string;
@@ -77,8 +78,7 @@ async function triggerCloudFunction(data: CloudFunctionData): Promise<void> {
     if (process.env.GCP_SERVICE_ACCOUNT) {
       credentials = JSON.parse(process.env.GCP_SERVICE_ACCOUNT);
     } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-      // Use the path from environment variable
-      credentials = require(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+      credentials = JSON.parse(fs.readFileSync(process.env.GOOGLE_APPLICATION_CREDENTIALS, 'utf8'));
     } else {
       console.warn('No valid Google Cloud credentials found');
       return;

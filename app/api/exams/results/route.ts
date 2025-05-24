@@ -20,9 +20,13 @@ export async function GET(request: Request) {
       exam,
       userExams
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    let errorMessage = 'Failed to load results';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
     return NextResponse.json(
-      { error: error.message || 'Failed to load results' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

@@ -4,8 +4,9 @@ import { useRouter } from 'next/navigation';
 import { toast } from '@/hooks/use-toast';
 import { redirect } from "next/navigation";
 import { useSearchParams } from 'next/navigation';
+import { AuthRecord } from 'pocketbase';
 
-export default function MCQGenerationForm(user: any) {
+export default function MCQGenerationForm(user: AuthRecord) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerated, setIsGenerated] = useState(false); // NEW STATE

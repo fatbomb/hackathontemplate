@@ -83,11 +83,12 @@ export default function SignupPage() {
       });
 
       router.push("/dashboard");
-    } catch (error: any) {
+    } catch (error) {
+      console.error("Error creating account:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "Something went wrong.",
+        description: "Something went wrong.",
       });
     } finally {
       setIsLoading(false);

@@ -5,11 +5,11 @@ export default async function ExamPage({
   params,
   searchParams
 }: {
-  params: { id: string },
-  searchParams: { userExamId?: string }
+  params: Promise<{ id: string }>,
+  searchParams: Promise< { userExamId?: string }>
 }) {
-  const { userExamId, error } = await initExamSession(params.id, searchParams.userExamId);
-  const examId = params.id;
+  const { userExamId, error } = await initExamSession((await params).id, (await searchParams).userExamId);
+  const examId = (await params).id;
   
   return (
     <ExamPageClient 

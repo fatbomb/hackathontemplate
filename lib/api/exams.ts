@@ -54,12 +54,12 @@ export async function fetchExamsData() {
       })),
       error: null
     };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching exams:', error);
     return { 
       exams: [],
       userExams: [],
-      error: error.message || 'Failed to load exams' 
+      error: 'Failed to load exams' 
     };
   }
 }

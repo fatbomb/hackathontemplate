@@ -1,4 +1,9 @@
-export function parseJWT(token: string): { id: string; [key: string]: any } | null {
+interface JWTPayload {
+    id: string;
+    [key: string]: string | number | boolean | object | null | undefined;
+}
+
+export function parseJWT(token: string): JWTPayload | null {
     if (!token) return null;
     
     try {

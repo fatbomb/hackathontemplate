@@ -12,33 +12,33 @@ interface GameLevel {
   link: string;
 }
 
-interface Points {
-  points: number;
-  level: number;
-}
+// interface Points {
+//   points: number;
+//   level: number;
+// }
 
 export default function WorldMap({ levels }: { levels: GameLevel[][] }) {
   const router = useRouter();
 
   return (
-    <div className="container mx-auto py-8 space-y-8">
+    <div className="space-y-8 mx-auto py-8 container">
       {/* Game Levels */}
       <div className="space-y-12">
         {levels.map((games, levelIdx) => (
           <div key={levelIdx} className="relative">
             <div className="flex items-center mb-6">
-              <div className="bg-primary rounded-full w-12 h-12 flex items-center justify-center text-primary-foreground font-bold shadow-md">
+              <div className="flex justify-center items-center bg-primary shadow-md rounded-full w-12 h-12 font-bold text-primary-foreground">
                 {levelIdx + 1}
               </div>
-              <h2 className="text-2xl font-bold ml-3">Level {levelIdx + 1}</h2>
+              <h2 className="ml-3 font-bold text-2xl">Level {levelIdx + 1}</h2>
             </div>
             
             {/* Connection line between levels */}
             {levelIdx < levels.length - 1 && (
-              <div className="absolute top-12 bottom-0 left-6 w-0.5 -mb-8 bg-gradient-to-b from-primary to-transparent z-0"></div>
+              <div className="top-12 bottom-0 left-6 z-0 absolute bg-gradient-to-b from-primary to-transparent -mb-8 w-0.5"></div>
             )}
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 ml-10">
+            <div className="gap-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 ml-10">
               {games.map((game) => (
                 <Card
                   key={game.id}
@@ -63,7 +63,7 @@ export default function WorldMap({ levels }: { levels: GameLevel[][] }) {
                         game.unlocked ? "text-accent-foreground" : "text-muted-foreground"
                       )} />
                     </div>
-                    <CardTitle className="text-base font-semibold">{game.name}</CardTitle>
+                    <CardTitle className="font-semibold text-base">{game.name}</CardTitle>
                   </CardHeader>
                   <CardContent className={cn(
                     "flex justify-center text-sm text-center py-4",

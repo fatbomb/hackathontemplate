@@ -65,11 +65,11 @@ export default function LoginPage() {
       });
       window.location.href = "/tutorials";
       router.push("/tutorials");
-    } catch (error: any) {
+    } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An unknown error occurred",
       });
     } finally {
       setIsLoading(false);

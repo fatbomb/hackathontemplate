@@ -2,18 +2,9 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Menu, Bell, ChevronDown } from "lucide-react";
+import { Menu, Bell} from "lucide-react";
 
-import { cn } from "@/lib/utils";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
+
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";

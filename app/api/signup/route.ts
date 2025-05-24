@@ -9,7 +9,7 @@ export async function POST(req: Request) {
 
   try {
     // 1. Create user in PocketBase
-    const user = await pb.collection("users").create({
+    await pb.collection("users").create({
       name,
       email,
       password,
@@ -41,9 +41,10 @@ export async function POST(req: Request) {
       },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
+    console.error("Signup error:", error);
     return NextResponse.json(
-      { error: error.message || "Signup failed" },
+      { error: "Signup failed" },
       { status: 400 }
     );
   }

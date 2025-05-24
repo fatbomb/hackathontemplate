@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Exam, UserExam } from '@/types';
 import { PlusCircle, BookOpen, BarChart3, Clock } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
@@ -20,12 +19,11 @@ export default function ExamsPageClient({
     initialUserExams,
     initialError
 }: ExamsPageClientProps) {
-    const router = useRouter();
+ 
     const [exams, setExams] = useState<Exam[]>(initialExams);
     const [userExams, setUserExams] = useState<UserExam[]>(initialUserExams);
     const [error, setError] = useState<string | null>(initialError);
     const [loading, setLoading] = useState(false);
-    const [retryCount, setRetryCount] = useState(0);
 
     const handleRetry = async () => {
         setLoading(true);
@@ -38,12 +36,12 @@ export default function ExamsPageClient({
             const { exams, userExams } = await response.json();
             setExams(exams);
             setUserExams(userExams);
-        } catch (err: any) {
-            setError(err.message || 'Failed to load exams');
+        } catch (err) {
+            console.error(err);
+            setError( 'Failed to load exams');
         } finally {
             setLoading(false);
         }
-        setRetryCount(prev => prev + 1);
     };
 
     if (loading) {
@@ -88,7 +86,7 @@ export default function ExamsPageClient({
                     </div>
                     <h3 className="mb-2 font-semibold text-xl">No Exams Found</h3>
                     <p className="mx-auto mb-6 max-w-md text-gray-500">
-                        You haven't created any exams yet. Start by creating your first exam to test your knowledge.
+                        You have not created any exams yet. Start by creating your first exam to test your knowledge.
                     </p>
                     <Button asChild className="gap-2">
                         <Link href="/generate">

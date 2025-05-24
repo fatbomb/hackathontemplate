@@ -4,7 +4,6 @@
 import { useState } from 'react';
 import TopicCard from './TopicCard';
 import { motion, AnimatePresence } from 'framer-motion';
-import { title } from 'process';
 
 interface Subject {
   title: string;

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import ExamView from '@/components/ExamView';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Button } from '@/components/ui/button';
@@ -17,11 +16,11 @@ export default function ExamPageClient({
   initialError,
   examId
 }: ExamPageClientProps) {
-  const router = useRouter();
+
   const [userExamId, setUserExamId] = useState(initialUserExamId);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(initialError);
-  const [retryCount, setRetryCount] = useState(0);
+  // const [retryCount, setRetryCount] = useState(0);
 
   const handleRetry = async () => {
     setLoading(true);
@@ -47,12 +46,12 @@ export default function ExamPageClient({
       const newUrl = new URL(window.location.href);
       newUrl.searchParams.set('userExamId', userExamId);
       window.history.replaceState({}, '', newUrl.toString());
-    } catch (err: any) {
-      setError(err.message || 'Failed to initialize exam');
+    } catch (err) {
+      console.error('Error initializing exam:', err);
+      setError( 'Failed to initialize exam');
     } finally {
       setLoading(false);
     }
-    setRetryCount(prev => prev + 1);
   };
 
   if (loading) {

@@ -9,7 +9,7 @@ export default async function GenerateExamPage() {
       <div className="mx-auto max-w-4xl">
         <h1 className="mb-8 font-bold text-3xl text-center">MCQ Question Generator</h1>
         <MCQGenerationForm
-        user={user} />
+          user={user} collectionId={""} collectionName={""} id={""} />
       </div>
     </main>
   );

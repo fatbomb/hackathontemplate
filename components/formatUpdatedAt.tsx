@@ -1,5 +1,4 @@
 // Format date utility function
-import ReactMarkdown from 'react-markdown';
 
 const formatUpdatedAt = (dateInput: string | Date): string => {
   try {

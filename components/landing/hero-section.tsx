@@ -1,18 +1,18 @@
 'use client'
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "@/lib/motion"
 import { ArrowRight, Play, Sparkles } from "lucide-react"
 import ScienceAnimation from "./scienceAnimation"
 import { cn } from "@/lib/utils"
-import { useTheme } from "next-themes"
+// import { useTheme } from "next-themes"
 
 const HeroSection = () => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const { resolvedTheme } = useTheme()
-  const isDark = resolvedTheme === "dark"
+  // const { resolvedTheme } = useTheme()
+  // const isDark = resolvedTheme === "dark"
 
   useEffect(() => {
     setIsLoaded(true)

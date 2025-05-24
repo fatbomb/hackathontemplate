@@ -1,5 +1,5 @@
 import React from 'react';
-import { MDXRemote } from 'next-mdx-remote';
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -10,8 +10,8 @@ import { FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
 const components = {
   // You can add custom components here to enhance your MDX content
   // For example, a component to display chemistry molecules or physics diagrams
-  Equation: (props) => (
-    <div className="py-2 flex justify-center">
+  Equation: (props: React.PropsWithChildren<Record<string, unknown>>) => (
+    <div className="flex justify-center py-2">
       <div>{props.children}</div>
     </div>
   ),
@@ -35,7 +35,7 @@ export const ChatMessageComponent: React.FC<ChatMessageProps> = ({
   isSpeaking,
   currentSpeakingId
 }) => {
-  const [mdxSource, setMdxSource] = React.useState<any>(null);
+  const [mdxSource, setMdxSource] = React.useState<MDXRemoteSerializeResult<Record<string, unknown>, Record<string, unknown>> | null>(null);
   
   React.useEffect(() => {
     // Process MDX content when the message is from the bot

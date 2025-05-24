@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import { ClientQuestion, ExamResult } from '@/types';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import { Button } from '@/components/ui/button';
 import ExamWithVoiceAssistant from './ExamWithVoiceAssistant';
+import Link from 'next/link';
 
 interface ExamViewProps {
   examId: string;
@@ -14,7 +14,6 @@ interface ExamViewProps {
 }
 
 export default function ExamView({ examId, userExamId }: ExamViewProps) {
-  const router = useRouter();
   const [exam, setExam] = useState<{
     id: string;
     exam_name: string;
@@ -24,7 +23,7 @@ export default function ExamView({ examId, userExamId }: ExamViewProps) {
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  // const [currentQuestionIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Map<string, number>>(new Map());
   const [examSubmitted, setExamSubmitted] = useState(false);
   const [examResult, setExamResult] = useState<ExamResult | null>(null);
@@ -53,7 +52,7 @@ export default function ExamView({ examId, userExamId }: ExamViewProps) {
         setTimeLeft(examData.exam.time_limit * 60);
         examStartTime.current = Date.now();
         setFetchedExamData(true);
-      } catch (err: any) {
+      } catch (err) {
         setError('Failed to load exam data');
         console.error(err);
       } finally {
@@ -113,15 +112,15 @@ export default function ExamView({ examId, userExamId }: ExamViewProps) {
     }
   };
 
-  const handleAnswerSelect = (questionId: string, answerIndex: number) => {
-    if (examSubmitted) return;
+  // const handleAnswerSelect = (questionId: string, answerIndex: number) => {
+  //   if (examSubmitted) return;
 
-    setSelectedAnswers(prev => {
-      const newMap = new Map(prev);
-      newMap.set(questionId, answerIndex);
-      return newMap;
-    });
-  };
+  //   setSelectedAnswers(prev => {
+  //     const newMap = new Map(prev);
+  //     newMap.set(questionId, answerIndex);
+  //     return newMap;
+  //   });
+  // };
 
   const handleSubmitExam = useCallback(async (silent = false) => {
     if (examSubmitted || !exam || !userExamId || submissionInProgress.current) return;
@@ -162,9 +161,10 @@ export default function ExamView({ examId, userExamId }: ExamViewProps) {
       if (timerId.current) {
         clearInterval(timerId.current);
       }
-    } catch (err: any) {
+    } catch (err) {
+      console.error('Error submitting exam:', err);
       if (!silent) {
-        setError(err.message || 'Failed to submit exam');
+        setError( 'Failed to submit exam');
       }
     } finally {
       if (!silent) setLoading(false);
@@ -172,11 +172,11 @@ export default function ExamView({ examId, userExamId }: ExamViewProps) {
     }
   }, [examSubmitted, exam, userExamId, timeLeft, selectedAnswers, examId]);
 
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-  };
+  // const formatTime = (seconds: number) => {
+  //   const minutes = Math.floor(seconds / 60);
+  //   const remainingSeconds = seconds % 60;
+  //   return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  // };
 
   if (loading) return (
     <div className="flex justify-center items-center min-h-[50vh]">
@@ -199,13 +199,13 @@ export default function ExamView({ examId, userExamId }: ExamViewProps) {
         <h2 className="mb-4 font-semibold text-xl">Exam Not Found</h2>
         <p className="mb-4 text-gray-600">The requested exam could not be loaded.</p>
         <Button asChild>
-          <a href="/exams">Back to Exams</a>
+          <Link href="/exams">Back to Exams</Link>
         </Button>
       </div>
     </div>
   );
 
-  const currentQuestion = exam.questions[currentQuestionIndex];
+  // const currentQuestion = exam.questions[currentQuestionIndex];
   // return (
   //   <div className="bg-white shadow-md mx-auto p-6 rounded-lg max-w-4xl">
   //     <div className="flex justify-between items-center mb-6">

@@ -54,8 +54,8 @@ interface User {
 // Web Speech API declarations
 declare global {
   interface Window {
-    SpeechRecognition: any;
-    webkitSpeechRecognition: any;
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
     bengaliTTSAudios?: HTMLAudioElement[];
   }
 }
@@ -80,11 +80,11 @@ export default function Chatbot() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredChats, setFilteredChats] = useState<Chat[]>([]);
+  // const [filteredChats, setFilteredChats] = useState<Chat[]>([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<string | null>(null);
   
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [currentSpeakingId, setCurrentSpeakingId] = useState<number | null>(null);
 
@@ -115,16 +115,7 @@ export default function Chatbot() {
   }, [router]);
   
   // Filter chats based on search query
-  useEffect(() => {
-    if (searchQuery.trim() === '') {
-      setFilteredChats(chats);
-    } else {
-      const filtered = chats.filter(chat => 
-        chat.title.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredChats(filtered);
-    }
-  }, [searchQuery, chats]);
+  
  
   // Scroll to bottom when chat history updates
   useEffect(() => {
@@ -143,7 +134,7 @@ export default function Chatbot() {
         throw new Error('কোন ডাটা পাওয়া যায়নি');
       }
       
-      const formattedChats: Chat[] = result.map((item: any) => ({
+      const formattedChats: Chat[] = result.map((item:Chat) => ({
         id: item.id,
         collectionId: item.collectionId,
         collectionName: item.collectionName,
@@ -161,9 +152,9 @@ export default function Chatbot() {
       );
       
       setChats(formattedChats);
-      setFilteredChats(formattedChats);
+      // setFilteredChats(formattedChats);
       setError(null);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error loading chats:', err);
       setError('চ্যাট লোড করতে সমস্যা হয়েছে।');
     } finally {
@@ -191,7 +182,7 @@ export default function Chatbot() {
       
       setShowChatsList(false);
       setError(null);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error loading chat:', err);
       setError('চ্যাট লোড করতে সমস্যা হয়েছে।');
     } finally {
@@ -230,9 +221,9 @@ export default function Chatbot() {
       if (textareaRef.current) {
         textareaRef.current.focus();
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error creating chat:', err);
-      setError(err.message || 'নতুন চ্যাট তৈরি করতে সমস্যা হয়েছে।');
+      setError( 'নতুন চ্যাট তৈরি করতে সমস্যা হয়েছে।');
     } finally {
       setLoading(false);
     }
@@ -260,7 +251,7 @@ export default function Chatbot() {
         setCurrentChatId(null);
         setChatHistory([]);
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error deleting chat:', err);
       setError('চ্যাট মুছতে সমস্যা হয়েছে।');
     } finally {
@@ -269,10 +260,10 @@ export default function Chatbot() {
   };
   
   // Cancel delete confirmation
-  const cancelDeleteConfirmation = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowDeleteConfirmation(null);
-  };
+  // const cancelDeleteConfirmation = (e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   setShowDeleteConfirmation(null);
+  // };
   
   // Setup speech recognition
   useEffect(() => {
@@ -283,19 +274,23 @@ export default function Chatbot() {
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = false;
       
-      recognitionRef.current.onresult = (event: any) => {
+      recognitionRef.current.onresult = function (event) {
         const transcript = event.results[event.results.length - 1][0].transcript;
-        setQuestion(prev => prev + ' ' + transcript);
+        setQuestion(function (prev) {
+          return prev + ' ' + transcript;
+        });
       };
       
-      recognitionRef.current.onerror = (event: any) => {
+      recognitionRef.current.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
         setListening(false);
       };
       
       recognitionRef.current.onend = () => {
         if (listening) {
-          recognitionRef.current.start();
+          if (recognitionRef.current) {
+            recognitionRef.current.start();
+          }
         }
       };
     }
@@ -474,7 +469,7 @@ export default function Chatbot() {
         const chat = await createChat(title);
         setCurrentChatId(chat.id);
         await loadUserChats();
-      } catch (err: any) {
+      } catch (err) {
         console.error('Error creating chat:', err);
         setError('নতুন চ্যাট তৈরি করতে সমস্যা হয়েছে।');
         return;
@@ -521,8 +516,9 @@ export default function Chatbot() {
         speak(data.answer);
       }
       
-    } catch (err: any) {
-      setError(err.message || 'কিছু সমস্যা হয়েছে।');
+    } catch (err) {
+      console.error('Error submitting question:', err);
+      setError( 'কিছু সমস্যা হয়েছে।');
     } finally {
       setQuestion('');
       setLoading(false);

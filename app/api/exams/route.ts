@@ -16,9 +16,10 @@ export async function GET() {
       exams,
       userExams
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to load exams';
     return NextResponse.json(
-      { error: error.message || 'Failed to load exams' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

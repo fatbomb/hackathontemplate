@@ -5,7 +5,7 @@ export async function fetchExamData(examId: string, userExamId?: string) {
   try {
     const cookieStore = await cookies();
     const pb = await getPocketBase(cookieStore.toString());
-
+    console.log('pb.authStore', userExamId, pb.authStore);
     if (!pb.authStore.isValid) {
       try {
         await pb.collection('users').authRefresh();
@@ -42,11 +42,11 @@ export async function fetchExamData(examId: string, userExamId?: string) {
       },
       error: null
     };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching exam:', error);
     return {
       exam: null,
-      error: error.message || 'Failed to load exam'
+      error: 'Failed to load exam'
     };
   }
 }
@@ -90,11 +90,11 @@ export async function initExamSession(examId: string, existingUserExamId?: strin
       userExamId: newUserExam.id,
       error: null
     };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Exam initialization error:', error);
     return {
       userExamId: null,
-      error: error.message || 'Failed to initialize exam'
+      error: 'Failed to initialize exam'
     };
   }
 }

@@ -34,9 +34,10 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ valid: true });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Verification failed';
     return NextResponse.json(
-      { error: error.message || 'Verification failed' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

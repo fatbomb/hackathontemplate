@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
 import {
   Globe,
@@ -9,7 +8,6 @@ import {
   Clipboard,
   MapPin,
   Cloud,
-  ArrowLeft,
   Sparkles,
   BarChart4,
   Database,

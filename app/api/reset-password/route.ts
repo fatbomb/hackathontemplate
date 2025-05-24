@@ -10,9 +10,10 @@ export async function POST(req: Request) {
     await pb.collection("users").requestPasswordReset(email);
 
     return NextResponse.json({ message: "Reset link sent" }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
+    console.error("Password reset error:", error);
     return NextResponse.json(
-      { error: error.message || "Password reset failed" },
+      { error:  "Password reset failed" },
       { status: 400 }
     );
   }

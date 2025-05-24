@@ -34,8 +34,8 @@ const ChatMessageComponent: React.FC<ChatMessageComponentProps> = ({
   const isLongMessage = message.content.length > 500;
   const [expanded, setExpanded] = useState(!isLongMessage);
   
-  const components = {
-    code({node, inline, className, children, ...props}: any) {
+  const components: import('react-markdown').Components = {
+    code({ inline, className, children, ...props }: { inline?: boolean; className?: string; children?: React.ReactNode }) {
       const match = /language-(\w+)/.exec(className || '');
       
       if (inline) {
@@ -59,28 +59,28 @@ const ChatMessageComponent: React.FC<ChatMessageComponentProps> = ({
         </div>
       );
     },
-    h1: ({node, ...props}: any) => <h1 className="my-2 font-bold text-2xl" {...props} />,
-    h2: ({node, ...props}: any) => <h2 className="my-2 font-bold text-xl" {...props} />,
-    h3: ({node, ...props}: any) => <h3 className="my-1.5 font-bold text-lg" {...props} />,
-    p: ({node, ...props}: any) => <p className="my-2 leading-relaxed" {...props} />,
-    ul: ({node, ...props}: any) => <ul className="my-2 pl-5 list-disc" {...props} />,
-    ol: ({node, ...props}: any) => <ol className="my-2 pl-5 list-decimal" {...props} />,
-    li: ({node, ...props}: any) => <li className="my-1" {...props} />,
-    blockquote: ({node, ...props}: any) => (
+    h1: (props) => <h1 className="my-2 font-bold text-2xl" {...props} />,
+    h2: (props) => <h2 className="my-2 font-bold text-xl" {...props} />,
+    h3: (props) => <h3 className="my-1.5 font-bold text-lg" {...props} />,
+    p: (props) => <p className="my-2 leading-relaxed" {...props} />,
+    ul: (props) => <ul className="my-2 pl-5 list-disc" {...props} />,
+    ol: (props) => <ol className="my-2 pl-5 list-decimal" {...props} />,
+    li: (props) => <li className="my-1" {...props} />,
+    blockquote: (props) => (
       <blockquote className="my-2 pl-4 border-l-4 italic" {...props} />
     ),
-    a: ({node, ...props}: any) => (
+    a: (props) => (
       <a className="hover:underline" target="_blank" rel="noopener noreferrer" {...props} />
     ),
-    table: ({node, ...props}: any) => (
+    table: (props) => (
       <div className="overflow-x-auto">
         <table className="my-2 border border-collapse" {...props} />
       </div>
     ),
-    th: ({node, ...props}: any) => (
+    th: (props) => (
       <th className="px-3 py-1 border" {...props} />
     ),
-    td: ({node, ...props}: any) => (
+    td: (props) => (
       <td className="px-3 py-1 border" {...props} />
     ),
   };

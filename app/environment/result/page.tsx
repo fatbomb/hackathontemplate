@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
+
 import axios from 'axios';
 import { EnvironmentalData } from '@/types/index';
 import Map from '@/components/ScienceSout/Map';

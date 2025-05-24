@@ -29,7 +29,7 @@ export interface ClientQuestion {
 }
 export interface ServerQuestion extends ClientQuestion {
   correct_answer: number;
-  explanation: string;
+  explaination: string;
 }
 
 export interface UserExam {
@@ -38,8 +38,8 @@ export interface UserExam {
   exam_id: string;
   status: 'pending' | 'completed' | 'in_progress';
   score?: number;
-  start_time?: string;
-  end_time?: string;
+  started_at?: string;
+  completed_at?: string;
 }
 
 export interface ExamSubmission {

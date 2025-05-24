@@ -1,5 +1,7 @@
 import { getPocketBase } from '@/lib/pocketbase';
 import { cookies } from 'next/headers';
+import { UserExam } from '@/types';
+import { RecordModel } from 'pocketbase';
 
 export async function fetchResultsData(examId?: string) {
     try {
@@ -33,21 +35,28 @@ export async function fetchResultsData(examId?: string) {
 
         // Fetch user answers for each user exam
         const userExamsWithAnswers = await Promise.all(
-            userExamsData.map(async (ue) => {
-                const userAnswers = await pb.collection('user_answers').getFullList({
-                    filter: `user_exam_id="${ue.id}"`,
-                    sort: 'question_id'
-                });
-                return {
-                    ...ue,
-                    answers: userAnswers.map(ua => ({
-                        id: ua.id,
-                        question_id: ua.question_id,
-                        answer: ua.selected_answer,
-                        // is_correct: ua.is_correct,
-                        created: ua.created,
-                    }))
-                };
+            userExamsData.map(async (ue: RecordModel) => {
+            const userExam: UserExam = {
+                id: ue.id,
+                user_id: ue.user_id,
+                exam_id: ue.exam_id,
+                status: ue.status,
+                completed_at: ue.completed_at,
+                started_at: ue.started_at,
+            };
+            const userAnswers = await pb.collection('user_answers').getFullList({
+                filter: `user_exam_id="${ue.id}"`,
+                sort: 'question_id'
+            });
+            return {
+                ...userExam,
+                answers: userAnswers.map(ua => ({
+                id: ua.id,
+                question_id: ua.question_id,
+                answer: ua.selected_answer,
+                created: ua.created,
+                }))
+            };
             })
         );
 
@@ -74,12 +83,12 @@ export async function fetchResultsData(examId?: string) {
             userExams: userExamsWithAnswers,
             error: null
         };
-    } catch (error: any) {
+    } catch (error) {
         console.error('Error fetching results:', error);
         return {
             exam: null,
             userExams: [],
-            error: error.message || 'Failed to load results'
+            error: 'Failed to load results'
         };
     }
 }

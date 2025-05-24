@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+
 import { compileMDX } from 'next-mdx-remote/rsc'
 import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from 'remark-gfm'

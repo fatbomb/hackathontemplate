@@ -3,7 +3,7 @@ import { CloudFunctionsServiceClient } from '@google-cloud/functions';
 
 interface TriggerFunctionRequestBody {
   functionName: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 export async function POST(request: NextRequest) {
@@ -33,7 +33,8 @@ export async function POST(request: NextRequest) {
       credentials = JSON.parse(process.env.GCP_SERVICE_ACCOUNT);
     } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
       // Use the path from environment variable
-      credentials = require(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      credentials = (await import(process.env.GOOGLE_APPLICATION_CREDENTIALS as string)).default || (await import(process.env.GOOGLE_APPLICATION_CREDENTIALS as string));
     } else {
       return NextResponse.json(
         { message: 'No valid Google Cloud credentials found' },

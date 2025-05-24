@@ -2,8 +2,6 @@
 // components/landing/feature-section.tsx
 import { motion } from "@/lib/motion"
 import { 
-    Zap, Shield, RefreshCw, Layers, 
-    Smartphone, PaintBucket, Code, Maximize, 
     Beaker,
     GraduationCap,
     Trophy,
@@ -151,16 +149,4 @@ import { useInView } from "react-intersection-observer";
   );
 };
 export default FeatureSection;
-  function FeatureCard({ title, description, icon }: { 
-    title: string; 
-    description: string; 
-    icon: React.ReactNode;
-  }) {
-    return (
-      <div className="flex flex-col items-center space-y-4 p-6 border hover:border-primary rounded-lg transition-all">
-        {icon}
-        <h3 className="font-bold text-xl">{title}</h3>
-        <p className="text-muted-foreground text-center">{description}</p>
-      </div>
-    )
-  }
+  

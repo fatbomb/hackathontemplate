@@ -58,7 +58,7 @@ interface Request {
 
 interface Response {
   status: (code: number) => Response;
-  send: (body: any) => void;
+  send: (body: unknown) => void;
 }
 
 /**
@@ -171,7 +171,7 @@ function findAddressComponent(components: AddressComponent[], type: string): str
  */
 function analyzeData(data: EnvironmentalData): Analysis {
   const numericValue = parseFloat(data.value);
-  let analysis: Analysis = {
+  const analysis: Analysis = {
     normalizedValue: numericValue,
     category: 'normal',
     exceededThreshold: false

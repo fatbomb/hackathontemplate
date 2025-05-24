@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser, getPocketBase } from '@/lib/pocketbase';
+import { ServerQuestion } from '@/types';
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise< { id: string }> }
 ) {
   try {
     const pb = await getPocketBase(request.headers.get('cookie') || '');
-    const examId = params.id;
+    const { id: examId } = await params;
     console.log("Exam ID:", examId);
 
     if (!pb.authStore.isValid) {
@@ -17,7 +18,7 @@ export async function POST(
       );
     }
 
-    const { userExamId, answers, timeSpent, clientTimeStamp } = await request.json();
+    const { userExamId, answers, timeSpent } = await request.json();
 
     // Verify the exam belongs to this user
     const userExam = await pb.collection('user_exams').getOne(userExamId);
@@ -29,7 +30,7 @@ export async function POST(
     }
 
     // Calculate results
-    const questions = await pb.collection('questions').getFullList({
+    const questions: ServerQuestion[] = await pb.collection('questions').getFullList({
       filter: `exam_id = "${examId}"`
     });
     const exam = await pb.collection('exams').getOne(examId);
@@ -37,7 +38,7 @@ export async function POST(
     // console.log("Questions:", questions);
 
     let correctCount = 0;
-    const questionResults = questions.map((question, index) => {
+    const questionResults = questions.map((question: ServerQuestion, index: number) => {
       const userAnswer = answers[index]?.selectedAnswer;
       const isCorrect = Number(userAnswer) === Number(question.correct_answer);
       if (isCorrect) correctCount++;
@@ -63,6 +64,7 @@ export async function POST(
       subjectRecord = await pb.collection('subjects').create({
         title: exam.subject
       });
+      console.log("Subject Record:", error);
     }
     // console.log("Subject Record:", subjectRecord);
     let topicRecord;
@@ -77,6 +79,7 @@ export async function POST(
         title: exam.topic,
         subject: subjectRecord.id
       });
+      console.log("Topic Record:", error);
     }
 
     const user = await getCurrentUser();
@@ -130,11 +133,7 @@ export async function POST(
 
 
       } catch (error) {
-        console.error("Full error:", {
-          status: (error as any)?.status,
-          data: (error as any)?.response?.data,
-          message: (error instanceof Error) ? error.message : 'Unknown error'
-        });
+        console.error("Error occurred while processing game points:", error);
         return NextResponse.json(
           { error: "Failed to process game points" },
           { status: 500 }
@@ -162,10 +161,12 @@ export async function POST(
       questions: questionResults
     });
 
-  } catch (error: any) {
+  } catch (error) {
+    console.error('Error submitting exam:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to submit exam' },
+      { error: 'Failed to submit exam' },
       { status: 500 }
     );
+    
   }
 }

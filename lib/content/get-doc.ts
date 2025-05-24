@@ -4,7 +4,7 @@ import matter from 'gray-matter';
 
 export interface DocData {
   content: string;
-  frontmatter: Record<string, any>;
+  frontmatter: { [key: string]: unknown };
 }
 
 export async function getDoc(slug: string[]): Promise<DocData | null> {

@@ -21,6 +21,7 @@ export default async function NavbarWrapper() {
         : null;
     }
   } catch (err) {
+    console.error('Error refreshing auth:', err);
     pb.authStore.clear();
     isAuthed = false;
     user = null;

@@ -1,12 +1,12 @@
 // components/landing/cta-section.tsx
 'use client'
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 import { motion } from "@/lib/motion"
 import { ArrowRight, Sparkles } from "lucide-react"
 import { useInView } from "react-intersection-observer"
 import { cn } from "@/lib/utils"
-import { useTheme } from "next-themes"
+// import { useTheme } from "next-themes"
 
 export const CTASection = () => {
   const { ref, inView } = useInView({
@@ -14,8 +14,8 @@ export const CTASection = () => {
     threshold: 0.1,
   })
   
-  const { resolvedTheme } = useTheme()
-  const isDark = resolvedTheme === "dark"
+  // const { resolvedTheme } = useTheme()
+  // const isDark = resolvedTheme === "dark"
 
   return (
     <section ref={ref} className="bg-primary/5 py-12 sm:py-16 md:py-24 w-full">

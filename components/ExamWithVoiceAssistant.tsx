@@ -4,20 +4,11 @@ import languageDetect from 'languagedetect';
 import { ExamResult,ClientQuestion } from '@/types';
 
 // Type definitions
-interface Option {
-  [key: string]: string;
-}
 
-interface Question {
-  id: string;
-  question_statement: string;
-  options: string[];
-}
 
-interface ExamQuestion extends Question {
-  correctAnswer?: string;
-  explanation?: string;
-}
+
+
+
 
 
 
@@ -41,8 +32,9 @@ interface ExamWithVoiceAssistantProps {
 // Type for speech recognition
 declare global {
   interface Window {
-    SpeechRecognition: any;
-    webkitSpeechRecognition: any;
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+    bengaliTTSAudios?: HTMLAudioElement[];
   }
 }
 
@@ -61,7 +53,7 @@ const ExamWithVoiceAssistant: FC<ExamWithVoiceAssistantProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const speechRecognitionRef = useRef<any>(null);
+  const speechRecognitionRef = useRef<SpeechRecognition | null>(null);
   
   const currentQuestion = exam.questions[currentQuestionIndex];
   const detector = new languageDetect();
@@ -198,56 +190,70 @@ const ExamWithVoiceAssistant: FC<ExamWithVoiceAssistantProps> = ({
       recognition.continuous = true;
       recognition.interimResults = false;
       
-      recognition.onresult = (event: any) => {
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
         const last = event.results.length - 1;
         const command = event.results[last][0].transcript.trim().toLowerCase();
-        
-        // Process voice commands
-        if (command.includes('next') || command.includes('next question')) {
-          if (currentQuestionIndex < exam.questions.length - 1) {
-            setCurrentQuestionIndex(prev => prev + 1);
+
+        switch (true) {
+          case /next|next question/.test(command):
+        if (currentQuestionIndex < exam.questions.length - 1) {
+          setCurrentQuestionIndex((prev) => prev + 1);
+        } else {
+          speakText("This is the last question. Say 'submit' to submit your exam.");
+        }
+        break;
+
+          case /previous|back/.test(command):
+        if (currentQuestionIndex > 0) {
+          setCurrentQuestionIndex((prev) => prev - 1);
+        } else {
+          speakText("This is the first question.");
+        }
+        break;
+
+          case /select|choose/.test(command): {
+        const optionMatches = command.match(/option [a-d]|[a-d]/i);
+        if (optionMatches) {
+          const option = optionMatches[0].replace(/option /i, '').toLowerCase();
+          const optionIndex = option.charCodeAt(0) - 97;
+
+          if (optionIndex >= 0 && optionIndex < currentQuestion.options.length) {
+            handleAnswerSelect(currentQuestion.id, optionIndex);
+            speakText(`Selected option ${option.toUpperCase()}`);
+          }
+        }
+        break;
+          }
+
+          case /read|repeat/.test(command):
+        narrateCurrentQuestion();
+        break;
+
+          case /submit/.test(command):
+        if (currentQuestionIndex === exam.questions.length - 1) {
+          handleSubmitExam();
+          speakText("Exam submitted!");
+        } else {
+          speakText("Please go to the last question to submit the exam.");
+        }
+        break;
+
+          case /go to question/.test(command): {
+        const matches = command.match(/\d+/);
+        if (matches) {
+          const questionNum = parseInt(matches[0], 10);
+          if (questionNum > 0 && questionNum <= exam.questions.length) {
+            setCurrentQuestionIndex(questionNum - 1);
+            speakText(`Going to question ${questionNum}`);
           } else {
-            speakText("This is the last question. Say 'submit' to submit your exam.");
+            speakText(`Please specify a valid question number between 1 and ${exam.questions.length}`);
           }
-        } else if (command.includes('previous') || command.includes('back')) {
-          if (currentQuestionIndex > 0) {
-            setCurrentQuestionIndex(prev => prev - 1);
-          } else {
-            speakText("This is the first question.");
+        }
+        break;
           }
-        } else if (command.includes('select') || command.includes('choose')) {
-          // Find if the command includes A, B, C, or D
-          const optionMatches = command.match(/option [a-d]|[a-d]/i);
-          if (optionMatches) {
-            const option = optionMatches[0].replace(/option /i, '').toLowerCase();
-            const optionIndex = option.charCodeAt(0) - 97;
-            
-            if (optionIndex >= 0 && optionIndex < currentQuestion.options.length) {
-              handleAnswerSelect(currentQuestion.id, optionIndex);
-              speakText(`Selected option ${option.toUpperCase()}`);
-            }
-          }
-        } else if (command.includes('read') || command.includes('repeat')) {
-          narrateCurrentQuestion();
-        } else if (command.includes('submit')) {
-          if (currentQuestionIndex === exam.questions.length - 1) {
-            handleSubmitExam();
-            speakText("Exam submitted!");
-          } else {
-            speakText("Please go to the last question to submit the exam.");
-          }
-        } else if (command.includes('go to question')) {
-          // Extract question number
-          const matches = command.match(/\d+/);
-          if (matches) {
-            const questionNum = parseInt(matches[0], 10);
-            if (questionNum > 0 && questionNum <= exam.questions.length) {
-              setCurrentQuestionIndex(questionNum - 1);
-              speakText(`Going to question ${questionNum}`);
-            } else {
-              speakText(`Please specify a valid question number between 1 and ${exam.questions.length}`);
-            }
-          }
+
+          default:
+        speakText("Command not recognized. Please try again.");
         }
       };
       
@@ -470,12 +476,12 @@ const ExamWithVoiceAssistant: FC<ExamWithVoiceAssistantProps> = ({
         <div className="bg-blue-50 mt-6 p-4 rounded-md">
           <h3 className="mb-2 font-semibold">Voice Commands Available:</h3>
           <ul className="space-y-1 pl-5 list-disc">
-            <li>"Next" or "Next question" - Move to next question</li>
-            <li>"Previous" or "Back" - Move to previous question</li>
-            <li>"Select A/B/C/D" - Choose an answer option</li>
-            <li>"Read question" or "Repeat" - Read the current question</li>
-            <li>"Go to question [number]" - Navigate to specific question</li>
-            <li>"Submit" - Submit your exam (on last question)</li>
+            <li>&quot;Next&quot; or &quot;Next question&quot; - Move to next question</li>
+            <li>&quot;Previous&quot; or &quot;Back&quot; - Move to previous question</li>
+            <li>&quot;Select A/B/C/D&quot; - Choose an answer option</li>
+            <li>&quot;Read question&quot; or &quot;Repeat&quot; - Read the current question</li>
+            <li>&quot;Go to question [number]&quot; - Navigate to specific question</li>
+            <li>&quot;Submit&quot; - Submit your exam (on last question)</li>
           </ul>
         </div>
       )}
