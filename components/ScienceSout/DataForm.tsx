@@ -192,6 +192,7 @@ const DataForm: React.FC<DataFormProps> = ({ language = 'english' }) => {
         if (values.images) {
           Array.from(values.images).forEach((file, index) => {
             formData.append(`images`, file);
+            console.log(index)
           });
         }
 
@@ -370,11 +371,11 @@ const DataForm: React.FC<DataFormProps> = ({ language = 'english' }) => {
             name="images"
             multiple
             accept="image/*"
-            className="bg-white dark:bg-gray-800 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400 w-full text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 dark:file:bg-green-900 dark:file:text-green-300 dark:hover:file:bg-green-800"
+            className="bg-white hover:file:bg-green-100 dark:bg-gray-800 dark:hover:file:bg-green-800 dark:file:bg-green-900 file:bg-green-50 file:mr-4 px-3 file:px-4 py-2 file:py-2 border border-gray-300 dark:border-gray-600 file:border-0 rounded-lg file:rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400 w-full file:font-semibold text-gray-900 dark:file:text-green-300 dark:text-gray-100 file:text-green-700 file:text-sm"
             onChange={handleImageChange}
           />
           {formik.values.images && formik.values.images.length > 0 && (
-            <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="mt-2 text-gray-600 dark:text-gray-400 text-sm">
               {formik.values.images.length} file(s) selected
             </div>
           )}
@@ -415,7 +416,7 @@ const DataForm: React.FC<DataFormProps> = ({ language = 'english' }) => {
           {(!formik.values.latitude || !formik.values.longitude) && (
             
             !location && (
-              <p className="text-sm text-yellow-600 dark:text-yellow-400">
+              <p className="text-yellow-600 dark:text-yellow-400 text-sm">
                 {activeContent.locationWaiting}
               </p>
             )

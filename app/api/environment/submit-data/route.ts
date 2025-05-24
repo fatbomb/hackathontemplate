@@ -4,14 +4,6 @@ import { CloudFunctionsServiceClient } from '@google-cloud/functions';
 import { CloudFunctionData } from '@/types/index';
 import fs from 'fs';
 
-interface SubmitDataRequestBody {
-  dataType: string;
-  value: string;
-  notes?: string;
-  images: FileList ;
-  latitude: number;
-  longitude: number;
-}
 
 export async function POST(request: NextRequest) {
   try {
