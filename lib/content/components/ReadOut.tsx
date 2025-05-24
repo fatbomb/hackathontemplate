@@ -76,6 +76,7 @@ export default function ReadOut({
         }
       } catch (err) {
         if (!isCancelled) alert("Error loading audio");
+        console.log(err)
       } finally {
         if (!isCancelled) setLoading(false);
       }
@@ -132,27 +133,27 @@ export default function ReadOut({
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex justify-center items-center">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="flex gap-2">
             {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin" />
             ) : isReading ? (
-              <Volume2 className="h-4 w-4" />
+              <Volume2 className="w-4 h-4" />
             ) : (
-              <VolumeOff className="h-4 w-4" />
+              <VolumeOff className="w-4 h-4" />
             )}
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="w-64 p-2" align="end">
+        <DropdownMenuContent className="p-2 w-64" align="end">
           <Card className="w-full">
-            <CardContent className="p-4 flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Audio Progress</span>
-                <span className="text-xs text-muted-foreground">
+            <CardContent className="flex flex-col gap-4 p-4">
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-sm">Audio Progress</span>
+                <span className="text-muted-foreground text-xs">
                   {Math.floor(progress)} / {Math.floor(duration)}s
                 </span>
               </div>
@@ -164,9 +165,9 @@ export default function ReadOut({
                 onValueChange={handleSeek}
               />
 
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Volume</span>
-                <span className="text-xs text-muted-foreground">
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-sm">Volume</span>
+                <span className="text-muted-foreground text-xs">
                   {(volume * 100).toFixed(0)}%
                 </span>
               </div>

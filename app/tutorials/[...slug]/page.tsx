@@ -8,9 +8,9 @@ import ReadableContentCard from '@/lib/content/components/ReadableContentCard';
 import { translateReactNodeToBanglaServer, translateTextToBanglaServer } from '@/lib/content/translate';
 
 interface SubjectPageProps {
-  params: {
+  params: Promise<{
     slug: string[];
-  };
+  }>;
 }
 
 export default async function SubjectPage({ params }: SubjectPageProps) {
