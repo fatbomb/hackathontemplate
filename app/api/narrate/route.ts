@@ -2,14 +2,14 @@ import { getGoogleServiceAccount } from '@/utils/googleServiceAPI';
 import textToSpeech from '@google-cloud/text-to-speech';
 import { NextResponse } from 'next/server';
 
-const client = new textToSpeech.TextToSpeechClient({
-    credentials: getGoogleServiceAccount(),
-    projectId: process.env.GOOGLE_SERVICE_ACCOUNT_PROJECT_ID || '',
-});
-
 export async function POST(request: Request){
     try{
         const { text, language } = await request.json();
+
+        const client = new textToSpeech.TextToSpeechClient({
+            credentials: getGoogleServiceAccount(),
+            projectId: process.env.GOOGLE_SERVICE_ACCOUNT_PROJECT_ID
+        });
 
         const [ response ] = await client.synthesizeSpeech({
             input: { text },

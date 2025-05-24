@@ -62,7 +62,7 @@ export default async function Playground() {
             <h1 className="font-bold text-4xl mb-6">Interactive Playground</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
                 {subjectDetails.map((subject: SubjectsDetails) => (
-                    <Card key={subject.id} className="">
+                    <Card key={subject.id} className="border-2 border-muted-foreground">
                         <CardHeader className=" rounded-t-lg p-5 border-0">
                             <CardTitle className="text-xl font-semibold">{subject.title}</CardTitle>
                         </CardHeader>

@@ -43,10 +43,10 @@ export default function WorldMap({ levels }: { levels: GameLevel[][] }) {
                 <Card
                   key={game.id}
                   className={cn(
-                    "transition-all cursor-pointer select-none w-full overflow-hidden shadow-md hover:shadow-xl",
+                    "transition-all cursor-pointer border-muted-foreground select-none w-full overflow-hidden shadow-md hover:shadow-xl",
                     game.unlocked
-                      ? "border-accent hover:border-accent/80 border-2"
-                      : "bg-muted border-border opacity-75 pointer-events-none"
+                      ? " hover:border-accent/80 border-2"
+                      : "bg-muted opacity-75 pointer-events-none"
                   )}
                   onClick={() => game.unlocked && router.push(game.link)}
                 >

@@ -3,7 +3,7 @@ import { v2 as Translate } from '@google-cloud/translate';
 import { getGoogleServiceAPIKey } from '@/utils/googleServiceAPI';
 
 const translate = new Translate.Translate({
-  key: getGoogleServiceAPIKey(),
+  key: getGoogleServiceAPIKey()
 });
 
 export async function POST(req: NextRequest) {

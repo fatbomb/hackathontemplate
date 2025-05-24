@@ -82,7 +82,7 @@ export default function Tutorials() {
                         <Separator className="mb-4" />
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
                             {tutorials.map((tut) => (
-                                <Card key={tut.tutorial}>
+                                <Card key={tut.tutorial} className="border   border-muted-foreground">
                                     <CardContent className="flex items-center justify-between gap-3 p-5 border-0">
                                         <CardTitle className="text-xl font-semibold">
                                             {tut.meta.title}

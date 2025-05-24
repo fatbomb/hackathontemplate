@@ -7,7 +7,7 @@ import { Footer } from "@/components/landing/footer";
 import NavbarWrapper from "@/components/landing/NavbarWrapper";
 
 const inter = localFont({
-  src: '../public/Inter.otf', // Path to your downloaded Inter font
+  src: '../public/Inter.otf',
   display: 'swap',
 });
 

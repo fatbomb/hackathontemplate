@@ -26,7 +26,7 @@ const HeroSection = () => {
   }, [])
 
   return (
-    <section className="relative flex flex-col items-center bg-gradient-to-b from-primary/5 via-background/95 to-background pt-6 sm:pt-10 md:pt-20 pb-12 md:pb-16 w-full min-h-[90vh] md:min-h-[85vh] overflow-hidden">
+    <section className="relative flex flex-col items-center bg-gradient-to-b from-primary/5 via-background/95 to-background pt-6 sm:pt-10 md:pt-20 pb-12 md:pb-16 w-full min-h-[90vh] md:min-h-[85vh] overflow-hidden px-20">
       {/* Dynamic background with parallax effect */}
       <div 
         className="absolute inset-0 bg-grid-pattern opacity-5"
@@ -154,82 +154,6 @@ const HeroSection = () => {
                 </motion.span>
               </Link>
             </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={isLoaded ? { opacity: 1 } : {}}
-              transition={{ delay: 1.1, duration: 0.7 }}
-              className="flex items-center gap-3 mt-3 sm:mt-4 md:mt-6"
-            >
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="bg-accent border-2 border-background rounded-full w-6 sm:w-8 h-6 sm:h-8 overflow-hidden">
-                    <div className={`w-full h-full bg-gradient-to-br from-primary/${30 + i * 10} to-purple-600/${30 + i * 10}`}></div>
-                  </div>
-                ))}
-              </div>
-              <p className="text-muted-foreground text-xs sm:text-sm">
-                <span className="font-semibold text-foreground">10,000+</span> students already learning
-              </p>
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isLoaded ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="relative lg:col-span-6 mt-6 lg:mt-0"
-          >
-            <div className="relative mx-auto w-full max-w-full sm:max-w-lg md:max-w-xl aspect-[4/3] sm:aspect-square">
-              <div className="absolute -inset-4 bg-gradient-to-tr from-primary/30 via-purple-600/30 to-cyan-400/30 opacity-20 blur-3xl rounded-full animate-pulse"></div>
-              <div className="relative bg-card/80 shadow-xl backdrop-blur-sm border border-border/50 rounded-xl sm:rounded-2xl h-full overflow-hidden">
-                <div className="absolute inset-0 bg-grid-small-pattern opacity-5"></div>
-                <div className="p-3 sm:p-6 pb-0 border-b">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="font-semibold text-sm sm:text-lg">Interactive Science Dashboard</h3>
-                      <p className="text-muted-foreground text-xs sm:text-sm">Explore the wonders of science</p>
-                    </div>
-                    <div className="hidden sm:flex gap-1.5">
-                      {[1, 2, 3].map(i => (
-                        <div key={i} className="bg-muted-foreground/20 border border-muted-foreground/30 rounded-full w-2 sm:w-3 h-2 sm:h-3" />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div className="p-1 w-full h-[calc(100%-3rem)] sm:h-[calc(100%-4rem)]">
-                  <ScienceAnimation />
-                </div>
-              </div>
-              
-              {/* Floating badges - hidden on smaller screens, visible on medium and up */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.2, duration: 0.5 }}
-                className="hidden sm:block -bottom-2 sm:-bottom-4 -left-2 sm:-left-4 z-10 absolute bg-card shadow-lg px-2 sm:px-3 py-1.5 sm:py-2 border rounded-lg"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="flex justify-center items-center bg-green-500/20 rounded-full w-6 sm:w-8 h-6 sm:h-8">
-                    <span className="font-bold text-green-500 text-xs sm:text-sm">+</span>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-muted-foreground sm:text-xs">Knowledge Growth</div>
-                    <div className="font-semibold text-xs sm:text-sm">87% Increase</div>
-                  </div>
-                </div>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.3, duration: 0.5 }}
-                className="hidden sm:block -top-2 -right-2 z-10 absolute bg-card shadow-lg px-2 sm:px-3 py-1.5 sm:py-2 border rounded-lg"
-              >
-                <div className="text-[10px] text-muted-foreground sm:text-xs">Personalized Learning</div>
-                <div className="font-semibold text-xs sm:text-sm">AI-Powered</div>
-              </motion.div>
-            </div>
           </motion.div>
         </div>
       </div>

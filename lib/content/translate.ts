@@ -1,35 +1,18 @@
+import { getGoogleServiceAPIKey } from '@/utils/googleServiceAPI';
 import { v2 as Translate } from '@google-cloud/translate';
-import { ReactNode, isValidElement, cloneElement, ReactElement } from 'react';
-
-interface TranslateOptions {
-  keyFilename?: string;
-}
-
-interface ElementWithClassName {
-  props: {
-    className?: string;
-    children?: ReactNode;
-    [key: string]: unknown;
-  };
-}
+import { ReactNode, isValidElement, cloneElement } from 'react';
 
 const translate = new Translate.Translate({
-  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-} as TranslateOptions);
+  key: getGoogleServiceAPIKey(),
+});
 
 export async function translateTextToBanglaServer(text: string): Promise<string> {
   if (!text.trim()) return '';
-  try {
-    const [translated] = await translate.translate(text, 'bn');
-    return translated;
-  } catch (error) {
-    console.error('Translation error:', error);
-    return text; // Return original text if translation fails
-  }
+  const [translated] = await translate.translate(text, 'bn');
+  return translated;
 }
 
 export async function translateReactNodeToBanglaServer(node: ReactNode): Promise<ReactNode> {
-  // Handle primitive types
   if (typeof node === 'string') {
     return await translateTextToBanglaServer(node);
   }
@@ -38,7 +21,6 @@ export async function translateReactNodeToBanglaServer(node: ReactNode): Promise
     return node;
   }
 
-  // Handle arrays
   if (Array.isArray(node)) {
     const translatedChildren = await Promise.all(
       node.map(async (child) => await translateReactNodeToBanglaServer(child))
@@ -46,23 +28,21 @@ export async function translateReactNodeToBanglaServer(node: ReactNode): Promise
     return translatedChildren;
   }
 
-  // Handle React elements
   if (isValidElement(node)) {
-    const element = node as ReactElement<ElementWithClassName['props']>;
+    const element = node as React.ReactElement<any>;
 
-    // Skip translation for certain elements
     if (element.type === 'code') return element;
-    
-    const className = element.props.className;
-    if (typeof className === 'string' && className.includes('katex')) {
+    if (
+      typeof element.props.className === 'string' &&
+      element.props.className.includes('katex')
+    ) {
       return element;
     }
 
-    // Recursively translate children
-    const translatedChildren = await translateReactNodeToBanglaServer(element.props.children);
+    const children = element.props.children;
+    const translatedChildren = await translateReactNodeToBanglaServer(children);
     return cloneElement(element, { ...element.props, children: translatedChildren });
   }
 
-  // Fallback for other cases
   return node;
 }

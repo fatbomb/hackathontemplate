@@ -1,97 +1,82 @@
 "use client";
 import { Card, CardContent } from '@/components/ui/card';
 import RichTextStyle from '@/styles/richTextStyle.module.css';
-import React, { useEffect, ReactNode, ReactElement } from 'react';
+import React, { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 
-const translationCache = new Map<string, ReactNode>();
-
-interface TranslationResponse {
-  translated: string;
-}
-
-interface TranslateRequest {
-  text: string;
-  to: string;
-}
+const translationCache = new Map<string, React.ReactNode>();
 
 export function ContentCard({
   content,
   language,
 }: {
-  content: ReactNode;
+  content: React.ReactNode;
   language: string;
 }) {
-  const [cont, setCont] = React.useState<ReactNode>(content);
+  const [cont, setCont] = React.useState<React.ReactNode>(content);
   const [loading, setLoading] = React.useState(false);
 
-  async function translateNode(node: ReactNode): Promise<ReactNode> {
-    if (typeof node === 'string') {
-      try {
+  useEffect(() => {
+    const cacheKey = `${language}-${JSON.stringify(content)}`;
+
+    async function translateNode(node: React.ReactNode): Promise<React.ReactNode> {
+      if (typeof node === 'string') {
         const res = await fetch(`/api/translate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             text: node,
             to: language,
-          } satisfies TranslateRequest),
+          }),
         });
 
         if (!res.ok) {
-          throw new Error(`Translation failed: ${res.status}`);
+          console.error('Translation error:', await res.text());
+          return node;
         }
 
-        const data = await res.json() as TranslationResponse;
+        const data = await res.json();
         return data.translated;
-      } catch (error) {
-        console.error('Translation error:', error);
-        return node;
       }
-    }
 
-    if (Array.isArray(node)) {
-      const translatedNodes: ReactNode[] = [];
-      for (let i = 0; i < node.length; i++) {
-        const translated = await translateNode(node[i]);
-        translatedNodes.push(translated);
-        if (i < node.length - 1) {
-          translatedNodes.push(' ');
+      if (Array.isArray(node)) {
+        const translatedNodes = [];
+        for (let i = 0; i < node.length; i++) {
+          const translated = await translateNode(node[i]);
+          translatedNodes.push(translated);
+          if (i < node.length - 1) {
+            translatedNodes.push(' ');
+          }
         }
+        return translatedNodes;
       }
-      return translatedNodes;
+
+      if (React.isValidElement(node)) {
+        const element = node as React.ReactElement<any>;
+        const props = element.props as any;
+        const className = props.className || props.class || '';
+        if (typeof className === 'string' && className.includes('katex')) {
+          return node;
+        }
+        const children = await translateNode(props.children);
+        return React.cloneElement(element, { ...props, children });
+      }
+
+      return node;
     }
-
-    if (React.isValidElement(node)) {
-      const element = node as ReactElement<{ children?: ReactNode }>;
-      const children = await translateNode(element.props.children);
-      return React.cloneElement(element, {
-        ...element.props,
-        children,
-      });
-    }
-
-    return node;
-  }
-
-  useEffect(() => {
-    const cacheKey = `${language}-${JSON.stringify(content)}`;
 
     async function fetchTranslation() {
       setLoading(true);
-      
       if (translationCache.has(cacheKey)) {
         setCont(translationCache.get(cacheKey)!);
         setLoading(false);
         return;
       }
 
-      try {
-        const translated = await translateNode(content);
-        translationCache.set(cacheKey, translated);
-        setCont(translated);
-      } finally {
-        setLoading(false);
-      }
+      const translated = await translateNode(content);
+      translationCache.set(cacheKey, translated);
+      setCont(translated);
+      setLoading(false);
     }
 
     if (language === 'en-US') {
@@ -105,7 +90,7 @@ export function ContentCard({
     <Card className="w-full">
       <CardContent className={`${RichTextStyle.richtext} p-10 w-full`}>
         {loading ? (
-          <div className="flex justify-center items-center gap-2 w-full h-full text-muted-foreground">
+          <div className="w-full h-full flex items-center justify-center gap-2 text-muted-foreground">
             <Loader2 className="w-4 h-4 animate-spin" />
             Translating...
           </div>

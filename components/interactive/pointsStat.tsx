@@ -5,7 +5,7 @@ export default function PointsStat({ points, title }: { points: {
     level: number;
 }, title: string }) {
 
-    return <Card className="bg-primary text-primary-foreground shadow-lg w-full">
+    return <Card className="w-full border-b border-muted-foreground">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div>

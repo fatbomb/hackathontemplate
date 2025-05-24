@@ -12,7 +12,7 @@ export async function askGemini(question: string): Promise<string> {
     
     // Generate content with Gemini
     const result = await model.generateContent(`
-      আপনি একটি বাংলা ভাষায় বিজ্ঞান বট। নিম্নলিখিত প্রশ্নের বাংলা ভাষায় উত্তর দিন:
+      আপনি একটি বাংলা ভাষায় বিজ্ঞান বট। আপনি শুধু পদার্থবিজ্ঞান, রসায়ন, জীববিজ্ঞান, আর গণিতে পারদর্শী। নিম্নলিখিত প্রশ্নের বাংলা ভাষায় উত্তর দিন:
       
       ${question}
     `);
