@@ -12,22 +12,7 @@ export async function generateWithGemini(prompt: string): Promise<string> {
 
   const model = 'learnlm-2.0-flash-experimental';
   const config = {
-    responseMimeType: 'application/json',
-    responseSchema: {
-      type: Type.ARRAY,
-      items: {
-        type: Type.OBJECT,
-        properties: {
-          question: { type: Type.STRING },
-          options: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
-          },
-          answer: { type: Type.STRING },
-          explanation: { type: Type.STRING },
-        }
-      }
-    }
+    responseMimeType: 'text/plain',
   };
 
   const contents = [
