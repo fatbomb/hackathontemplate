@@ -8,14 +8,36 @@ interface SubmitDataRequestBody {
   dataType: string;
   value: string;
   notes?: string;
+  images: FileList ;
   latitude: number;
   longitude: number;
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json() as SubmitDataRequestBody;
-    const { dataType, value, notes, latitude, longitude } = body;
+    //const body = await request.json() as SubmitDataRequestBody;
+    //const { dataType, value, notes, latitude, longitude } = body;
+
+    const formData = await request.formData();
+
+    const dataType = formData.get('dataType') as string;
+    const value = formData.get('value') as string;
+    const notes = formData.get('notes') as string | null;
+    const latitude = parseFloat(formData.get('latitude') as string);
+    const longitude = parseFloat(formData.get('longitude') as string);
+    const images = formData.getAll('images') as File[];
+
+    const pbFormData = new FormData();
+    pbFormData.append('dataType', dataType);
+    pbFormData.append('value', value);
+    if (notes) pbFormData.append('notes', notes);
+    pbFormData.append('latitude', latitude.toString());
+    pbFormData.append('longitude', longitude.toString());
+
+    images.forEach((file) => {
+      pbFormData.append('images', file);
+    });
+    
 
     // Validate inputs
     if (!dataType || !value || latitude === undefined || longitude === undefined) {
@@ -34,14 +56,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Create record in PocketBase
-    const record = await pb.collection('environmental_data').create({
-      dataType,
-      value,
-      notes: notes || '',
-      latitude: parseFloat(latitude.toString()),
-      longitude: parseFloat(longitude.toString()),
-      created: new Date().toISOString(),
-    });
+    const record = await pb.collection('environmental_data').create(pbFormData);
+    // const record = await pb.collection('environmental_data').create({
+    //   dataType,
+    //   value,
+    //   notes: notes || '',
+    //   latitude: parseFloat(latitude.toString()),
+    //   longitude: parseFloat(longitude.toString()),
+      
+    //   created: new Date().toISOString(),
+    // });
 
     // Trigger Google Cloud Function for further processing
     await triggerCloudFunction({

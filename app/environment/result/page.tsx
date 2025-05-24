@@ -26,7 +26,7 @@ const translations = {
     totalDataPoints: "Total Data Points",
     collectedRecords: "Collected environmental records",
     avgPollutionLevel: "Avg. Pollution Level",
-    pollutionScale: "Scale of 1-10 severity",
+    pollutionScale: "Scale of 1-4 severity",
     uniqueSpecies: "Unique Species",
     documentedBiodiversity: "Documented biodiversity",
     recentWeatherEvents: "Recent Weather Events",
@@ -122,6 +122,16 @@ const translations = {
     eventInfo: "পরবর্তী কমিউনিটি বিজ্ঞান ইভেন্টে যোগ দিন ১৫ জুন, ২০২৫ তারিখে! আরও বিশদ জানতে কমিউনিটি পৃষ্ঠাটি দেখুন।",
   }
 };
+
+ 
+type PollutionLevelKey = 'moderate' | 'unhealthy' | 'very_unhealthy' | 'hazardous';
+
+const pollutionLevelMap: Record<PollutionLevelKey, number> = {
+  moderate: 1,
+  unhealthy: 2,
+  very_unhealthy: 3,
+  hazardous: 4
+};
   
 
 const EnvironmentPage: React.FC = () => {
@@ -196,16 +206,38 @@ const EnvironmentPage: React.FC = () => {
 
     // Calculate total entries
     const totalEntries = environmentalData.length;
+   
+    // const pollutionLevelMap = {
+    //   moderate: 1,
+    //   unhealthy: 2,
+    //   very_unhealthy: 3,
+    //   hazardous: 4
+    // };
+
+  //   const pollutionData = environmentalData.filter(item => item.dataType === 'pollution');
+
+  //   // Calculate average pollution (assuming pollution value is 1-10)
     
-    // Calculate average pollution (assuming pollution value is 1-10)
-    const pollutionData = environmentalData.filter(item => item.dataType === 'pollution');
-    const averagePollution = pollutionData.length > 0 
-      ? pollutionData.reduce((sum, item) => {
-          const value = parseFloat(item.value);
-          return sum + (isNaN(value) ? 0 : value);
-        }, 0) / pollutionData.length
-      : 0;
+  //   const averagePollution = pollutionData.length > 0 
+  // ? pollutionData.reduce((sum, item) => {
+  //     const levelKey = item.value?.toLowerCase().replace(/\s+/g, '_');
+  //     const numericValue = pollutionLevelMap[levelKey] || 0;
+  //     return sum + numericValue;
+  //   }, 0) / pollutionData.length
+  // : 0;
     
+  const pollutionData = environmentalData.filter(item => item.dataType === 'pollution');
+
+  const averagePollution = pollutionData.length > 0 
+    ? pollutionData.reduce((sum, item) => {
+        const rawValue = item.value?.toLowerCase().replace(/\s+/g, '_');
+        const levelKey = rawValue as PollutionLevelKey; // type assertion
+        const numericValue = pollutionLevelMap[levelKey] || 0;
+        return sum + numericValue;
+      }, 0) / pollutionData.length
+    : 0;
+
+
     // Count unique species
     const uniqueSpecies = new Set(
       environmentalData
@@ -466,7 +498,10 @@ const EnvironmentPage: React.FC = () => {
                   </div>
                 </div>
               ) : (
+
+                //google map integrate korsi 
                 <Map dataPoints={filteredData} />
+
               )}
             </div>
             

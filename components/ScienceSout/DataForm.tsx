@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+  import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -10,6 +11,7 @@ interface FormValues {
   notes: string;
   latitude: number | string;
   longitude: number | string;
+  images: FileList | null;
 }
 
 interface DataFormProps {
@@ -34,18 +36,49 @@ const DataForm: React.FC<DataFormProps> = ({ language = 'english' }) => {
         weather: "Weather Observation"
       },
       valueLabels: {
-        pollution: "Pollution Level (1-10)",
+        pollution: "Pollution Level",
         biodiversity: "Species Observed",
         weather: "Weather Conditions"
       },
+      pollutionLevels: {
+        moderate: "Moderate",
+        unhealthy: "Unhealthy",
+        very_unhealthy: "Very Unhealthy",
+        hazardous: "Hazardous"
+      },
+      biodiversityTypes: {
+        birds: "Birds",
+        mammals: "Mammals",
+        insects: "Insects",
+        plants: "Plants",
+        reptiles: "Reptiles",
+        amphibians: "Amphibians",
+        fish: "Fish",
+        other: "Other"
+      },
+      weatherConditions: {
+        sunny: "Sunny",
+        cloudy: "Cloudy",
+        rainy: "Rainy",
+        stormy: "Stormy",
+        foggy: "Foggy",
+        windy: "Windy",
+        snowy: "Snowy",
+        hot: "Hot",
+        cold: "Cold"
+      },
       notesLabel: "Additional Notes",
+      imagesLabel: "Upload Images",
       locationLabel: "Location",
       latitudeLabel: "Latitude",
       longitudeLabel: "Longitude",
       locationWaiting: "Waiting for location... Please enable location services.",
       submitButton: "Submit Data",
       submittingButton: "Submitting...",
-      requiredError: "Required"
+      requiredError: "Required",
+      selectPlaceholder: "Select pollution level",
+      selectBiodiversityPlaceholder: "Select species type",
+      selectWeatherPlaceholder: "Select weather condition"
     },
     bangla: {
       title: "পরিবেশগত তথ্য জমা দিন",
@@ -57,18 +90,49 @@ const DataForm: React.FC<DataFormProps> = ({ language = 'english' }) => {
         weather: "আবহাওয়া পর্যবেক্ষণ"
       },
       valueLabels: {
-        pollution: "দূষণের মাত্রা (১-১০)",
+        pollution: "দূষণের মাত্রা",
         biodiversity: "পর্যবেক্ষিত প্রজাতি",
         weather: "আবহাওয়ার অবস্থা"
       },
+      pollutionLevels: {
+        moderate: "মাঝারি",
+        unhealthy: "অস্বাস্থ্যকর",
+        very_unhealthy: "অত্যন্ত অস্বাস্থ্যকর",
+        hazardous: "বিপজ্জনক"
+      },
+      biodiversityTypes: {
+        birds: "পাখি",
+        mammals: "স্তন্যপায়ী",
+        insects: "পোকামাকড়",
+        plants: "উদ্ভিদ",
+        reptiles: "সরীসৃপ",
+        amphibians: "উভচর",
+        fish: "মাছ",
+        other: "অন্যান্য"
+      },
+      weatherConditions: {
+        sunny: "রৌদ্রোজ্জ্বল",
+        cloudy: "মেঘলা",
+        rainy: "বৃষ্টি",
+        stormy: "ঝড়",
+        foggy: "কুয়াশা",
+        windy: "বাতাস",
+        snowy: "তুষার",
+        hot: "গরম",
+        cold: "ঠান্ডা"
+      },
       notesLabel: "অতিরিক্ত মন্তব্য",
+      imagesLabel: "ছবি আপলোড করুন",
       locationLabel: "অবস্থান",
       latitudeLabel: "অক্ষাংশ",
       longitudeLabel: "দ্রাঘিমাংশ",
       locationWaiting: "অবস্থানের জন্য অপেক্ষা করা হচ্ছে... দয়া করে অবস্থান সেবা সক্ষম করুন।",
       submitButton: "তথ্য জমা দিন",
       submittingButton: "জমা দেওয়া হচ্ছে...",
-      requiredError: "প্রয়োজনীয়"
+      requiredError: "প্রয়োজনীয়",
+      selectPlaceholder: "দূষণের মাত্রা নির্বাচন করুন",
+      selectBiodiversityPlaceholder: "প্রজাতির ধরন নির্বাচন করুন",
+      selectWeatherPlaceholder: "আবহাওয়ার অবস্থা নির্বাচন করুন"
     }
   };
 
@@ -97,6 +161,7 @@ const DataForm: React.FC<DataFormProps> = ({ language = 'english' }) => {
     notes: Yup.string(),
     latitude: Yup.number().required('Location is required'),
     longitude: Yup.number().required('Location is required'),
+    images: Yup.mixed(),
   });
 
   const formik = useFormik<FormValues>({
@@ -106,6 +171,7 @@ const DataForm: React.FC<DataFormProps> = ({ language = 'english' }) => {
       notes: '',
       latitude: location?.lat || '',
       longitude: location?.lng || '',
+      images: null,
     },
     validationSchema,
     enableReinitialize: true,
@@ -115,10 +181,24 @@ const DataForm: React.FC<DataFormProps> = ({ language = 'english' }) => {
       setSubmitSuccess(false);
 
       try {
-        await axios.post('/api/environment/submit-data', {
-          ...values,
-          latitude: Number(values.latitude),
-          longitude: Number(values.longitude),
+        const formData = new FormData();
+        formData.append('dataType', values.dataType);
+        formData.append('value', values.value);
+        formData.append('notes', values.notes);
+        formData.append('latitude', String(values.latitude));
+        formData.append('longitude', String(values.longitude));
+        
+        // Append images if they exist
+        if (values.images) {
+          Array.from(values.images).forEach((file, index) => {
+            formData.append(`images`, file);
+          });
+        }
+
+        await axios.post('/api/environment/submit-data', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         });
         setSubmitSuccess(true);
         formik.resetForm();
@@ -143,6 +223,83 @@ const DataForm: React.FC<DataFormProps> = ({ language = 'english' }) => {
 
   const getValueLabel = () => {
     return activeContent.valueLabels[formik.values.dataType];
+  };
+
+  const renderValueInput = () => {
+    if (formik.values.dataType === 'pollution') {
+      return (
+        <select
+          id="value"
+          name="value"
+          className="bg-white dark:bg-gray-800 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400 w-full text-gray-900 dark:text-gray-100"
+          onChange={formik.handleChange}
+          value={formik.values.value}
+        >
+          <option value="">{activeContent.selectPlaceholder}</option>
+          <option value="moderate">{activeContent.pollutionLevels.moderate}</option>
+          <option value="unhealthy">{activeContent.pollutionLevels.unhealthy}</option>
+          <option value="very_unhealthy">{activeContent.pollutionLevels.very_unhealthy}</option>
+          <option value="hazardous">{activeContent.pollutionLevels.hazardous}</option>
+        </select>
+      );
+    } else if (formik.values.dataType === 'biodiversity') {
+      return (
+        <select
+          id="value"
+          name="value"
+          className="bg-white dark:bg-gray-800 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400 w-full text-gray-900 dark:text-gray-100"
+          onChange={formik.handleChange}
+          value={formik.values.value}
+        >
+          <option value="">{activeContent.selectBiodiversityPlaceholder}</option>
+          <option value="birds">{activeContent.biodiversityTypes.birds}</option>
+          <option value="mammals">{activeContent.biodiversityTypes.mammals}</option>
+          <option value="insects">{activeContent.biodiversityTypes.insects}</option>
+          <option value="plants">{activeContent.biodiversityTypes.plants}</option>
+          <option value="reptiles">{activeContent.biodiversityTypes.reptiles}</option>
+          <option value="amphibians">{activeContent.biodiversityTypes.amphibians}</option>
+          <option value="fish">{activeContent.biodiversityTypes.fish}</option>
+          <option value="other">{activeContent.biodiversityTypes.other}</option>
+        </select>
+      );
+    } else if (formik.values.dataType === 'weather') {
+      return (
+        <select
+          id="value"
+          name="value"
+          className="bg-white dark:bg-gray-800 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400 w-full text-gray-900 dark:text-gray-100"
+          onChange={formik.handleChange}
+          value={formik.values.value}
+        >
+          <option value="">{activeContent.selectWeatherPlaceholder}</option>
+          <option value="sunny">{activeContent.weatherConditions.sunny}</option>
+          <option value="cloudy">{activeContent.weatherConditions.cloudy}</option>
+          <option value="rainy">{activeContent.weatherConditions.rainy}</option>
+          <option value="stormy">{activeContent.weatherConditions.stormy}</option>
+          <option value="foggy">{activeContent.weatherConditions.foggy}</option>
+          <option value="windy">{activeContent.weatherConditions.windy}</option>
+          <option value="snowy">{activeContent.weatherConditions.snowy}</option>
+          <option value="hot">{activeContent.weatherConditions.hot}</option>
+          <option value="cold">{activeContent.weatherConditions.cold}</option>
+        </select>
+      );
+    } else {
+      return (
+        <input
+          type="text"
+          id="value"
+          name="value"
+          className="bg-white dark:bg-gray-800 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400 w-full text-gray-900 dark:text-gray-100"
+          onChange={formik.handleChange}
+          value={formik.values.value}
+        />
+      );
+    }
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    formik.setFieldValue('images', files);
   };
 
   return (
@@ -183,14 +340,7 @@ const DataForm: React.FC<DataFormProps> = ({ language = 'english' }) => {
           <label htmlFor="value" className="block mb-2 font-bold text-gray-700 dark:text-gray-300">
             {getValueLabel()}
           </label>
-          <input
-            type="text"
-            id="value"
-            name="value"
-            className="bg-white dark:bg-gray-800 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400 w-full text-gray-900 dark:text-gray-100"
-            onChange={formik.handleChange}
-            value={formik.values.value}
-          />
+          {renderValueInput()}
           {formik.touched.value && formik.errors.value && (
             <div className="mt-1 text-red-500 dark:text-red-400">{formik.errors.value as string}</div>
           )}
@@ -208,6 +358,26 @@ const DataForm: React.FC<DataFormProps> = ({ language = 'english' }) => {
             onChange={formik.handleChange}
             value={formik.values.notes}
           ></textarea>
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="images" className="block mb-2 font-bold text-gray-700 dark:text-gray-300">
+            {activeContent.imagesLabel}
+          </label>
+          <input
+            type="file"
+            id="images"
+            name="images"
+            multiple
+            accept="image/*"
+            className="bg-white dark:bg-gray-800 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400 w-full text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 dark:file:bg-green-900 dark:file:text-green-300 dark:hover:file:bg-green-800"
+            onChange={handleImageChange}
+          />
+          {formik.values.images && formik.values.images.length > 0 && (
+            <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              {formik.values.images.length} file(s) selected
+            </div>
+          )}
         </div>
 
         <div className="mb-4">
@@ -243,9 +413,13 @@ const DataForm: React.FC<DataFormProps> = ({ language = 'english' }) => {
             </div>
           </div>
           {(!formik.values.latitude || !formik.values.longitude) && (
-            <div className="mt-1 text-yellow-600 dark:text-yellow-400">
-              {activeContent.locationWaiting}
-            </div>
+            
+            !location && (
+              <p className="text-sm text-yellow-600 dark:text-yellow-400">
+                {activeContent.locationWaiting}
+              </p>
+            )
+            
           )}
         </div>
 
