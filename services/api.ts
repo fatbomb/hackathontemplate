@@ -1,15 +1,15 @@
 import { getPocketBase } from '@/lib/pocketbase';
-import { 
-  Exam, 
-  ClientQuestion, 
-  ServerQuestion, 
-  UserExam, 
+import {
+  Exam,
+  ClientQuestion,
+  ServerQuestion,
+  UserExam,
   UserAnswer,
   ExamResult,
   MCQQuestion
 } from '@/types';
 import { generateWithGemini } from './ai';
-import { renderMDX } from '@/lib/mdx-remote';
+// import { renderMDX } from '@/lib/mdx-remote';
 
 // // Use your own AI service URL or provider
 // // const AI_SERVICE_URL = 'https://your-ai-service-url.com/generate-mcq';
@@ -58,9 +58,37 @@ import { renderMDX } from '@/lib/mdx-remote';
 
 //   return cleaned;
 // }
+export function cleanMalformedJson(raw: string): string {
+  // Step 1: Replace equal signs with colons and fix field formatting
+  let cleaned = raw
+    .replace(/(\boptions)\s*=\s*/g, '"options": ')
+    .replace(/(\banswer)\s*=\s*/g, '"answer": ')
+    .replace(/(\bexplanation)\s*=\s*/g, '"explanation": ')
+    .replace(/(\bquestion)\s*:\s*"/g, '"question": "');
+
+  // Step 2: Ensure all property keys are quoted properly
+  cleaned = cleaned.replace(/([{,])\s*(\w+)\s*:/g, '$1 "$2":');
+
+  // Step 3: Fix any stray backslashes, remove line breaks within entries
+  cleaned = cleaned.replace(/\\n/g, ' ').replace(/\s+/g, ' ');
+
+  // Step 4: Wrap entire string in brackets if not already a valid array
+  if (!cleaned.trim().startsWith('[')) {
+    cleaned = `[${cleaned}]`;
+  }
+
+  // Step 5: Parse and re-stringify to ensure validity (optional)
+  try {
+    const parsed = JSON.parse(cleaned);
+    return JSON.stringify(parsed, null, 2);
+  } catch (e) {
+    throw new Error("Cleaned JSON is still invalid: " + e);
+  }
+}
+
 
 export const AIService = {
-  
+
   async generateMCQQuestions(params: {
     refined_text: string;
     difficulty: string;
@@ -69,17 +97,32 @@ export const AIService = {
     language?: string;
     exam_name?: string;
     subject?: string;
-    Class:string;
+    Class: string;
   }) {
     try {
-      const { refined_text, difficulty, num_questions, topic_name, language, exam_name,subject,Class } = params;
+      const { refined_text, difficulty, num_questions, topic_name, language, exam_name, subject, Class } = params;
       console.log(refined_text, difficulty, num_questions, topic_name, language, exam_name);
 
       const numQuestionsNumber = Number(num_questions);
-      const prompt = `Generate exactly ${numQuestionsNumber + 3} muliple choice questions (4 options each) for the subject='${subject}' topic='${topic_name}'  in language='${language}' with difficulty='${difficulty}' for class=${Class} .
-      Questions, options, explanations string must be in perfect markdown format with equations in LaTeX format wrapped in proper $ signs.
-      Do not include any additional text or explanations outside the JSON format.
-      `;
+      const prompt = `Generate exactly ${numQuestionsNumber + 3} multiple-choice questions (MCQs) for:
+- subject = '${subject}'
+- topic = '${topic_name}'
+- class = '${Class}'
+- difficulty = '${difficulty}'
+- language = '${language}'
+
+Follow these strict instructions:
+1. Respond **only** with a JSON array (enclosed in []).
+2. Each object must include exactly the following keys:
+   - "question": A clear, direct question (no extra context or instructions).
+   - "options": A list of exactly 4 distinct answer choices.
+   - "answer": The correct answer as a **string**, exactly matching one of the options (not an index or label).
+   - "explanation": A brief, concise explanation of why the answer is correct.
+3. Do **not** include any additional text or formatting outside the JSON.
+4. Do **not** prepend or append any commentary, headers, or markdown.
+5. Do **not** add extra information to the question—keep it direct and academic.
+
+Ensure the response is clean and parsable as valid JSON.`;
 
       const response = await generateWithGemini(prompt);
       return response;
@@ -101,6 +144,7 @@ export const AIService = {
       }
 
       let jsonText = response.substring(jsonStart, jsonEnd);
+      // jsonText = cleanMalformedJson(jsonText)
       console.log('Cleaned JSON:', jsonText);
 
       const batchQuestions = JSON.parse(jsonText);
@@ -112,27 +156,18 @@ export const AIService = {
           break;
         }
 
-        const { question: questionText = '', options = [], answer = '', explanation = '' } = question;
-        const renderables = [questionText, ...options, answer, explanation];
-        const rendered = await Promise.all(renderables.map(text => renderMDX(text)));
-        const [questionRendered, ...rest] = rendered;
-        const optionsRendered = rest.slice(0, options.length).map(r => r.content);
-        const answerRendered = rest[options.length]?.content || '';
-        const explanationRendered = rest[options.length + 1]?.content || '';
+        const questionText = question.question || '';
+        const options = question.options || [];
+        const answerText = question.answer || '';
+        const explanation = question.explanation || '';
 
         if (questionText && options.length === 4) {
           try {
-            const answerIndex = options.indexOf(answer);
-            question.question = questionRendered.content;
-            question.options = optionsRendered;
-            question.answer = answerIndex >= 0 ? answerIndex : -1;
-            question.explanation = explanationRendered;
-            allGeneratedQuestions.push({
-              question: question.question,
-              options: question.options,
-              answer: question.answer,
-              explanation: question.explanation
-            });
+            const answerIndex = options.indexOf(answerText);
+            if (answerIndex !== -1) {
+              question.answer = answerIndex;
+              allGeneratedQuestions.push(question);
+            }
           } catch (e) {
             console.log(`Skipping invalid question: ${questionText}`);
           }
@@ -152,26 +187,26 @@ export const ExamService = {
     const pb = await getPocketBase();
     return await pb.collection('exams').getOne(examId);
   },
-  
+
   async getClientQuestions(examId: string): Promise<ClientQuestion[]> {
     const pb = await getPocketBase();
     const records = await pb.collection('questions').getFullList({
       filter: `exam_id = "${examId}"`,
     });
-    
+
     return records.map(record => ({
       id: record.id,
       question_statement: record.question_statement,
       options: record.options
     }));
   },
-  
+
   async getFullQuestions(examId: string): Promise<ServerQuestion[]> {
-    const pb =await  getPocketBase();
+    const pb = await getPocketBase();
     const records = await pb.collection('questions').getFullList({
       filter: `exam_id = "${examId}"`,
     });
-    
+
     return records.map(record => ({
       id: record.id,
       question_statement: record.question_statement,
@@ -180,51 +215,51 @@ export const ExamService = {
       explaination: record.explaination
     }));
   },
-  
+
   async startExam(userExamId: string): Promise<void> {
-    const pb =await getPocketBase();
+    const pb = await getPocketBase();
     await pb.collection('user_exams').update(userExamId, {
       status: 'in_progress',
       start_time: new Date().toISOString()
     });
   },
-  
+
   async getUserExam(userExamId: string): Promise<UserExam> {
     const pb = await getPocketBase();
     return await pb.collection('user_exams').getOne(userExamId);
   },
-  
+
   async getExamStartTime(userExamId: string): Promise<number> {
     const pb = await getPocketBase();
     const userExam = await pb.collection('user_exams').getOne(userExamId);
-    
+
     if (!userExam.start_time) {
       return Date.now(); // Default to now if not set
     }
-    
+
     return new Date(userExam.start_time).getTime();
   },
-  
+
   async getExamTimeLimit(examId: string): Promise<number> {
-    const pb =await getPocketBase();
+    const pb = await getPocketBase();
     const exam = await pb.collection('exams').getOne(examId);
     return exam.time_limit; // Returns time in minutes
   },
-  
+
   async saveExamResult(
-    userExamId: string, 
-    score: number, 
+    userExamId: string,
+    score: number,
     answers: { questionId: string, selectedAnswer: number }[]
   ): Promise<void> {
-    const pb =await getPocketBase();
-    
+    const pb = await getPocketBase();
+
     // Update user exam record
     await pb.collection('user_exams').update(userExamId, {
       status: 'completed',
       score: score,
       end_time: new Date().toISOString()
     });
-    
+
     // Save user answers
     for (const answer of answers) {
       await pb.collection('user_answers').create({
@@ -234,25 +269,25 @@ export const ExamService = {
       });
     }
   },
-  
+
   async calculateExamResults(
-    userExamId: string, 
-    examId: string, 
+    userExamId: string,
+    examId: string,
     answers: { questionId: string, selectedAnswer: number }[]
   ): Promise<ExamResult> {
     const pb = getPocketBase();
-    
+
     // Get all questions for this exam
     const questions = await this.getFullQuestions(examId);
-    
+
     // Calculate results
     let correctAnswers = 0;
     const resultQuestions = questions.map(question => {
       const userAnswer = answers.find(a => a.questionId === question.id)?.selectedAnswer ?? -1;
       const isCorrect = userAnswer === question.correct_answer;
-      
+
       if (isCorrect) correctAnswers++;
-      
+
       return {
         id: question.id,
         question_statement: question.question_statement,
@@ -262,11 +297,11 @@ export const ExamService = {
         explanation: question.explaination
       };
     });
-    
-    const score = questions.length > 0 
-      ? (correctAnswers / questions.length) * 100 
+
+    const score = questions.length > 0
+      ? (correctAnswers / questions.length) * 100
       : 0;
-    
+
     return {
       score,
       totalQuestions: questions.length,
@@ -274,13 +309,13 @@ export const ExamService = {
       questions: resultQuestions
     };
   },
-  
+
   async getUserAnswers(userExamId: string): Promise<UserAnswer[]> {
-    const pb =await getPocketBase();
+    const pb = await getPocketBase();
     const records = await pb.collection('user_answers').getFullList({
       filter: `user_exam_id = "${userExamId}"`,
     });
-    
+
     return records.map(record => ({
       id: record.id,
       user_exam_id: record.user_exam_id,
