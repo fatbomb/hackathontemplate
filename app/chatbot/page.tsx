@@ -59,6 +59,36 @@ declare global {
     bengaliTTSAudios?: HTMLAudioElement[];
   }
 }
+function markdownToPlainText(markdown: string): string {
+  return markdown
+    // Remove code blocks
+    .replace(/```[\s\S]*?```/g, '')
+    // Remove inline code
+    .replace(/`([^`]+)`/g, '$1')
+    // Remove images ![alt](url)
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    // Remove links but keep text [text](url)
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    // Remove bold/italic/strikethrough
+    .replace(/(\*\*|__)(.*?)\1/g, '$2')
+    .replace(/(\*|_)(.*?)\1/g, '$2')
+    .replace(/~~(.*?)~~/g, '$1')
+    // Remove blockquotes
+    .replace(/^>\s+/gm, '')
+    // Remove headings
+    .replace(/^#{1,6}\s+/gm, '')
+    // Remove unordered list markers
+    .replace(/^\s*[-+*]\s+/gm, '')
+    // Remove ordered list numbers
+    .replace(/^\s*\d+\.\s+/gm, '')
+    // Remove horizontal rules
+    .replace(/^([-*_]\s*){3,}$/gm, '')
+    // Collapse multiple newlines into a single newline
+    .replace(/\n{2,}/g, '\n')
+    // Trim whitespace
+    .trim();
+}
+
 
 // Format date utility function
 
@@ -308,6 +338,7 @@ export default function Chatbot() {
       setError('আপনার ব্রাউজারে ভয়েস ইনপুট সমর্থিত নয়।');
       return;
     }
+    console.log(listening, "what is this? not here any time??")
     
     if (listening) {
       recognitionRef.current.stop();
@@ -351,7 +382,11 @@ export default function Chatbot() {
   // Handle text-to-speech
   const speak = async (text: string, messageId?: number) => {
     try {
-      stopSpeaking();
+      if(isSpeaking){
+        stopSpeaking();
+        return;
+      }
+
       
       setIsSpeaking(true);
       if (messageId !== undefined) {
@@ -378,10 +413,10 @@ export default function Chatbot() {
         
         try {
           const chunk = chunks[index];
-          const response = await fetch('/api/tts', {
+          const response = await fetch('/api/narrate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: chunk }),
+            body: JSON.stringify({ text: markdownToPlainText( chunk), language: 'bn-IN' }),
           });
           
           if (!response.ok) {
@@ -416,11 +451,13 @@ export default function Chatbot() {
 
   // Stop all speaking
   const stopSpeaking = () => {
+    setIsSpeaking(false);
+    // setIsSpeaking(false);
     if (typeof window !== 'undefined') {
       if (!window.bengaliTTSAudios) {
         window.bengaliTTSAudios = [];
       }
-      
+      console.log("here")
       window.bengaliTTSAudios.forEach(audio => {
         try {
           audio.pause();
