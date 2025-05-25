@@ -127,7 +127,7 @@ export default function Form() {
 
           <button
             onClick={toggleLanguage}
-            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 dark:bg-white/5 dark:hover:bg-white/10 backdrop-blur-sm px-3 py-2 rounded-lg text-primary transition-colors"
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 dark:bg-white/5 dark:hover:bg-white/10 backdrop-blur-sm px-3 py-2 rounded-lg text-primary transition-colors cursor-pointer"
           >
             <Globe size={18} />
             <span className="hidden sm:inline">{activeContent.switchToOther}</span>
@@ -183,7 +183,7 @@ export default function Form() {
                   className="space-y-4"
                 >
                   <Link href="/environment/result">
-                    <button className="inline-flex justify-center items-center bg-gradient-to-r from-blue-600 hover:from-blue-700 to-blue-500 hover:to-blue-600 shadow-md hover:shadow-lg px-6 py-3 rounded-lg w-full sm:w-auto text-white transition-all">
+                    <button className="inline-flex justify-center items-center bg-gradient-to-r from-blue-600 hover:from-blue-700 to-blue-500 hover:to-blue-600 shadow-md hover:shadow-lg px-6 py-3 rounded-lg w-full sm:w-auto text-white transition-all cursor-pointer">
                       <BarChart4 size={18} className="mr-2" />
                       {activeContent.dashboardLink}
                       <ChevronRight size={16} className="ml-1" />
@@ -270,14 +270,14 @@ export default function Form() {
 
               <div className="flex sm:flex-row flex-col justify-center gap-4">
                 <Link href="#top" scroll={false}>
-                  <button className="flex justify-center items-center bg-white hover:bg-green-50 dark:bg-gray-800 dark:hover:bg-gray-700 shadow-md px-8 py-4 rounded-lg text-green-700 dark:text-green-400 transition-colors">
+                  <button className="flex justify-center items-center bg-white hover:bg-green-50 dark:bg-gray-800 dark:hover:bg-gray-700 shadow-md px-8 py-4 rounded-lg text-green-700 dark:text-green-400 transition-colors cursor-pointer">
                     <Clipboard size={18} className="mr-2" />
                     {activeContent.submitData}
                   </button>
                 </Link>
 
                 <Link href="/environment/result">
-                  <button className="flex justify-center items-center bg-white/10 hover:bg-white/20 dark:bg-white/10 dark:hover:bg-white/20 shadow-md backdrop-blur-sm px-8 py-4 rounded-lg text-white transition-colors">
+                  <button className="flex justify-center items-center bg-white/10 hover:bg-white/20 dark:bg-white/10 dark:hover:bg-white/20 shadow-md backdrop-blur-sm px-8 py-4 rounded-lg text-white transition-colors cursor-pointer">
                     <BarChart4 size={18} className="mr-2" />
                     {activeContent.dashboardLink}
                   </button>

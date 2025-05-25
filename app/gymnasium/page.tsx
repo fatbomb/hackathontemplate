@@ -90,7 +90,7 @@ export default async function GymnasiumPage() {
               
               <button
                       type="submit"
-                      className="flex flex-row bg-primary hover:bg-primary/90 disabled:opacity-70 px-4 py-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary font-medium text-primary-foreground text-sm transition-colors disabled:pointer-events-none"
+                      className="flex flex-row bg-primary hover:bg-primary/90 disabled:opacity-70 px-4 py-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary font-medium text-primary-foreground text-sm transition-colors cursor-pointer disabled:pointer-events-none"
                     ><svg className="mr-2 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
               </svg>

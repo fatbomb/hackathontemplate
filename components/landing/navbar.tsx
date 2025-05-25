@@ -138,7 +138,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
             variant="ghost"
             size="sm"
             onClick={handleLogout}
-            className="flex items-center"
+            className="flex items-center cursor-pointer"
             disabled={isLoading}
           >
             <LogOut className="mr-2 w-4 h-4" />
@@ -257,7 +257,7 @@ export function Navbar({ serverAuth }: NavbarProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="justify-start w-full"
+                    className="justify-start w-full cursor-pointer"
                     onClick={() => {
                       handleLogout();
                       setIsMobileMenuOpen(false);

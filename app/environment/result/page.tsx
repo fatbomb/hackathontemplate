@@ -274,7 +274,7 @@ const EnvironmentPage: React.FC = () => {
       <div className="right-6 bottom-6 z-10 fixed flex flex-col gap-3">
         {/* Add Data Button */}
         <Link href="/environment/form">
-          <button className="group flex justify-center items-center bg-gradient-to-r from-green-600 to-green-500 shadow-lg hover:shadow-xl p-4 rounded-full text-white transition-all duration-300">
+          <button className="group flex justify-center items-center bg-gradient-to-r from-green-600 to-green-500 shadow-lg hover:shadow-xl p-4 rounded-full text-white transition-all duration-300 cursor-pointer">
             <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
           </button>
         </Link>
@@ -282,7 +282,7 @@ const EnvironmentPage: React.FC = () => {
         {/* Language Toggle */}
         <button 
           onClick={toggleLanguage}
-          className="flex justify-center items-center bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl p-4 rounded-full transition-all duration-300"
+          className="flex justify-center items-center bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl p-4 rounded-full transition-all duration-300 cursor-pointer"
           aria-label="Toggle language"
         >
           <Globe className="w-6 h-6 text-green-600" />

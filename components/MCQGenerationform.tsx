@@ -15,7 +15,7 @@ export default function MCQGenerationForm(user: AuthRecord) {
   const searchParams = useSearchParams();
   const topic = searchParams.get('topic');
   const subject = searchParams.get('subject');
-  const level = searchParams.get('level')||'1';
+  const level = searchParams.get('level');
 
   useEffect(() => {
     if (topic) {
@@ -33,13 +33,13 @@ export default function MCQGenerationForm(user: AuthRecord) {
   const [formData, setFormData] = useState({
     refined_text: '',
     difficulty: 'medium',
-    num_questions: 10,
+    num_questions: 5,
     topic_name: '',
     language: 'English',
     exam_name: '',
     subject: subject || '',
     Class: '9',
-    time_limit: 30
+    time_limit: 10
   });
 
   // ...handleChange remains unchanged
@@ -254,12 +254,10 @@ export default function MCQGenerationForm(user: AuthRecord) {
             className="px-3 py-2 border rounded-md w-full"
           >
             <option value="English">English</option>
-            <option value="Spanish">Spanish</option>
-            <option value="French">French</option>
-            <option value="German">German</option>
+            
+            
             <option value="Bangla">Bangla</option>
-            <option value="Japanese">Japanese</option>
-            <option value="Hindi">Hindi</option>
+            
           </select>
         </div>
         
@@ -273,7 +271,7 @@ export default function MCQGenerationForm(user: AuthRecord) {
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-4 py-2 rounded-md w-full font-medium text-white"
+            className="bg-gray-900 hover:bg-gray-700 disabled:opacity-50 px-4 py-2 rounded-md w-full font-medium text-white cursor-pointer disabled:cursor-not-allowed"
           >
             {isLoading ? 'Generating Questions...' : 'Generate MCQ Exam'}
           </button>
@@ -282,14 +280,14 @@ export default function MCQGenerationForm(user: AuthRecord) {
             <button
               type="button"
               onClick={handleSaveForLater}
-              className="bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-md w-full font-medium text-white"
+              className="bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-md w-full font-medium text-white cursor-pointer"
             >
               Save for Later
             </button>
             <button
               type="button"
               onClick={handleGiveExamNow}
-              className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md w-full font-medium text-white"
+              className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md w-full font-medium text-white cursor-pointer"
             >
               Give Exam Now
             </button>

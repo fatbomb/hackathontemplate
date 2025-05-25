@@ -147,7 +147,7 @@ export default function SignupPage() {
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="top-0 right-0 absolute px-3 h-full"
+                      className="top-0 right-0 absolute px-3 h-full cursor-pointer"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
@@ -182,7 +182,7 @@ export default function SignupPage() {
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="top-0 right-0 absolute px-3 h-full"
+                      className="top-0 right-0 absolute px-3 h-full cursor-pointer"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     >
                       {showConfirmPassword ? (
@@ -227,7 +227,7 @@ export default function SignupPage() {
               </FormItem>
             )}
           />
-          <Button className="w-full" type="submit" disabled={isLoading}>
+          <Button className="w-full cursor-pointer" type="submit" disabled={isLoading}>
             {isLoading ? (
               <>
                 <LoadingSpinner size="sm" className="mr-2" /> Creating account...

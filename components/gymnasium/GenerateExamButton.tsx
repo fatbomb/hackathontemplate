@@ -14,13 +14,13 @@ export default function GenerateExamButton({ subjectId, topicId,level }: Generat
   const router = useRouter();
   
   const handleGenerateExam = () => {
-    router.push(`/exams/generateexam?subject=${subjectId}&topic=${topicId}&levlel=${level}`);
+    router.push(`/exams/generateexam?subject=${subjectId}&topic=${topicId}&level=${level}`);
   };
   
   return (
     <motion.button
       onClick={handleGenerateExam}
-      className="flex justify-center items-center bg-indigo-600 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2 w-full font-medium text-white transition-all duration-300"
+      className="flex justify-center items-center bg-indigo-600 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2 w-full font-medium text-white transition-all duration-300 cursor-pointer"
       whileHover={{ backgroundColor: "#4338ca" }}
       whileTap={{ scale: 0.98 }}
     >

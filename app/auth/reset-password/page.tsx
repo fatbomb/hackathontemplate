@@ -86,7 +86,7 @@ export default function ResetPasswordPage() {
               We&#39;ve sent a password reset link to your email. Please check your inbox.
             </p>
           </div>
-          <Button className="w-full" asChild>
+          <Button className="w-full cursor-pointer" asChild>
             <Link href="/auth/login">Back to Login</Link>
           </Button>
         </div>
@@ -106,7 +106,7 @@ export default function ResetPasswordPage() {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit" disabled={isLoading}>
+            <Button className="w-full cursor-pointer" type="submit" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <LoadingSpinner size="sm" className="mr-2" /> Sending...

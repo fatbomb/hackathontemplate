@@ -241,7 +241,7 @@ export default function ResultsPageClient({
                                         <td className="px-4 py-3 font-medium text-sm text-right whitespace-nowrap">
                                             <Button
                                                 variant="link"
-                                                className="p-0 h-auto"
+                                                className="p-0 h-auto cursor-pointer"
                                                 onClick={() => handleViewDetails(userExam)}
                                             >
                                                 View Details
@@ -351,7 +351,7 @@ export default function ResultsPageClient({
                             </div>
 
                             <div className="flex justify-end mt-6">
-                                <Button onClick={handleCloseDetails}>
+                                <Button className='cursor-pointer' onClick={handleCloseDetails}>
                                     Close
                                 </Button>
                             </div>

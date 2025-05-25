@@ -20,13 +20,13 @@ export default function Error({
         <p className="mb-6">{error.message || 'An unexpected error occurred'}</p>
         <button
           onClick={() => reset()}
-          className="bg-blue-600 hover:bg-blue-700 mr-2 px-4 py-2 rounded-md font-bold text-white"
+          className="bg-blue-600 hover:bg-blue-700 mr-2 px-4 py-2 rounded-md font-bold text-white cursor-pointer"
         >
           Try again
         </button>
         <button
           onClick={() => window.location.href = '/'}
-          className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md font-bold text-gray-800"
+          className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md font-bold text-gray-800 cursor-pointer"
         >
           Go to Home
         </button>
