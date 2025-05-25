@@ -125,7 +125,7 @@ export async function fetchResultsData(examId?: string) {
                 created: examData.created,
                 questions: questions.map(q => ({
                     id: q.id,
-                    text: q.text,
+                    text: q.question_statement,
                     options: q.options,
                     correct_option: Number(q.correct_answer),
                     created: q.created,
